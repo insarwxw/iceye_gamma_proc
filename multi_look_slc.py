@@ -32,7 +32,7 @@ def main():
     # - Parameters
     rlks = 10          # - number of range looks (INT)
     azlks = 5          # - number of azimuth looks (INT)
-    raspwr_f = False   # - save power amplitude image raster
+    raspwr_f = True    # - save power amplitude image raster
 
     # - List Directory Content
     data_dir_list = [os.path.join(data_dir, x) for x in os.listdir(data_dir)

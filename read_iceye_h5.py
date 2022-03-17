@@ -37,9 +37,12 @@ def main():
     out_dir = make_dir(args.directory, 'output')
     out_dir = make_dir(out_dir, 'slc+par')
 
+    # - ICEye Suffix
+    ieye_suff = 'ICEYE_X7_SLC_SM_'
+
     for b_input in data_dir_list:
         # - Read input Binary File Name
-        b_input_name = b_input.split('/')[-1]
+        b_input_name = b_input.split('/')[-1].replace(ieye_suff, '')
         slc_name = os.path.join(out_dir, b_input_name.replace('.h5', '.slc'))
         par_name = os.path.join(out_dir, b_input_name.replace('.h5', '.par'))
         # - Extract SLC and Parameter File

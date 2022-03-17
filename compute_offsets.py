@@ -30,8 +30,8 @@ def main():
     data_dir = os.path.join(args.directory, 'slc+par')
 
     # - Parameters
-    ref = 'ICEYE_X7_SLC_SM_152307_20211022T145808'
-    sec = 'ICEYE_X7_SLC_SM_152566_20211023T145809'
+    ref = '152307_20211022T145808'
+    sec = '152566_20211023T145809'
     # - Offset Computation parameter
     algorithm = 1       # - offset estimation algorithm
     rlks = 1   # - number of interferogram range looks (enter -  for default: 1)
