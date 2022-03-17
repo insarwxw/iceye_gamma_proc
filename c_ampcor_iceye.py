@@ -143,7 +143,7 @@ def main():
     # - "init_offset_orbit" multiplied by -1 and normalized
     # - for 30 (line_spacing ???)
     px0 = int(off_param_dict['initial_azimuth_offset'][0])
-    y_start = int(max([0, np.fix(-int(px0 / line_spacing) + 1.5) * 30]))
+    y_start = int(max([0, np.fix((-px0 / line_spacing) + 1.5) * 30]))
 
     # - Total Number of Records to consider
     n_rec = int(y_end - y_start)
@@ -154,7 +154,8 @@ def main():
 
     # - y-slope
     y_slope = (ref_pixel_sp - sec_pixel_sp) / ref_pixel_sp
-
+    print(y_slope)
+    print(ref_pixel_sp, sec_pixel_sp)
     print(f'# - Number of record of ref. SLC : {n_rec}')
     print(f'# - Divide offsets into {args.np} chunks')
 
@@ -211,9 +212,10 @@ def main():
                 yoff_c = int(np.fix(yoff + y_slope
                                      * (2. * y_curr
                                         + line_spacing * (nn - 1)) / 2. + 0.5))
-                print(yoff)
-                print(y_slope)
+                print(yoff_c)
                 print(y_curr)
+                print(y_slope)
+                print(line_spacing)
                 sys.exit()
                 print('{:5} {:6}'.format(xoff_c, yoff_c), file=fid_2)
 
