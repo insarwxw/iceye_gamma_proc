@@ -32,7 +32,6 @@ def main():
     # - Parameters
     rlks = 10          # - number of range looks (INT)
     azlks = 5          # - number of azimuth looks (INT)
-    raspwr_f = False    # - save power amplitude image raster
 
     # - List Directory Content
     data_dir_list = [os.path.join(data_dir, x) for x in os.listdir(data_dir)
@@ -52,11 +51,9 @@ def main():
         # - Read Multi-Looked SLCs par file
         par_dict = pg.ParFile(mli_par_name).par_dict
         n_rsmpl = int(par_dict['range_samples'][0])
-        print(n_rsmpl)
-        print(mli_name)
-        if raspwr_f:
-            # - Calculate a raster image from data with power-law scaling
-            pg.raspwr(mli_name, n_rsmpl)
+
+        # - Calculate a raster image from data with power-law scaling
+        pg.raspwr(mli_name, n_rsmpl)
 
 
 # - run main program
