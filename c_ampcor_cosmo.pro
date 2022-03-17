@@ -67,6 +67,9 @@ printf,1,'32 32'
 printf,1,'1 1'
 xoff0=xoff & yoff0=fix(yoff+y_slope*(2.*y_curr+line_spac*(nn-1))/2.+0.5)
 if (i eq 1 or i eq nproc) then print,yoff0
+if (i eq 1 or i eq nproc) then print,y_curr
+if (i eq 1 or i eq nproc) then print,y_slope
+if (i eq 1 or i eq nproc) then print,line_spac
 printf,1,xoff0,yoff0,format='(i5,1x,i6)'
 printf,1,'0. 1.e10'
 printf,1,'f f'

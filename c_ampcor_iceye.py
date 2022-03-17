@@ -204,13 +204,17 @@ def main():
                 # - Define "Search Window" and "Chip" size
                 print('64 64', file=fid_2)
                 print('32 32', file=fid_2)
+                print('1 1', file=fid_2)
 
                 # - i-th chunk initial offset
                 xoff_c = xoff
-                yoff_c = int(np.ceil(yoff + y_slope
+                yoff_c = int(np.fix(yoff + y_slope
                                      * (2. * y_curr
                                         + line_spacing * (nn - 1)) / 2. + 0.5))
-
+                print(yoff)
+                print(y_slope)
+                print(y_curr)
+                sys.exit()
                 print('{:5} {:6}'.format(xoff_c, yoff_c), file=fid_2)
 
                 # - Other Input parameters for AMPCOR
