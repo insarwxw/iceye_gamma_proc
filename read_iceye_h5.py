@@ -18,7 +18,7 @@ def main():
     )
     # - Absolute Path to directory containing input data.
     default_dir = os.path.join(os.path.expanduser('~'), 'Desktop',
-                               'iceye_gamma_test', 'input')
+                               'iceye_gamma_test')
     parser.add_argument('--directory', '-D',
                         type=lambda p: os.path.abspath(os.path.expanduser(p)),
                         default=default_dir,
@@ -27,15 +27,14 @@ def main():
     args = parser.parse_args()
 
     # - Path to Test directory
-    data_dir = args.directory
+    data_dir = os.path.join(args.directory, 'input')
 
     # - List Directory Content
     data_dir_list = [os.path.join(data_dir, x) for x in os.listdir(data_dir)
                      if x.endswith('.h5')]
 
     # - create output directory
-    out_dir = make_dir(os.path.join(os.path.expanduser('~'), 'Desktop',
-                                    'iceye_gamma_test'), 'output')
+    out_dir = make_dir(args.directory, 'output')
     out_dir = make_dir(out_dir, 'slc+par')
 
     for b_input in data_dir_list:
