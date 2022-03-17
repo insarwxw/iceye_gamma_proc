@@ -19,7 +19,7 @@ yoff=po.z0
 print,'Offset :',xoff,yoff
 
 p1 = load_isp_param(id1+'.par')
-p2 = load_isp_param(id1+'.par')
+p2 = load_isp_param(id2+'.par')
 
 nl=max([p1.nrec,p2.nrec])
 if not keyword_set(nproc) then nproc=14
