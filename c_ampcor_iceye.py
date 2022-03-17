@@ -154,8 +154,9 @@ def main():
 
     # - y-slope
     y_slope = (ref_pixel_sp - sec_pixel_sp) / ref_pixel_sp
-    print(y_slope)
-    print(ref_pixel_sp, sec_pixel_sp)
+    print(f'# - Reference Azimuth Res: {ref_pixel_sp}')
+    print(f'# - Secondary Azimuth Res: {sec_pixel_sp}')
+    print(f'# - Computed y_slope: {y_slope}\n')
     print(f'# - Number of record of ref. SLC : {n_rec}')
     print(f'# - Divide offsets into {args.np} chunks')
 
@@ -210,13 +211,9 @@ def main():
                 # - i-th chunk initial offset
                 xoff_c = xoff
                 yoff_c = int(np.fix(yoff + y_slope
-                                     * (2. * y_curr
-                                        + line_spacing * (nn - 1)) / 2. + 0.5))
-                print(yoff_c)
-                print(y_curr)
-                print(y_slope)
-                print(line_spacing)
-                sys.exit()
+                                    * (2. * y_curr
+                                       + line_spacing * (nn - 1)) / 2. + 0.5))
+
                 print('{:5} {:6}'.format(xoff_c, yoff_c), file=fid_2)
 
                 # - Other Input parameters for AMPCOR

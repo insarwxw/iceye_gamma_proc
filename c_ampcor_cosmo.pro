@@ -34,8 +34,9 @@ nrec=0L+y_end-y_start
 
 bat_id='bat_'+id1+'-'+id2
 y_slope=(p1.azsp-p2.azsp)/p1.azsp
-print,'yslope: ', y_slope
-print,p1.azsp, p2.azsp
+print,'Reference Azimuth Res:',p1.azsp
+print,'Secondary Azimuth Res:',p2.azsp
+print,'Computed yslope: ', y_slope
 print,'Number of record of ref. SLC :',nrec
 
 print,'Divide offsets into ',nproc,' chunks ..'
