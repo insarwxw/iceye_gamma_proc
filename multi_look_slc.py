@@ -5,18 +5,35 @@ using  GAMMA's Python integration with the py_gamma module.
 # - Python Dependencies
 from __future__ import print_function
 import os
+import argparse
 import datetime
 # - GAMMA's Python integration with the py_gamma module
 import py_gamma as pg
 
 
 def main():
-    # - Parameters
-    rlks = 10       # number of range looks (INT)
-    azlks = 5      # - number of azimuth looks (INT)
+    parser = argparse.ArgumentParser(
+        description="""TEST: Calculate a multi-look intensity (MLI)
+        image from ICEye SLCs."""
+    )
+    # - Absolute Path to directory containing input data.
+    default_dir = os.path.join(os.path.expanduser('~'), 'Desktop',
+                               'iceye_gamma_test', 'output', 'slc+par')
+    parser.add_argument('--directory', '-D',
+                        type=lambda p: os.path.abspath(os.path.expanduser(p)),
+                        default=default_dir,
+                        help='Project data directory.')
+
+    args = parser.parse_args()
+
     # - Path to Test directory
-    data_dir = os.path.join(os.path.expanduser('~'), 'Desktop',
-                            'iceye_gamma_test', 'output', 'slc+par')
+    data_dir = args.directory
+
+    # - Parameters
+    rlks = 10          # - number of range looks (INT)
+    azlks = 5          # - number of azimuth looks (INT)
+    raspwr_f = False   # - save power amplitude image raster
+
     # - List Directory Content
     data_dir_list = [os.path.join(data_dir, x) for x in os.listdir(data_dir)
                      if x.endswith('.slc')]
@@ -37,8 +54,9 @@ def main():
         n_rsmpl = int(par_dict['range_samples'][0])
         print(n_rsmpl)
         print(mli_name)
-        # - Calculate a raster image from data with power-law scaling
-        pg.raspwr(mli_name, n_rsmpl)
+        if raspwr_f:
+            # - Calculate a raster image from data with power-law scaling
+            pg.raspwr(mli_name, n_rsmpl)
 
 
 # - run main program
