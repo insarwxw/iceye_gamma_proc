@@ -46,7 +46,8 @@ def main():
         slc_name = os.path.join(out_dir, b_input_name.replace('.h5', '.slc'))
         par_name = os.path.join(out_dir, b_input_name.replace('.h5', '.par'))
         # - Extract SLC and Parameter File
-        pg.par_ICEYE_SLC(b_input, par_name, slc_name)
+        # - Set dtype equal to zero to save the SLC in FCOMPLEX format.
+        pg.par_ICEYE_SLC(b_input, par_name, slc_name, dtype=0)
 
 
 # - run main program
