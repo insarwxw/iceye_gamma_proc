@@ -1,3 +1,8 @@
+"""
+Enrico Ciraci' - 03/2022
+
+Compute Interferogram for the selected pair.
+"""
 # - Python dependencies
 from __future__ import print_function
 import os
@@ -38,7 +43,7 @@ def main():
     ref_slc = slc_list[0]
     sec_slc = slc_list[1]
 
-    # - Define Data directory
+    # - Data directory
     data_dir = os.path.join(args.directory,
                             'pair_diff', ref_slc + '-' + sec_slc)
 
@@ -89,7 +94,6 @@ def main():
                      f'coco{ref_slc}-{sec_slc}.flat')
     pg.rasmph_pwr(os.path.join('.', f'coco{ref_slc}-{sec_slc}.flat'),
                   os.path.join('.', f'{ref_slc}.pwr1'), n_col)
-
 
 
 # - run main program
