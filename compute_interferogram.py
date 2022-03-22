@@ -61,10 +61,10 @@ def main():
     # Change the current working directory
     os.chdir(data_dir)
     # - Calculate Interferogram
-    os.system(os.path.join(data_dir, f'./bat_inter.{ref_slc}-{sec_slc}'))
+    # os.system(os.path.join('.', f'bat_inter.{ref_slc}-{sec_slc}'))
     print('# - Interferogram Calculation Completed.')
     # - read interferogram parameter file
-    igram_par_path = os.path.join(args.directory,
+    igram_par_path = os.path.join('.',
                                   f'{ref_slc}-{sec_slc}.offmap.par.interp')
     igram_param_dict = pg.ParFile(igram_par_path).par_dict
     # - read interferogram number of columns
