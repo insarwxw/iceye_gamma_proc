@@ -62,6 +62,20 @@ def main():
     os.chdir(data_dir)
     # - Calculate Interferogram
     os.system(os.path.join(data_dir, f'./bat_inter.{ref_slc}-{sec_slc}'))
+    print('# - Interferogram Calculation Completed.')
+    # - read interferogram parameter file
+    igram_par_path = os.path.join(args.directory,
+                                  f'{ref_slc}-{sec_slc}.offmap.par.interp')
+    igram_param_dict = pg.ParFile(igram_par_path).par_dict
+    # - read interferogram number of columns
+    n_col = int(igram_param_dict['interferogram_width'])
+
+    # - Generate 8-bit raster image of the interferogram
+    # - plotted on top of the reference intensity image.
+    print('# - Generate 8-bit raster image of the interferogram '
+          'plotted on top of the reference SLC intensity image')
+    pg.rasmph_pwr(os.path.join('.', f'coco{ref_slc}-{sec_slc}.dat'),
+                  os.path.join('.', f'{ref_slc}.pwr'), n_col)
 
 
 # - run main program
