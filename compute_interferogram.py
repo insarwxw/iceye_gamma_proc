@@ -78,6 +78,19 @@ def main():
     pg.rasmph_pwr(os.path.join('.', f'coco{ref_slc}-{sec_slc}.dat'),
                   os.path.join('.', f'{ref_slc}.pwr1'), n_col)
 
+    # - Remove Flat Earth Phase contribution to differential phase
+    # - ph_slope_base -> Subtract/add interferogram Flat-Earth phase trend as
+    # -                  estimated from initial baseline.
+    # -                  See Gamma Remote Sensing.
+    pg.ph_slope_base(f'coco{ref_slc}-{sec_slc}.dat',
+                     f'{ref_slc}.par',
+                     f'{ref_slc}-{sec_slc}.offmap.par.interp',
+                     f'base{ref_slc}-{sec_slc}.dat',
+                     f'coco{ref_slc}-{sec_slc}.flat')
+    pg.rasmph_pwr(os.path.join('.', f'coco{ref_slc}-{sec_slc}.flat'),
+                  os.path.join('.', f'{ref_slc}.pwr1'), n_col)
+
+
 
 # - run main program
 if __name__ == '__main__':
