@@ -57,6 +57,7 @@ def main():
         print('#!/bin/sh', file=b_fid)
         for f_line in bat_lines:
             print(f_line, file=b_fid)
+
     print('# - Compute Interferogram (./bat_inter_ref_slc-sec_scl).')
     # Change the current working directory
     os.chdir(data_dir)
@@ -68,7 +69,7 @@ def main():
                                   f'{ref_slc}-{sec_slc}.offmap.par.interp')
     igram_param_dict = pg.ParFile(igram_par_path).par_dict
     # - read interferogram number of columns
-    n_col = int(igram_param_dict['interferogram_width'])
+    n_col = int(igram_param_dict['interferogram_width'][0])
 
     # - Generate 8-bit raster image of the interferogram
     # - plotted on top of the reference intensity image.
