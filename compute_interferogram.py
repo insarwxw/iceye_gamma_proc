@@ -58,6 +58,8 @@ def main():
         for f_line in bat_lines:
             print(f_line, file=b_fid)
     print('# - Compute Interferogram (./bat_inter_ref_slc-sec_scl).')
+    # Change the current working directory
+    os.chdir(data_dir)
     # - Calculate Interferogram
     os.system(os.path.join(data_dir, f'./bat_inter.{ref_slc}-{sec_slc}'))
 
