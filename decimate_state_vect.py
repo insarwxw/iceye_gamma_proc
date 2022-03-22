@@ -7,6 +7,7 @@ parameter file.
 from __future__ import print_function
 import os
 import sys
+import shutil
 import argparse
 import datetime
 # - GAMMA's Python integration with the py_gamma module
@@ -36,6 +37,8 @@ def main():
                         type=int,
                         default=10,
                         help='Decimation Rate.')
+    parser.add_argument('--replace', action='store_true',
+                        help='Replace Original Parameter File.')
     args = parser.parse_args()
 
     if args.slc is None:
@@ -51,8 +54,15 @@ def main():
     print(f'# - Number of State Vectors: {n_st_vect}')
     print(f'# - State Vector Interval [{st_vect_interval_unit}]: '
           f'{st_vect_interval}')
-    # - Save new Parameter file
-    dec_par_path = slc_par_path.replace('.par', '.dec.par')
+
+    if args.replace:
+        # - Replace Original Parameter File
+        shutil.copy(slc_par_path, slc_par_path.replace('.par', '.full.par'))
+        dec_par_path = slc_par_path
+    else:
+        # - Save new Parameter file
+        dec_par_path = slc_par_path.replace('.par', '.dec.par')
+
     with open(dec_par_path, 'w', encoding='utf8') as p_fid:
         print('Gamma Interferometric SAR Processor (ISP) '
               '- Image Parameter File\n', file=p_fid)
