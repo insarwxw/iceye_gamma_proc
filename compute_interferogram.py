@@ -76,7 +76,7 @@ def main():
     print('# - Generate 8-bit raster image of the interferogram '
           'plotted on top of the reference SLC intensity image')
     pg.rasmph_pwr(os.path.join('.', f'coco{ref_slc}-{sec_slc}.dat'),
-                  os.path.join('.', f'{ref_slc}.pwr'), n_col)
+                  os.path.join('.', f'{ref_slc}.pwr1'), n_col)
 
 
 # - run main program
