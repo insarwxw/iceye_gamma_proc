@@ -7,10 +7,12 @@ Compute Interferogram for the selected pair.
 from __future__ import print_function
 import os
 import sys
+import shutil
 import argparse
 import datetime
 # - GAMMA's Python integration with the py_gamma module
 import py_gamma as pg
+from utils.make_dir import make_dir
 
 
 def main():
@@ -67,7 +69,7 @@ def main():
     # Change the current working directory
     os.chdir(data_dir)
     # - Calculate Interferogram
-    os.system(os.path.join('.', f'bat_inter.{ref_slc}-{sec_slc}'))
+    # os.system(os.path.join('.', f'bat_inter.{ref_slc}-{sec_slc}'))
     print('# - Interferogram Calculation Completed.')
     # - read interferogram parameter file
     igram_par_path = os.path.join('.',
@@ -94,6 +96,19 @@ def main():
                      f'coco{ref_slc}-{sec_slc}.flat')
     pg.rasmph_pwr(os.path.join('.', f'coco{ref_slc}-{sec_slc}.flat'),
                   os.path.join('.', f'{ref_slc}.pwr1'), n_col)
+
+    # - Change Permission Access to all the files contained inside the
+    # - output directory.
+    for out_file in os.listdir('.'):
+        os.chmod(out_file, 0o0755)
+
+    # - Create OFFSETS subdirectory
+    save_dir = make_dir('.', 'OFFSETS')
+    # - Move offsets calculated by AMPCOR into OFFSETS
+    off_file_list = [os.path.join('.', x) for x in os.listdir('.')
+                     if '.offmap_' in x]
+    for fm in off_file_list:
+        shutil.move(fm, save_dir)
 
 
 # - run main program
