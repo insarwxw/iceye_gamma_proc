@@ -59,7 +59,7 @@ def main():
 
     # - Reference SLCs both interferograms
     ref_igram_ref = os.path.join(data_dir_ref, igram_ref.split('-')[0])
-    ref_igram_sec = os.path.join(data_dir_ref, igram_sec.split('-')[0])
+    ref_igram_sec = os.path.join(data_dir_sec, igram_sec.split('-')[0])
 
     # - Create Output Direcotry
     out_dir = make_dir(args.directory, 'ddiff')
