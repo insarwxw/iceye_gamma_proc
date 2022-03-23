@@ -69,7 +69,7 @@ def main():
     # Change the current working directory
     os.chdir(data_dir)
     # - Calculate Interferogram
-    # os.system(os.path.join('.', f'bat_inter.{ref_slc}-{sec_slc}'))
+    os.system(os.path.join('.', f'bat_inter.{ref_slc}-{sec_slc}'))
     print('# - Interferogram Calculation Completed.')
     # - read interferogram parameter file
     igram_par_path = os.path.join('.',
