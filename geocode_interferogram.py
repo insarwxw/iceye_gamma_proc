@@ -8,12 +8,10 @@ to Interferometric Phase.
 from __future__ import print_function
 import os
 import sys
-import shutil
 import argparse
 import datetime
 # - GAMMA's Python integration with the py_gamma module
 import py_gamma as pg
-from utils.make_dir import make_dir
 from utils.path_to_dem import path_to_gimp
 from utils.read_keyword import read_keyword
 from utils.psfilt import psfilt
@@ -23,8 +21,7 @@ def main():
     # - Read the system arguments listed after the program
     parser = argparse.ArgumentParser(
         description="""Geocode Flattened Interferogram and Remove
-        Topographic Contribution to Interferometric Phase.
-            """
+        Topographic Contribution to Interferometric Phase. """
     )
     # - Working Directory directory.
     default_dir = os.path.join(os.path.expanduser('~'), 'Desktop',
@@ -39,6 +36,9 @@ def main():
                         default=None,
                         help='SLC Pair Codes separated by "_" '
                              'reference-secondary')
+    parser.add_argument('--psfilt', '-F', action='store_true',
+                        help='Apply weighted power spectrum interferogram filter'
+                             ' - (psfilt)')
     args = parser.parse_args()
 
     if args.pair is None:
@@ -104,14 +104,14 @@ def main():
     #                     3: nn-thinned (not available in gc_map2)
     #   r_ovr           range over-sampling factor for nn-thinned
     #                          layover/shadow mode (enter - for default: 2.0)
-    # pg.gc_map(ref_slc+'.par',
-    #           igram_par_path,
-    #           os.path.join(path_to_gimp(), 'DEM_gc_par'),
-    #           os.path.join(path_to_gimp(), 'gimpdem100.dat'),
-    #           'DEM_gc_par', 'DEMice_gc', 'gc_icemap',
-    #           10, 10, 'sar_map_in_dem_geometry',
-    #           '-', '-', 'inc.geo', '-', '-', '-', '-', '2', '-'
-    #           )
+    pg.gc_map(ref_slc+'.par',
+              igram_par_path,
+              os.path.join(path_to_gimp(), 'DEM_gc_par'),
+              os.path.join(path_to_gimp(), 'gimpdem100.dat'),
+              'DEM_gc_par', 'DEMice_gc', 'gc_icemap',
+              10, 10, 'sar_map_in_dem_geometry',
+              '-', '-', 'inc.geo', '-', '-', '-', '-', '2', '-'
+              )
     igram_param_dict = pg.ParFile(igram_par_path).par_dict
 
     # - read interferogram number of columns
@@ -162,13 +162,17 @@ def main():
     # - Subtract topographic phase from interferogram
     pg.sub_phase(f'coco{ref_slc}-{sec_slc}.flat', 'sim_phase', 'DIFF_par',
                  f'coco{ref_slc}-{sec_slc}.flat.topo_off', 1)
-
-    # - Smooth the obtained interferogram with PSFILT
-    # - weighted power spectrum interferogram filter v1.0
-    psfilt(f'coco{ref_slc}-{sec_slc}.flat.topo_off', interf_width)
-    # - Show filtered interferogram
-    pg.rasmph_pwr(f'coco{ref_slc}-{sec_slc}.flat.topo_off.psfilt',
+    # - Show interferogram w/o topographic phase
+    pg.rasmph_pwr(f'coco{ref_slc}-{sec_slc}.flat.topo_off',
                   f'{ref_slc}.pwr1', interf_width)
+
+    if args.psfilt:
+        # - Smooth the obtained interferogram with PSFILT
+        # - weighted power spectrum interferogram filter v1.0
+        psfilt(f'coco{ref_slc}-{sec_slc}.flat.topo_off', interf_width)
+        # - Show filtered interferogram
+        pg.rasmph_pwr(f'coco{ref_slc}-{sec_slc}.flat.topo_off.psfilt',
+                      f'{ref_slc}.pwr1', interf_width)
 
 
 # - run main program
