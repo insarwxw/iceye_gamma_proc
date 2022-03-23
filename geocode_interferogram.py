@@ -102,42 +102,51 @@ def main():
     #                     3: nn-thinned (not available in gc_map2)
     #   r_ovr           range over-sampling factor for nn-thinned
     #                          layover/shadow mode (enter - for default: 2.0)
-    pg.gc_map(ref_slc+'.par',
-              igram_par_path,
-              os.path.join(path_to_gimp(), 'DEM_gc_par'),
-              os.path.join(path_to_gimp(), 'gimpdem100.dat'),
-              'DEM_gc_par', 'DEMice_gc', 'gc_icemap',
-              10, 10, 'sar_map_in_dem_geometry',
-              '-', '-', 'inc.geo', '-', '-', '-', '-', '2', '-'
-              )
+    # pg.gc_map(ref_slc+'.par',
+    #           igram_par_path,
+    #           os.path.join(path_to_gimp(), 'DEM_gc_par'),
+    #           os.path.join(path_to_gimp(), 'gimpdem100.dat'),
+    #           'DEM_gc_par', 'DEMice_gc', 'gc_icemap',
+    #           10, 10, 'sar_map_in_dem_geometry',
+    #           '-', '-', 'inc.geo', '-', '-', '-', '-', '2', '-'
+    #           )
     igram_param_dict = pg.ParFile(igram_par_path).par_dict
 
     # - read interferogram number of columns
-    n_cols = int(igram_param_dict['interferogram_width'][0])
-    n_rows = int(igram_param_dict['interferogram_azimuth_lines'][0])
-    print(f'# - Interferogram Size: {n_rows} x {n_cols}')
+    interf_width = int(igram_param_dict['interferogram_width'][0])
+    interf_lines = int(igram_param_dict['interferogram_azimuth_lines'][0])
+    print(f'# - Interferogram Size: {interf_lines} x {interf_width}')
 
     # - Extract DEM Size from parameter file
     dem_par_path = os.path.join('.', 'DEM_gc_par')
     try:
         dem_param_dict = pg.ParFile(dem_par_path).par_dict
-        n_cols_dem = int(dem_param_dict['width'][0])
-        n_rows_dem = int(dem_param_dict['nlines'][0])
+        dem_width = int(dem_param_dict['width'][0])
+        dem_nlines = int(dem_param_dict['nlines'][0])
     except IndexError:
-        n_cols_dem = int(read_keyword(dem_par_path, 'width'))
-        n_rows_dem = int(read_keyword(dem_par_path, 'nlines'))
+        dem_width = int(read_keyword(dem_par_path, 'width'))
+        dem_nlines = int(read_keyword(dem_par_path, 'nlines'))
 
-    print(f'# - DEM Size: {n_rows_dem} x {n_cols_dem}')
+    print(f'# - DEM Size: {dem_nlines} x {dem_width}')
 
     # - Forward geocoding transformation using a lookup table
-    pg.geocode('gc_icemap', 'DEMice_gc', n_cols_dem, 'hgt_icemap',
-               n_cols, n_rows)
-    pg.geocode('gc_icemap', 'inc.geo', n_cols_dem, 'inc',
-               n_cols, n_rows)
+    pg.geocode('gc_icemap', 'DEMice_gc', dem_width, 'hgt_icemap',
+               interf_width, interf_lines)
+    pg.geocode('gc_icemap', 'inc.geo', dem_width, 'inc',
+               interf_width, interf_lines)
 
     # - Create DIFF/GEO parameter file for geocoding and differential
     # - interferometry.
     pg.create_diff_par(igram_par_path, igram_par_path, 'DIFF_par', '-', 0)
+
+    # - Invert geocoding lookup table
+    pg.c_map_inversion('gc_icemap', dem_width, 'gc_map_invert', 
+                       interf_width, interf_lines)
+
+    # - Geocoding of Reference SLC using a geocoding lookup table
+    pg.geocode_back(ref_slc + '.pwr1', interf_width, 'gc_icemap',
+                    ref_slc + '.pwr1.geo', dem_width, dem_nlines)
+    pg.raspwr(ref_slc + '.pwr1.geo', dem_width)
 
 
 # - run main program
