@@ -54,6 +54,10 @@ def main():
     # - Change the current working directory
     os.chdir(data_dir)
 
+    # - Extract Interferogram Size from parameter file
+    igram_par_path = os.path.join('.',
+                                  f'{ref_slc}-{sec_slc}.offmap.par.interp')
+
     print('# - Calculate terrain-geocoding lookup table and DEM derived '
           'data products.')
     # - Calculate terrain-geocoding lookup table and DEM derived data products.
@@ -99,17 +103,13 @@ def main():
     #   r_ovr           range over-sampling factor for nn-thinned
     #                          layover/shadow mode (enter - for default: 2.0)
     pg.gc_map(ref_slc+'.par',
-              args.pair.split+'.offmap.par.interp',
+              igram_par_path,
               os.path.join(path_to_gimp(), 'DEM_gc_par'),
               os.path.join(path_to_gimp(), 'gimpdem100.dat'),
               'DEM_gc_par', 'DEMice_gc', 'DEMice_gc',
               'gc_icemap', 10, 10, 'sar_map_in_dem_geometry',
               '-', '-', 'inc.geo', '-', '-', '-', '-', '2', '-'
               )
-
-    # - Extract Interferogram Size from parameter file
-    igram_par_path = os.path.join('.',
-                                  f'{ref_slc}-{sec_slc}.offmap.par.interp')
     igram_param_dict = pg.ParFile(igram_par_path).par_dict
 
     # - read interferogram number of columns
