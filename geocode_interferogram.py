@@ -15,7 +15,7 @@ import datetime
 import py_gamma as pg
 from utils.make_dir import make_dir
 from utils.path_to_dem import path_to_gimp
-
+from utils.read_keyword import read_keyword
 
 def main():
     # - Read the system arguments listed after the program
@@ -102,14 +102,14 @@ def main():
     #                     3: nn-thinned (not available in gc_map2)
     #   r_ovr           range over-sampling factor for nn-thinned
     #                          layover/shadow mode (enter - for default: 2.0)
-    pg.gc_map(ref_slc+'.par',
-              igram_par_path,
-              os.path.join(path_to_gimp(), 'DEM_gc_par'),
-              os.path.join(path_to_gimp(), 'gimpdem100.dat'),
-              'DEM_gc_par', 'DEMice_gc', 'DEMice_gc',
-              'gc_icemap', 10, 10, 'sar_map_in_dem_geometry',
-              '-', '-', 'inc.geo', '-', '-', '-', '-', '2', '-'
-              )
+    # pg.gc_map(ref_slc+'.par',
+    #           igram_par_path,
+    #           os.path.join(path_to_gimp(), 'DEM_gc_par'),
+    #           os.path.join(path_to_gimp(), 'gimpdem100.dat'),
+    #           'DEM_gc_par', 'DEMice_gc', 'DEMice_gc',
+    #           'gc_icemap', 10, 10, 'sar_map_in_dem_geometry',
+    #           '-', '-', 'inc.geo', '-', '-', '-', '-', '2', '-'
+    #           )
     igram_param_dict = pg.ParFile(igram_par_path).par_dict
 
     # - read interferogram number of columns
@@ -119,9 +119,14 @@ def main():
 
     # - Extract DEM Size from parameter file
     dem_par_path = os.path.join('.', 'DEM_gc_par')
-    dem_param_dict = pg.ParFile(dem_par_path).par_dict
-    n_cols_dem = int(dem_param_dict['width'][0])
-    n_rows_dem = int(dem_param_dict['nlines'][0])
+    try:
+        dem_param_dict = pg.ParFile(dem_par_path).par_dict
+        n_cols_dem = int(dem_param_dict['width'][0])
+        n_rows_dem = int(dem_param_dict['nlines'][0])
+    except IndexError:
+        n_cols_dem = int(read_keyword(dem_par_path, 'width'))
+        n_rows_dem = int(read_keyword(dem_par_path, 'nlines'))
+
     print(f'# - DEM Size: {n_rows_dem} x {n_cols_dem}')
 
 
