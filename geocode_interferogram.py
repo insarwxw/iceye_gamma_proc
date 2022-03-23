@@ -16,6 +16,8 @@ import py_gamma as pg
 from utils.make_dir import make_dir
 from utils.path_to_dem import path_to_gimp
 from utils.read_keyword import read_keyword
+from utils.psfilt import psfilt
+
 
 def main():
     # - Read the system arguments listed after the program
@@ -147,6 +149,26 @@ def main():
     pg.geocode_back(ref_slc + '.pwr1', interf_width, 'gc_icemap',
                     ref_slc + '.pwr1.geo', dem_width, dem_nlines)
     pg.raspwr(ref_slc + '.pwr1.geo', dem_width)
+
+    # - Remove Interferometric Phase component due to surface Topography.
+    # - Simulate unwrapped interferometric phase using DEM height.
+    pg.phase_sim(ref_slc + '.par', igram_par_path,
+                 f'base{ref_slc}-{sec_slc}.dat', 'hgt_icemap',
+                 'sim_phase', 1, 0, '-')
+    # - Create DIFF/GEO parameter file for geocoding and
+    # - differential interferometry
+    pg.create_diff_par(igram_par_path, igram_par_path, 'DIFF_par', '-', 0)
+
+    # - Subtract topographic phase from interferogram
+    pg.sub_phase(f'coco{ref_slc}-{sec_slc}.flat', 'sim_phase', 'DIFF_par',
+                 f'coco{ref_slc}-{sec_slc}.flat.topo_off', 1)
+
+    # - Smooth the obtained interferogram with PSFILT
+    # - weighted power spectrum interferogram filter v1.0
+    psfilt(f'coco{ref_slc}-{sec_slc}.flat.topo_off', interf_width)
+    # - Show filtered interferogram
+    pg.rasmph_pwr(f'coco{ref_slc}-{sec_slc}.flat.topo_off.psfilt',
+                  f'{ref_slc}.pwr1', interf_width)
 
 
 # - run main program
