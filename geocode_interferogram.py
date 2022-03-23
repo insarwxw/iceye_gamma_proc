@@ -140,8 +140,8 @@ def main():
     pg.create_diff_par(igram_par_path, igram_par_path, 'DIFF_par', '-', 0)
 
     # - Invert geocoding lookup table
-    pg.c_map_inversion('gc_icemap', dem_width, 'gc_map_invert', 
-                       interf_width, interf_lines)
+    pg.gc_map_inversion('gc_icemap', dem_width, 'gc_map_invert',
+                        interf_width, interf_lines)
 
     # - Geocoding of Reference SLC using a geocoding lookup table
     pg.geocode_back(ref_slc + '.pwr1', interf_width, 'gc_icemap',
