@@ -39,6 +39,8 @@ def main():
                         help='Decimation Rate.')
     parser.add_argument('--replace', action='store_true',
                         help='Replace Original Parameter File.')
+    parser.add_argument('--overwrite', action='store_true',
+                        help='Overwrite Previously Decimated Parameter File.')
     args = parser.parse_args()
 
     if args.slc is None:
@@ -47,6 +49,18 @@ def main():
 
     # - Read SLC par file
     slc_par_path = os.path.join(args.directory, 'slc+par', args.slc+'.par')
+
+    # - Verify if a decimated version of the state vector parameter file
+    # - already exists inside the data directory.
+    if os.path.isfile(slc_par_path.replace('.par', '.full.par')):
+        print('# - Sate vectors already decimated for this file.')
+        print(f'# - {slc_par_path}')
+        if args.overwrite:
+            shutil.copy(slc_par_path.replace('.par', '.full.par'), slc_par_path)
+        else:
+            print('# - Verify file content.')
+            sys.exit()
+
     slc_par_dict = pg.ParFile(slc_par_path).par_dict
     n_st_vect = int(slc_par_dict['number_of_state_vectors'][0])
     st_vect_interval = slc_par_dict['state_vector_interval'][0]
@@ -86,7 +100,6 @@ def main():
                 print(key+':' + ' '*13 + line, file=p_fid)
 
         for st in range(1, n_st_vect+1, args.rate):
-            line = ''
             if st == 1:
                 line = f'state_vector_position_{st}'
             else:
