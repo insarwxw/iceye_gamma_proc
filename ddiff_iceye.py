@@ -71,7 +71,7 @@ def main():
     diff_par = 'DIFF_par' + igram_ref + '--' + igram_sec
     pg.create_diff_par(ref_par, sec_par, diff_par, 0, 0)
     # - Estimate Initial Offset
-    pg.init_offsetm(ref_igram_ref+'.pwr1', ref_igram_sec+'pwr1',
+    pg.init_offsetm(ref_igram_ref+'.pwr1', ref_igram_sec+'.pwr1',
                     diff_par, 1, 1, '-', '-', '0', '0', '-', '-', 1)
 
 
