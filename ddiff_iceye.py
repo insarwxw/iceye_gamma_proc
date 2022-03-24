@@ -70,6 +70,8 @@ def main():
     # - Interferograms
     ref_interf = os.path.join(data_dir_ref,
                               'coco' + igram_ref + '.flat.topo_off')
+    ref_pwr = os.path.join(data_dir_ref, igram_ref.split('-')[0] + '.pwr1')
+    # -
     sec_interf = os.path.join(data_dir_sec,
                               'coco' + igram_sec + '.flat.topo_off')
     sec_pwr = os.path.join(data_dir_sec, igram_sec.split('-')[0] + '.pwr1')
@@ -119,43 +121,47 @@ def main():
                     'base' + igram_ref + '-' + igram_sec + '.flat.topo_off',
 
                     )
+    pg.rasmph_pwr('coco' + igram_ref + '-' + igram_sec + '.flat.topo_off',
+                  ref_pwr, ref_interf_width)
 
     # - Smooth the obtained interferogram with pg.adf
     # - Adaptive interferogram filter using the power spectral density.
-    # pg.adf('coco' + igram_ref + '-' + igram_sec + '.flat.topo_off',
-    #        'coco' + igram_ref + '-' + igram_sec + '.flat.topo_off.filt',
-    #        'coco' + igram_ref + '-' + igram_sec + '.flat.topo_off.filt.coh',
-    #        ref_interf_width)
+    pg.adf('coco' + igram_ref + '-' + igram_sec + '.flat.topo_off',
+           'coco' + igram_ref + '-' + igram_sec + '.flat.topo_off.filt',
+           'coco' + igram_ref + '-' + igram_sec + '.flat.topo_off.filt.coh',
+           ref_interf_width)
+    pg.rasmph_pwr('coco' + igram_ref + '-' + igram_sec + '.flat.topo_off.filt',
+                  ref_pwr, ref_interf_width)
 
-    # - Geocode Double Difference
-    # -  Reference Interferogram look-up table
-    ref_gcmap = os.path.join(data_dir_ref, 'gc_icemap')
-    dem_par_path = os.path.join(data_dir_ref, 'DEM_gc_par')
-    # -  Width of Geocoding par (master)
-    dem_width = int(read_keyword(dem_par_path, 'width'))
-    # -  nlines of Geocoding par (slave)
-    dem_nlines = int(read_keyword(dem_par_path, 'nlines'))
-
-    pg.geocode_back('coco' + igram_ref + '-' + igram_sec + '.flat.topo_off',
-                    ref_interf_width,
-                    ref_gcmap,
-                    'coco' + igram_ref + '-' + igram_sec
-                    + '.flat.topo_off.filt.geo',
-                    dem_width, dem_nlines,
-                    '-', 1
-                    )
-
-    # - Calculate real part, imaginary part, intensity, magnitude,
-    # - or phase of FCOMPLEX data
-    # - Extract Interferogram Phase.
-    pg.cpx_to_real('coco' + igram_ref + '-' + igram_sec
-                   + '.flat.topo_off.filt.geo',
-                   'phs.geo', dem_width, 4)
-    pg.raspwr('phs.geo', dem_width)
-    # - Save Geocoded Interferogram phase as a GeoTiff
-    pg.data2geotiff(dem_par_path, 'phs.geo', 2,
-                    'coco' + igram_ref + '-' + igram_sec
-                    + '.flat.topo_off.filt.geo.tiff', -9999)
+    # # - Geocode Double Difference
+    # # -  Reference Interferogram look-up table
+    # ref_gcmap = os.path.join(data_dir_ref, 'gc_icemap')
+    # dem_par_path = os.path.join(data_dir_ref, 'DEM_gc_par')
+    # # -  Width of Geocoding par (master)
+    # dem_width = int(read_keyword(dem_par_path, 'width'))
+    # # -  nlines of Geocoding par (slave)
+    # dem_nlines = int(read_keyword(dem_par_path, 'nlines'))
+    #
+    # pg.geocode_back('coco' + igram_ref + '-' + igram_sec + '.flat.topo_off',
+    #                 ref_interf_width,
+    #                 ref_gcmap,
+    #                 'coco' + igram_ref + '-' + igram_sec
+    #                 + '.flat.topo_off.filt.geo',
+    #                 dem_width, dem_nlines,
+    #                 '-', 1
+    #                 )
+    #
+    # # - Calculate real part, imaginary part, intensity, magnitude,
+    # # - or phase of FCOMPLEX data
+    # # - Extract Interferogram Phase.
+    # pg.cpx_to_real('coco' + igram_ref + '-' + igram_sec
+    #                + '.flat.topo_off.filt.geo',
+    #                'phs.geo', dem_width, 4)
+    # pg.raspwr('phs.geo', dem_width)
+    # # - Save Geocoded Interferogram phase as a GeoTiff
+    # pg.data2geotiff(dem_par_path, 'phs.geo', 2,
+    #                 'coco' + igram_ref + '-' + igram_sec
+    #                 + '.flat.topo_off.filt.geo.tiff', -9999)
 
 
 # - run main program
