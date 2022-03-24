@@ -61,7 +61,7 @@ def main():
     # - read reference interferogram parameter file
     ref_par_dict = pg.ParFile(ref_par).par_dict
     # - Interferogram Width
-    ref_interf_width = ref_par_dict['interferogram_width']
+    ref_interf_width = int(ref_par_dict['interferogram_width'][0])
 
     # - Reference SLCs for the selected interferograms
     ref_pair_ref = os.path.join(data_dir_ref, igram_ref.split('-')[0])
@@ -124,17 +124,16 @@ def main():
                     )
     # - Read Double Difference Parameter file
     pg.rasmph_pwr('coco' + igram_ref + '-' + igram_sec + '.flat.topo_off',
-                  ref_pwr, 1594)
-    print(ref_interf_width)
+                  ref_pwr, ref_interf_width)
 
     # - Smooth the obtained interferogram with pg.adf
     # - Adaptive interferogram filter using the power spectral density.
-    # pg.adf('coco' + igram_ref + '-' + igram_sec + '.flat.topo_off',
-    #        'coco' + igram_ref + '-' + igram_sec + '.flat.topo_off.filt',
-    #        'coco' + igram_ref + '-' + igram_sec + '.flat.topo_off.filt.coh',
-    #        ref_interf_width)
-    # pg.rasmph_pwr('coco' + igram_ref + '-' + igram_sec + '.flat.topo_off.filt',
-    #               ref_pwr, ref_interf_width)
+    pg.adf('coco' + igram_ref + '-' + igram_sec + '.flat.topo_off',
+           'coco' + igram_ref + '-' + igram_sec + '.flat.topo_off.filt',
+           'coco' + igram_ref + '-' + igram_sec + '.flat.topo_off.filt.coh',
+           ref_interf_width)
+    pg.rasmph_pwr('coco' + igram_ref + '-' + igram_sec + '.flat.topo_off.filt',
+                  ref_pwr, ref_interf_width)
 
     # # - Geocode Double Difference
     # # -  Reference Interferogram look-up table
