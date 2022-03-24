@@ -57,7 +57,12 @@ def main():
     ref_par = os.path.join(data_dir_ref, igram_ref+'.offmap.par.interp')
     sec_par = os.path.join(data_dir_sec, igram_sec+'.offmap.par.interp')
 
-    # - Reference SLCs both interferograms
+    # - read reference interferogram parameter file
+    ref_par_dict = pg.ParFile(ref_par).par_dict
+    # - Interferogram Width
+    ref_interf_width = ref_par_dict['interferogram_width']
+
+    # - Reference SLCs for the selected interferograms
     ref_pair_ref = os.path.join(data_dir_ref, igram_ref.split('-')[0])
     ref_pair_sec = os.path.join(data_dir_sec, igram_sec.split('-')[0])
     
@@ -67,6 +72,10 @@ def main():
     sec_interf = os.path.join(data_dir_sec,
                               'coco' + igram_sec + '.flat.topo_off')
     sec_pwr = os.path.join(data_dir_sec, igram_sec.split('-')[0] + '.pwr1')
+
+    # - Path to Interferograms Baseline Files
+    ref_base = os.path.join(data_dir_ref, 'base' + igram_ref + '.dat')
+    sec_base = os.path.join(data_dir_sec, 'base' + igram_sec + '.dat')
 
     # - Create Output Directory
     out_dir = make_dir(args.directory, 'ddiff')
@@ -95,11 +104,20 @@ def main():
 
     # - Interpolate Secondary interferogram on the Reference Grid
     pg.interp_data(sec_interf, diff_par,
-                   sec_interf.split('/')[-1] + '.reg',
+                   sec_interf.split('/')[-1] + b'.reg',
                    1, 1)
     pg.interp_data(sec_pwr, diff_par,
                    sec_pwr.split('/')[-1].replace('.pwr1', '.reg.pwr1'),
                    0, 1)
+    # - path to co-registered complex interferogram
+    reg_intf = sec_interf.split('/')[-1] + b'.reg'
+    # - Combine Complex Interferograms
+    pg.comb_interfs(ref_interf, reg_intf, ref_base, sec_base, 1, -1,
+                    ref_interf_width,
+                    'coco' + igram_ref + '-' + igram_sec + '.flat.topo_off',
+                    'base' + igram_ref + '-' + igram_sec + '.flat.topo_off',
+
+                    )
 
 
 # - run main program
