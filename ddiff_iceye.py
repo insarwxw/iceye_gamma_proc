@@ -152,6 +152,8 @@ def main():
                     dem_width, dem_nlines,
                     '-', 1
                     )
+    pg.rasmph_pwr('coco' + igram_ref + '-' + igram_sec + '.flat.topo_off.filt.geo',
+                  ref_pwr, ref_interf_width)
 
     # - Calculate real part, imaginary part, intensity, magnitude,
     # - or phase of FCOMPLEX data

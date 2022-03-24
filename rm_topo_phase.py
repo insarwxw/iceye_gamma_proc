@@ -176,7 +176,7 @@ def main():
     dem_width = int(read_keyword(dem_par_path, 'width'))
     # -  nlines of Geocoding par (slave)
     dem_nlines = int(read_keyword(dem_par_path, 'nlines'))
-
+    # - geocode interferogram
     pg.geocode_back(f'coco{ref_slc}-{sec_slc}.flat.topo_off',
                     interf_width,
                     ref_gcmap,
@@ -184,6 +184,17 @@ def main():
                     dem_width, dem_nlines,
                     '-', 1
                     )
+    # - geocode reference power image
+    pg.geocode_back(f'{ref_slc}.pwr1',
+                    interf_width,
+                    ref_gcmap,
+                    f'{ref_slc}.pwr1.geo',
+                    dem_width, dem_nlines,
+                    '-', 1
+                    )
+    # - Show Geocoded interferogram
+    pg.rasmph_pwr(f'coco{ref_slc}-{sec_slc}.flat.topo_off.geo',
+                  f'{ref_slc}.pwr1.geo', dem_width)
 
     if args.adf:
         # - Smooth the obtained interferogram with pg.adf
@@ -191,19 +202,19 @@ def main():
         pg.adf(f'coco{ref_slc}-{sec_slc}.flat.topo_off',
                f'coco{ref_slc}-{sec_slc}.flat.topo_off.filt',
                f'coco{ref_slc}-{sec_slc}.flat.topo_off.filt.coh',
-               interf_width)
+               dem_width)
         # - Show filtered interferogram
         pg.rasmph_pwr(f'coco{ref_slc}-{sec_slc}.flat.topo_off.filt',
-                      f'{ref_slc}.pwr1', interf_width)
+                      f'{ref_slc}.pwr1.geo', dem_width)
 
         # - Smooth Geocoded Interferogram
         pg.adf(f'coco{ref_slc}-{sec_slc}.flat.topo_off.geo',
                f'coco{ref_slc}-{sec_slc}.flat.topo_off.geo.filt',
                f'coco{ref_slc}-{sec_slc}.flat.topo_off.geo.filt.coh',
-               interf_width)
+               dem_width)
         # - Show filtered interferogram
         pg.rasmph_pwr(f'coco{ref_slc}-{sec_slc}.flat.topo_off.geo.filt',
-                      f'{ref_slc}.pwr1', interf_width)
+                      f'{ref_slc}.pwr1.geo', dem_width)
 
     # - Change Permission Access to all the files contained inside the
     # - output directory.
