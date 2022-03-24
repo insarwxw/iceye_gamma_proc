@@ -96,6 +96,21 @@ def main():
                  os.path.join('.', 'coco' + igram_sec + '.flat.topo_off.geo.res'),
                  '-', '-', '-', 1)
 
+    # - Path to co-registered complex interferogram
+    reg_intf = os.path.join('.', 'coco' + igram_sec + '.flat.topo_off.geo.res')
+
+    # - Combine Complex Interferograms
+    pg.comb_interfs(ref_interf, reg_intf, ref_base, sec_base, 1, -1,
+                    dem_width,
+                    'coco' + igram_ref + '-' + igram_sec + '.flat.topo_off',
+                    'base' + igram_ref + '-' + igram_sec + '.flat.topo_off',
+
+                    )
+
+    # - Read Double Difference Parameter file
+    pg.rasmph_pwr('coco' + igram_ref + '-' + igram_sec + '.flat.topo_off',
+                  ref_pwr, dem_width)
+
 
 # - run main program
 if __name__ == '__main__':
