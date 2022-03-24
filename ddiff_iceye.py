@@ -148,7 +148,7 @@ def main():
         dem_width = int(read_keyword(dem_par_path, 'width'))
         dem_nlines = int(read_keyword(dem_par_path, 'nlines'))
 
-    pg.geocode_back('coco' + igram_ref + '-' + igram_sec + '.flat.topo_off',
+    pg.geocode_back('coco' + igram_ref + '-' + igram_sec + '.flat.topo_off.filt',
                     ref_interf_width,
                     ref_gcmap,
                     'coco' + igram_ref + '-' + igram_sec
