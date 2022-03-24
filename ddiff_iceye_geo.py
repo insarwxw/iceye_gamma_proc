@@ -93,7 +93,8 @@ def main():
 
     # - Resampling Secondary Interferogram on the Reference grid.
     pg.map_trans(sec_par, sec_interf, ref_par,
-                 os.path.join('.', 'coco' + igram_sec + '.flat.topo_off.geo.res'),
+                 os.path.join('.', 'coco' + igram_sec
+                              + '.flat.topo_off.geo.res'),
                  '-', '-', '-', 1)
 
     # - Path to co-registered complex interferogram
@@ -102,14 +103,35 @@ def main():
     # - Combine Complex Interferograms
     pg.comb_interfs(ref_interf, reg_intf, ref_base, sec_base, 1, -1,
                     dem_width,
-                    'coco' + igram_ref + '-' + igram_sec + '.flat.topo_off',
-                    'base' + igram_ref + '-' + igram_sec + '.flat.topo_off',
+                    'coco' + igram_ref + '-' + igram_sec + '.flat.topo_off.geo',
+                    'base' + igram_ref + '-' + igram_sec + '.flat.topo_off.geo',
 
                     )
 
     # - Read Double Difference Parameter file
-    pg.rasmph_pwr('coco' + igram_ref + '-' + igram_sec + '.flat.topo_off',
+    pg.rasmph_pwr('coco' + igram_ref + '-' + igram_sec + '.flat.topo_off.geo',
                   ref_pwr, dem_width)
+
+    # - Smooth the obtained interferogram with pg.adf
+    # - Adaptive interferogram filter using the power spectral density.
+    pg.adf('coco' + igram_ref + '-' + igram_sec + '.flat.topo_off.geo',
+           'coco' + igram_ref + '-' + igram_sec + '.flat.topo_off.geo.filt',
+           'coco' + igram_ref + '-' + igram_sec + '.flat.topo_off.geo.filt.coh',
+           dem_width)
+    pg.rasmph_pwr('coco' + igram_ref + '-' + igram_sec
+                  + '.flat.topo_off.geo.filt', ref_pwr, dem_width)
+
+    # - Calculate real part, imaginary part, intensity, magnitude,
+    # - or phase of FCOMPLEX data
+    # - Extract Interferogram Phase.
+    pg.cpx_to_real('coco' + igram_ref + '-' + igram_sec
+                   + '.flat.topo_off.geo.filt',
+                   'phs.geo', dem_width, 4)
+    pg.raspwr('phs.geo', dem_width)
+    # - Save Geocoded Interferogram phase as a GeoTiff
+    pg.data2geotiff(ref_par, 'phs.geo', 2,
+                    'coco' + igram_ref + '-' + igram_sec
+                    + '.flat.topo_off.geo.filt.tiff', -9999)
 
 
 # - run main program
