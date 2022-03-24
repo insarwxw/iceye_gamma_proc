@@ -72,6 +72,8 @@ def main():
     ref_interf = os.path.join(data_dir_ref,
                               'coco' + igram_ref + '.flat.topo_off')
     ref_pwr = os.path.join(data_dir_ref, igram_ref.split('-')[0] + '.pwr1')
+    ref_pwr_geo = os.path.join(data_dir_ref,
+                               igram_ref.split('-')[0] + '.pwr1.geo')
     # -
     sec_interf = os.path.join(data_dir_sec,
                               'coco' + igram_sec + '.flat.topo_off')
@@ -158,7 +160,7 @@ def main():
                     )
     pg.rasmph_pwr('coco' + igram_ref + '-' + igram_sec
                   + '.flat.topo_off.filt.geo',
-                  ref_pwr, dem_width)
+                  ref_pwr_geo, dem_width)
 
     # - Calculate real part, imaginary part, intensity, magnitude,
     # - or phase of FCOMPLEX data
