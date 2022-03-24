@@ -24,16 +24,19 @@ def main():
     # - Working Directory directory.
     default_dir = os.path.join(os.path.expanduser('~'), 'Desktop',
                                'iceye_gamma_test', 'output')
+
     parser.add_argument('--directory', '-D',
                         type=lambda p: os.path.abspath(
                             os.path.expanduser(p)),
                         default=default_dir,
                         help='Project data directory.')
+
     parser.add_argument('--pair', '-P',
                         type=str,
                         default=None,
                         help='SLC Pair Codes separated by "_" '
                              'reference-secondary')
+
     parser.add_argument('--filter', '-F', action='store_true',
                         help='Adaptive interferogram filter using the power '
                              'spectral density - (GAMMA - adf)')
@@ -164,6 +167,24 @@ def main():
     pg.rasmph_pwr(f'coco{ref_slc}-{sec_slc}.flat.topo_off',
                   f'{ref_slc}.pwr1', interf_width)
 
+    # - Geocode Output interferogram
+    # - Geocode Double Difference
+    # -  Reference Interferogram look-up table
+    ref_gcmap = os.path.join('.', 'gc_icemap')
+    dem_par_path = os.path.join('.', 'DEM_gc_par')
+    # -  Width of Geocoding par (master)
+    dem_width = int(read_keyword(dem_par_path, 'width'))
+    # -  nlines of Geocoding par (slave)
+    dem_nlines = int(read_keyword(dem_par_path, 'nlines'))
+
+    pg.geocode_back(f'coco{ref_slc}-{sec_slc}.flat.topo_off',
+                    interf_width,
+                    ref_gcmap,
+                    f'coco{ref_slc}-{sec_slc}.flat.topo_off.geo',
+                    dem_width, dem_nlines,
+                    '-', 1
+                    )
+
     if args.adf:
         # - Smooth the obtained interferogram with pg.adf
         # - Adaptive interferogram filter using the power spectral density.
@@ -174,6 +195,20 @@ def main():
         # - Show filtered interferogram
         pg.rasmph_pwr(f'coco{ref_slc}-{sec_slc}.flat.topo_off.filt',
                       f'{ref_slc}.pwr1', interf_width)
+
+        # - Smooth Geocoded Interferogram
+        pg.adf(f'coco{ref_slc}-{sec_slc}.flat.topo_off.geo',
+               f'coco{ref_slc}-{sec_slc}.flat.topo_off.geo.filt',
+               f'coco{ref_slc}-{sec_slc}.flat.topo_off.geo.filt.coh',
+               interf_width)
+        # - Show filtered interferogram
+        pg.rasmph_pwr(f'coco{ref_slc}-{sec_slc}.flat.topo_off.geo.filt',
+                      f'{ref_slc}.pwr1', interf_width)
+
+    # - Change Permission Access to all the files contained inside the
+    # - output directory.
+    for out_file in os.listdir('.'):
+        os.chmod(out_file, 0o0755)
 
 
 # - run main program
