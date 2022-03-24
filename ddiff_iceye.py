@@ -61,7 +61,7 @@ def main():
     ref_igram_ref = os.path.join(data_dir_ref, igram_ref.split('-')[0])
     ref_igram_sec = os.path.join(data_dir_sec, igram_sec.split('-')[0])
 
-    # - Create Output Direcotry
+    # - Create Output Directory
     out_dir = make_dir(args.directory, 'ddiff')
     out_dir = make_dir(out_dir, igram_ref + '--' + igram_sec)
     # Change the current working directory
@@ -73,6 +73,18 @@ def main():
     # - Estimate Initial Offset
     pg.init_offsetm(ref_igram_ref+'.pwr1', ref_igram_sec+'.pwr1',
                     diff_par, 1, 1, '-', '-', '0', '0', '-', '-', 1)
+
+    # - Starting Double Difference Computation: Orbits based
+    pg.create_offset(ref_igram_ref + '.par',
+                     ref_igram_sec + '.par',
+                     igram_ref.split('-')[0] + '-' + igram_sec.split('-')[0]
+                     + '.par', 1, 15, 15, 0
+                     )
+    pg.init_offset_orbit(ref_igram_ref + '.par',
+                         ref_igram_sec + '.par',
+                         igram_ref.split('-')[0] + '-' + igram_sec.split('-')[0]
+                         + '.par', '-', '-', 1
+                         )
 
 
 # - run main program
