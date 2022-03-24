@@ -13,6 +13,7 @@ import datetime
 # - GAMMA's Python integration with the py_gamma module
 import py_gamma as pg
 from utils.make_dir import make_dir
+from utils.read_keyword import read_keyword
 
 
 def main():
@@ -129,16 +130,18 @@ def main():
     # - Geocode Double Difference
     # -  Reference Interferogram look-up table
     ref_gcmap = os.path.join(data_dir_ref, 'gc_icemap')
-    dem_par = os.path.join(data_dir_ref, 'DEM_gc_par')
-    m_gcpar = pg.ParFile(dem_par).par_dict
-    width = m_gcpar['width']        # -  Width of Geocoding par (master)
-    nlines = m_gcpar['nlines']      # -  nlines of Geocoding par (slave)
+    dem_par_path = os.path.join(data_dir_ref, 'DEM_gc_par')
+    # -  Width of Geocoding par (master)
+    dem_width = int(read_keyword(dem_par_path, 'width'))
+    # -  nlines of Geocoding par (slave)
+    dem_nlines = int(read_keyword(dem_par_path, 'nlines'))
+
     pg.geocode_back('coco' + igram_ref + '-' + igram_sec + '.flat.topo_off.filt',
                     ref_interf_width,
                     ref_gcmap,
                     'coco' + igram_ref + '-' + igram_sec
                     + '.flat.topo_off.filt.geo',
-                    width, nlines,
+                    dem_width, dem_nlines,
                     '-', 1
                     )
 
@@ -147,10 +150,10 @@ def main():
     # - Extract Interferogram Phase.
     pg.cpx_to_real('coco' + igram_ref + '-' + igram_sec
                    + '.flat.topo_off.filt.geo',
-                   'phs.geo', width, 4)
-    pg.raspwr('phs.geo', width)
+                   'phs.geo', dem_width, 4)
+    pg.raspwr('phs.geo', dem_width)
     # - Save Geocoded Interferogram phase as a GeoTiff
-    pg.data2geotiff(dem_par, 'phs.geo', 2,
+    pg.data2geotiff(dem_par_path, 'phs.geo', 2,
                     'coco' + igram_ref + '-' + igram_sec
                     + '.flat.topo_off.filt.geo.tiff', -9999)
 
