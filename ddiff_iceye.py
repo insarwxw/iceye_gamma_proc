@@ -135,35 +135,35 @@ def main():
     pg.rasmph_pwr('coco' + igram_ref + '-' + igram_sec + '.flat.topo_off.filt',
                   ref_pwr, ref_interf_width)
 
-    # # - Geocode Double Difference
-    # # -  Reference Interferogram look-up table
-    # ref_gcmap = os.path.join(data_dir_ref, 'gc_icemap')
-    # dem_par_path = os.path.join(data_dir_ref, 'DEM_gc_par')
-    # # -  Width of Geocoding par (master)
-    # dem_width = int(read_keyword(dem_par_path, 'width'))
-    # # -  nlines of Geocoding par (slave)
-    # dem_nlines = int(read_keyword(dem_par_path, 'nlines'))
-    #
-    # pg.geocode_back('coco' + igram_ref + '-' + igram_sec + '.flat.topo_off',
-    #                 ref_interf_width,
-    #                 ref_gcmap,
-    #                 'coco' + igram_ref + '-' + igram_sec
-    #                 + '.flat.topo_off.filt.geo',
-    #                 dem_width, dem_nlines,
-    #                 '-', 1
-    #                 )
-    #
-    # # - Calculate real part, imaginary part, intensity, magnitude,
-    # # - or phase of FCOMPLEX data
-    # # - Extract Interferogram Phase.
-    # pg.cpx_to_real('coco' + igram_ref + '-' + igram_sec
-    #                + '.flat.topo_off.filt.geo',
-    #                'phs.geo', dem_width, 4)
-    # pg.raspwr('phs.geo', dem_width)
-    # # - Save Geocoded Interferogram phase as a GeoTiff
-    # pg.data2geotiff(dem_par_path, 'phs.geo', 2,
-    #                 'coco' + igram_ref + '-' + igram_sec
-    #                 + '.flat.topo_off.filt.geo.tiff', -9999)
+    # - Geocode Double Difference
+    # -  Reference Interferogram look-up table
+    ref_gcmap = os.path.join(data_dir_ref, 'gc_icemap')
+    dem_par_path = os.path.join(data_dir_ref, 'DEM_gc_par')
+    # -  Width of Geocoding par (master)
+    dem_width = int(read_keyword(dem_par_path, 'width'))
+    # -  nlines of Geocoding par (slave)
+    dem_nlines = int(read_keyword(dem_par_path, 'nlines'))
+
+    pg.geocode_back('coco' + igram_ref + '-' + igram_sec + '.flat.topo_off',
+                    ref_interf_width,
+                    ref_gcmap,
+                    'coco' + igram_ref + '-' + igram_sec
+                    + '.flat.topo_off.filt.geo',
+                    dem_width, dem_nlines,
+                    '-', 1
+                    )
+
+    # - Calculate real part, imaginary part, intensity, magnitude,
+    # - or phase of FCOMPLEX data
+    # - Extract Interferogram Phase.
+    pg.cpx_to_real('coco' + igram_ref + '-' + igram_sec
+                   + '.flat.topo_off.filt.geo',
+                   'phs.geo', dem_width, 4)
+    pg.raspwr('phs.geo', dem_width)
+    # - Save Geocoded Interferogram phase as a GeoTiff
+    pg.data2geotiff(dem_par_path, 'phs.geo', 2,
+                    'coco' + igram_ref + '-' + igram_sec
+                    + '.flat.topo_off.filt.geo.tiff', -9999)
 
 
 # - run main program
