@@ -105,14 +105,16 @@ def main():
     #                     3: nn-thinned (not available in gc_map2)
     #   r_ovr           range over-sampling factor for nn-thinned
     #                          layover/shadow mode (enter - for default: 2.0)
-    pg.gc_map(ref_slc+'.par',
-              igram_par_path,
-              os.path.join(path_to_gimp(), 'DEM_gc_par'),
-              os.path.join(path_to_gimp(), 'gimpdem100.dat'),
-              'DEM_gc_par', 'DEMice_gc', 'gc_icemap',
-              10, 10, 'sar_map_in_dem_geometry',
-              '-', '-', 'inc.geo', '-', '-', '-', '-', '2', '-'
-              )
+
+    # pg.gc_map(ref_slc+'.par',
+    #           igram_par_path,
+    #           os.path.join(path_to_gimp(), 'DEM_gc_par'),
+    #           os.path.join(path_to_gimp(), 'gimpdem100.dat'),
+    #           'DEM_gc_par', 'DEMice_gc', 'gc_icemap',
+    #           10, 10, 'sar_map_in_dem_geometry',
+    #           '-', '-', 'inc.geo', '-', '-', '-', '-', '2', '-'
+    #           )
+
     igram_param_dict = pg.ParFile(igram_par_path).par_dict
 
     # - read interferogram number of columns
@@ -133,39 +135,39 @@ def main():
     print(f'# - DEM Size: {dem_nlines} x {dem_width}')
 
     # - Forward geocoding transformation using a lookup table
-    pg.geocode('gc_icemap', 'DEMice_gc', dem_width, 'hgt_icemap',
-               interf_width, interf_lines)
-    pg.geocode('gc_icemap', 'inc.geo', dem_width, 'inc',
-               interf_width, interf_lines)
+    # pg.geocode('gc_icemap', 'DEMice_gc', dem_width, 'hgt_icemap',
+    #            interf_width, interf_lines)
+    # pg.geocode('gc_icemap', 'inc.geo', dem_width, 'inc',
+    #            interf_width, interf_lines)
 
     # - Create DIFF/GEO parameter file for geocoding and differential
     # - interferometry.
-    pg.create_diff_par(igram_par_path, igram_par_path, 'DIFF_par', '-', 0)
+    # pg.create_diff_par(igram_par_path, igram_par_path, 'DIFF_par', '-', 0)
 
     # - Invert geocoding lookup table
-    pg.gc_map_inversion('gc_icemap', dem_width, 'gc_map_invert',
-                        interf_width, interf_lines)
+    # pg.gc_map_inversion('gc_icemap', dem_width, 'gc_map_invert',
+    #                     interf_width, interf_lines)
 
     # - Geocoding of Reference SLC using a geocoding lookup table
-    pg.geocode_back(ref_slc + '.pwr1', interf_width, 'gc_icemap',
-                    ref_slc + '.pwr1.geo', dem_width, dem_nlines)
-    pg.raspwr(ref_slc + '.pwr1.geo', dem_width)
+    # pg.geocode_back(ref_slc + '.pwr1', interf_width, 'gc_icemap',
+    #                 ref_slc + '.pwr1.geo', dem_width, dem_nlines)
+    # pg.raspwr(ref_slc + '.pwr1.geo', dem_width)
 
     # - Remove Interferometric Phase component due to surface Topography.
     # - Simulate unwrapped interferometric phase using DEM height.
-    pg.phase_sim(ref_slc + '.par', igram_par_path,
-                 f'base{ref_slc}-{sec_slc}.dat', 'hgt_icemap',
-                 'sim_phase', 1, 0, '-')
+    # pg.phase_sim(ref_slc + '.par', igram_par_path,
+    #              f'base{ref_slc}-{sec_slc}.dat', 'hgt_icemap',
+    #              'sim_phase', 1, 0, '-')
     # - Create DIFF/GEO parameter file for geocoding and
     # - differential interferometry
-    pg.create_diff_par(igram_par_path, igram_par_path, 'DIFF_par', '-', 0)
+    # pg.create_diff_par(igram_par_path, igram_par_path, 'DIFF_par', '-', 0)
 
     # - Subtract topographic phase from interferogram
-    pg.sub_phase(f'coco{ref_slc}-{sec_slc}.flat', 'sim_phase', 'DIFF_par',
-                 f'coco{ref_slc}-{sec_slc}.flat.topo_off', 1)
+    # pg.sub_phase(f'coco{ref_slc}-{sec_slc}.flat', 'sim_phase', 'DIFF_par',
+    #              f'coco{ref_slc}-{sec_slc}.flat.topo_off', 1)
     # - Show interferogram w/o topographic phase
-    pg.rasmph_pwr(f'coco{ref_slc}-{sec_slc}.flat.topo_off',
-                  f'{ref_slc}.pwr1', interf_width)
+    # pg.rasmph_pwr(f'coco{ref_slc}-{sec_slc}.flat.topo_off',
+    #               f'{ref_slc}.pwr1', interf_width)
 
     # - Geocode Output interferogram
     # - Geocode Double Difference
@@ -196,7 +198,7 @@ def main():
     pg.rasmph_pwr(f'coco{ref_slc}-{sec_slc}.flat.topo_off.geo',
                   f'{ref_slc}.pwr1.geo', dem_width)
 
-    if args.adf:
+    if args.filter:
         # - Smooth the obtained interferogram with pg.adf
         # - Adaptive interferogram filter using the power spectral density.
         pg.adf(f'coco{ref_slc}-{sec_slc}.flat.topo_off',
