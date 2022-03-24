@@ -110,7 +110,7 @@ def main():
                    sec_pwr.split('/')[-1].replace('.pwr1', '.reg.pwr1'),
                    0, 1)
     # - path to co-registered complex interferogram
-    reg_intf = sec_interf.split('/')[-1] + b'.reg'
+    reg_intf = sec_interf.split('/')[-1] + '.reg'
     # - Combine Complex Interferograms
     pg.comb_interfs(ref_interf, reg_intf, ref_base, sec_base, 1, -1,
                     ref_interf_width,
