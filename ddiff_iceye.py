@@ -66,7 +66,7 @@ def main():
                               'coco' + igram_ref + '.flat.topo_off')
     sec_interf = os.path.join(data_dir_sec,
                               'coco' + igram_sec + '.flat.topo_off')
-    sec_pwr = os.path.join(data_dir_sec, igram_sec + '.pwr1')
+    sec_pwr = os.path.join(data_dir_sec, igram_sec.split('-')[0] + '.pwr1')
 
     # - Create Output Directory
     out_dir = make_dir(args.directory, 'ddiff')
