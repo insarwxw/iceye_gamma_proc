@@ -18,7 +18,7 @@ python c_ampcor_iceye.py --pair=152735_20211024T145811-152987_20211025T145812 --
 
 # - Compute Interferogram
 python compute_interferogram.py --pair=152735_20211024T145811-152987_20211025T145812 --directory=/u/mawson-r0/eric/ICEye_2021_PETERMAN/DATA_REPOSITORY/Peterman_Glacier_X7_extended_range_SLC/test.dir/output
-python rm_topo_phase.py --pair=152735_20211024T145811-152987_20211025T145812 --directory=/u/mawson-r0/eric/ICEye_2021_PETERMAN/DATA_REPOSITORY/Peterman_Glacier_X7_extended_range_SLC/test.dir/output --psfilt
+python rm_topo_phase.py --pair=152735_20211024T145811-152987_20211025T145812 --directory=/u/mawson-r0/eric/ICEye_2021_PETERMAN/DATA_REPOSITORY/Peterman_Glacier_X7_extended_range_SLC/test.dir/output --filter
 
 # - Pair 154480_20211028T145816-154755_20211029T145817
 # - Decimate State Vector [Needed to run on an older version of GAMMA]
@@ -34,7 +34,7 @@ python c_ampcor_iceye.py --pair=154480_20211028T145816-154755_20211029T145817 --
 
 # - Compute Interferogram
 python compute_interferogram.py --pair=154480_20211028T145816-154755_20211029T145817 --directory=/u/mawson-r0/eric/ICEye_2021_PETERMAN/DATA_REPOSITORY/Peterman_Glacier_X7_extended_range_SLC/test.dir/output
-python rm_topo_phase.py --pair=154480_20211028T145816-154755_20211029T145817 --directory=/u/mawson-r0/eric/ICEye_2021_PETERMAN/DATA_REPOSITORY/Peterman_Glacier_X7_extended_range_SLC/test.dir/output
+python rm_topo_phase.py --pair=154480_20211028T145816-154755_20211029T145817 --directory=/u/mawson-r0/eric/ICEye_2021_PETERMAN/DATA_REPOSITORY/Peterman_Glacier_X7_extended_range_SLC/test.dir/output --filter
 
 # - Compute Double Difference
 python ddiff_iceye.py 152735_20211024T145811-152987_20211025T145812 154480_20211028T145816-154755_20211029T145817 --directory=/u/mawson-r0/eric/ICEye_2021_PETERMAN/DATA_REPOSITORY/Peterman_Glacier_X7_extended_range_SLC/test.dir/output

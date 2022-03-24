@@ -2,6 +2,7 @@
 Enrico Ciraci' - 03/2022
 
 Compute Double-Difference Interferogram from ICEYE data.
+- Use data expressed in RADAR Coordinates.
 """
 # - Python dependencies
 from __future__ import print_function
@@ -54,7 +55,7 @@ def main():
         print(f'# - {data_dir_sec} - Not Found.')
         sys.exit()
 
-    # - Path Interferogram Parameter Files
+    # - Path to Interferogram Parameter Files
     ref_par = os.path.join(data_dir_ref, igram_ref+'.offmap.par.interp')
     sec_par = os.path.join(data_dir_sec, igram_sec+'.offmap.par.interp')
 
@@ -139,10 +140,13 @@ def main():
     # -  Reference Interferogram look-up table
     ref_gcmap = os.path.join(data_dir_ref, 'gc_icemap')
     dem_par_path = os.path.join(data_dir_ref, 'DEM_gc_par')
-    # -  Width of Geocoding par (master)
-    dem_width = int(read_keyword(dem_par_path, 'width'))
-    # -  nlines of Geocoding par (slave)
-    dem_nlines = int(read_keyword(dem_par_path, 'nlines'))
+    try:
+        dem_param_dict = pg.ParFile(dem_par_path).par_dict
+        dem_width = int(dem_param_dict['width'][0])
+        dem_nlines = int(dem_param_dict['nlines'][0])
+    except IndexError:
+        dem_width = int(read_keyword(dem_par_path, 'width'))
+        dem_nlines = int(read_keyword(dem_par_path, 'nlines'))
 
     pg.geocode_back('coco' + igram_ref + '-' + igram_sec + '.flat.topo_off',
                     ref_interf_width,
