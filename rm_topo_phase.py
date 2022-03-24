@@ -166,12 +166,12 @@ def main():
     # pg.sub_phase(f'coco{ref_slc}-{sec_slc}.flat', 'sim_phase', 'DIFF_par',
     #              f'coco{ref_slc}-{sec_slc}.flat.topo_off', 1)
     # - Show interferogram w/o topographic phase
-    # pg.rasmph_pwr(f'coco{ref_slc}-{sec_slc}.flat.topo_off',
-    #               f'{ref_slc}.pwr1', interf_width)
+    pg.rasmph_pwr(f'coco{ref_slc}-{sec_slc}.flat.topo_off',
+                  f'{ref_slc}.pwr1', interf_width)
 
     # - Geocode Output interferogram
     # - Geocode Double Difference
-    # -  Reference Interferogram look-up table
+    # - Reference Interferogram look-up table
     ref_gcmap = os.path.join('.', 'gc_icemap')
     dem_par_path = os.path.join('.', 'DEM_gc_par')
     # -  Width of Geocoding par (master)
