@@ -122,10 +122,10 @@ def main():
 
     # - Smooth the obtained interferogram with pg.adf
     # - Adaptive interferogram filter using the power spectral density.
-    pg.adf('coco' + igram_ref + '-' + igram_sec + '.flat.topo_off',
-           'coco' + igram_ref + '-' + igram_sec + '.flat.topo_off.filt',
-           'coco' + igram_ref + '-' + igram_sec + '.flat.topo_off.filt.coh',
-           ref_interf_width)
+    # pg.adf('coco' + igram_ref + '-' + igram_sec + '.flat.topo_off',
+    #        'coco' + igram_ref + '-' + igram_sec + '.flat.topo_off.filt',
+    #        'coco' + igram_ref + '-' + igram_sec + '.flat.topo_off.filt.coh',
+    #        ref_interf_width)
 
     # - Geocode Double Difference
     # -  Reference Interferogram look-up table
