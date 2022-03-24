@@ -1,8 +1,7 @@
 """
 Enrico Ciraci' - 03/2022
 
-Geocode Flattened Interferogram and Remove Topographic Contribution
-to Interferometric Phase.
+Remove Topographic Contribution from Flattened Interferogram.
 """
 # - Python dependencies
 from __future__ import print_function
@@ -14,7 +13,6 @@ import datetime
 import py_gamma as pg
 from utils.path_to_dem import path_to_gimp
 from utils.read_keyword import read_keyword
-from utils.psfilt import psfilt
 
 
 def main():
@@ -36,9 +34,9 @@ def main():
                         default=None,
                         help='SLC Pair Codes separated by "_" '
                              'reference-secondary')
-    parser.add_argument('--psfilt', '-F', action='store_true',
-                        help='Apply weighted power spectrum interferogram filter'
-                             ' - (psfilt)')
+    parser.add_argument('--filter', '-F', action='store_true',
+                        help='Adaptive interferogram filter using the power '
+                             'spectral density - (GAMMA - adf)')
     args = parser.parse_args()
 
     if args.pair is None:
@@ -166,12 +164,15 @@ def main():
     pg.rasmph_pwr(f'coco{ref_slc}-{sec_slc}.flat.topo_off',
                   f'{ref_slc}.pwr1', interf_width)
 
-    if args.psfilt:
-        # - Smooth the obtained interferogram with PSFILT
-        # - weighted power spectrum interferogram filter v1.0
-        psfilt(f'coco{ref_slc}-{sec_slc}.flat.topo_off', interf_width)
+    if args.adf:
+        # - Smooth the obtained interferogram with pg.adf
+        # - Adaptive interferogram filter using the power spectral density.
+        pg.adf(f'coco{ref_slc}-{sec_slc}.flat.topo_off',
+               f'coco{ref_slc}-{sec_slc}.flat.topo_off.filt',
+               f'coco{ref_slc}-{sec_slc}.flat.topo_off.filt.coh',
+               interf_width)
         # - Show filtered interferogram
-        pg.rasmph_pwr(f'coco{ref_slc}-{sec_slc}.flat.topo_off.psfilt',
+        pg.rasmph_pwr(f'coco{ref_slc}-{sec_slc}.flat.topo_off.filt',
                       f'{ref_slc}.pwr1', interf_width)
 
 
