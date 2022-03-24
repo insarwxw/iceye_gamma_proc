@@ -104,7 +104,7 @@ def main():
 
     # - Interpolate Secondary interferogram on the Reference Grid
     pg.interp_data(sec_interf, diff_par,
-                   sec_interf.split('/')[-1] + b'.reg',
+                   sec_interf.split('/')[-1] + '.reg',
                    1, 1)
     pg.interp_data(sec_pwr, diff_par,
                    sec_pwr.split('/')[-1].replace('.pwr1', '.reg.pwr1'),
