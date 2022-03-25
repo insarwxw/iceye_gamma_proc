@@ -103,7 +103,7 @@ def main():
         os.chmod(out_file, 0o0755)
 
     # - Create OFFSETS subdirectory
-    save_dir = make_dir('.', 'OFFSETS')
+    save_dir = make_dir('.', 'SAVE')
     # - Move offsets calculated by AMPCOR into OFFSETS
     off_file_list = [os.path.join('.', x) for x in os.listdir('.')
                      if '.offmap_' in x]
