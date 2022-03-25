@@ -27,6 +27,9 @@ CD, data_dir
 ; Read Offsets
 r_off, reference_slc,secondary_slc, resp = 'y'
 
+; Create Output Directory
+FILE_MKDIR,'Save'
+
 ; Display Offsets
 c_off4intf, reference_slc, secondary_slc, rs=30, zs=30, /fill
 end
