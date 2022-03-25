@@ -22,6 +22,7 @@ PYTHON DEPENDENCIES:
            https://docs.python.org/3/library/datetime.html#module-datetime
     tqdm: Progress Bar in Python.
           https://tqdm.github.io/
+    py_gamma: GAMMA's Python integration with the py_gamma module
 
 UPDATE HISTORY:
 

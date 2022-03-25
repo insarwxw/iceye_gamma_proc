@@ -1,6 +1,30 @@
-"""
-Calculate a multi-look intensity (MLI) image from ICEye Single Look Complex
-using  GAMMA's Python integration with the py_gamma module.
+#!/usr/bin/env python
+u"""
+multi_look_slc.py
+Written by Enrico Ciraci' (03/2022)
+Calculate a multi-looked intensity (MLI) image from the selected ICEye SLCs.
+
+usage: multi_look_slc.py [-h] [--directory DIRECTORY] [--slc SLC]
+
+Calculate a multi-looked intensity (MLI) image from the selected ICEye SLCs.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --directory DIRECTORY, -D DIRECTORY
+                        Project data directory.
+  --slc SLC, -C SLC     Process and single SLC.
+
+PYTHON DEPENDENCIES:
+    argparse: Parser for command-line options, arguments and sub-commands
+           https://docs.python.org/3/library/argparse.html
+    datetime: Basic date and time types
+           https://docs.python.org/3/library/datetime.html#module-datetime
+    tqdm: Progress Bar in Python.
+          https://tqdm.github.io/
+    py_gamma: GAMMA's Python integration with the py_gamma module
+
+UPDATE HISTORY:
+
 """
 # - Python Dependencies
 from __future__ import print_function
@@ -13,8 +37,8 @@ import py_gamma as pg
 
 def main():
     parser = argparse.ArgumentParser(
-        description="""TEST: Calculate a multi-look intensity (MLI)
-        image from ICEye SLCs."""
+        description="""Calculate a multi-looked intensity (MLI)
+        image from the selected ICEye SLCs."""
     )
     # - Absolute Path to directory containing input data.
     default_dir = os.path.join(os.path.expanduser('~'), 'Desktop',
