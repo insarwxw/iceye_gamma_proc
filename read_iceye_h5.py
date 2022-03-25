@@ -66,7 +66,7 @@ def main():
 
     if args.slc is not None:
         # - Process a single SLC
-        b_input = os.path.join(args.directory, args.slc)
+        b_input = os.path.join(data_dir, args.slc)
         # - Read input Binary File Name
         b_input_name = b_input.split('/')[-1].replace(ieye_suff, '')
         slc_name = os.path.join(out_dir,
