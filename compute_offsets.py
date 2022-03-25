@@ -1,6 +1,34 @@
-"""
+#!/usr/bin/env python
+u"""
+compute_offsets.py
+
 Calculate Preliminary Offsets Parameter File for a pair of ICEye Single Look
 Complex images using  GAMMA's Python integration with the py_gamma module.
+
+usage: compute_offsets.py [-h] [--directory DIRECTORY] reference secondary
+
+Calculate Preliminary Offsets Parameter.
+
+positional arguments:
+  reference             Reference SLCs.
+  secondary             Secondary SLCs.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --directory DIRECTORY, -D DIRECTORY
+                        Project data directory.
+
+PYTHON DEPENDENCIES:
+    argparse: Parser for command-line options, arguments and sub-commands
+           https://docs.python.org/3/library/argparse.html
+    datetime: Basic date and time types
+           https://docs.python.org/3/library/datetime.html#module-datetime
+    tqdm: Progress Bar in Python.
+          https://tqdm.github.io/
+    py_gamma: GAMMA's Python integration with the py_gamma module
+
+UPDATE HISTORY:
+
 """
 # - Python Dependencies
 from __future__ import print_function
@@ -14,7 +42,7 @@ from utils.make_dir import make_dir
 
 def main():
     parser = argparse.ArgumentParser(
-        description="""TEST: Calculate Preliminary Offsets Parameter."""
+        description="""Calculate Preliminary Offsets Parameter."""
     )
     # - Absolute Path to directory containing input data.
     default_dir = os.path.join(os.path.expanduser('~'), 'Desktop',

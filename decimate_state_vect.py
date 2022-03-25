@@ -1,7 +1,35 @@
-"""
+#!/usr/bin/env python
+u"""
+decimate_state_vect.py
 Enrico Ciraci' - 03/2022
 Decimate the number of state vectors available inside the considered SLC
 parameter file.
+
+usage: decimate_state_vect.py [-h] [--directory DIRECTORY] [--slc SLC]
+                              [--rate RATE] [--replace] [--overwrite]
+
+Decimate the number of state vectors available inside the considered
+SLC parameter file.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --directory DIRECTORY, -D DIRECTORY
+                        Project data directory.
+  --slc SLC, -S SLC     Considered Single Look Complex.
+  --rate RATE, -R RATE  State Vector Decimation Rate.
+  --replace             Replace Original Parameter File.
+  --overwrite           Overwrite Previously Decimated Parameter File.
+
+PYTHON DEPENDENCIES:
+    argparse: Parser for command-line options, arguments and sub-commands
+           https://docs.python.org/3/library/argparse.html
+    datetime: Basic date and time types
+           https://docs.python.org/3/library/datetime.html#module-datetime
+    tqdm: Progress Bar in Python.
+          https://tqdm.github.io/
+    py_gamma: GAMMA's Python integration with the py_gamma module
+
+UPDATE HISTORY:
 """
 # - Python dependencies
 from __future__ import print_function
@@ -36,7 +64,7 @@ def main():
     parser.add_argument('--rate', '-R',
                         type=int,
                         default=10,
-                        help='Decimation Rate.')
+                        help='State Vector Decimation Rate.')
     parser.add_argument('--replace', action='store_true',
                         help='Replace Original Parameter File.')
     parser.add_argument('--overwrite', action='store_true',
