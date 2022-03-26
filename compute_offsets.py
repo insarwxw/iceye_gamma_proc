@@ -1,6 +1,34 @@
-"""
+#!/usr/bin/env python
+u"""
+compute_offsets.py
+
 Calculate Preliminary Offsets Parameter File for a pair of ICEye Single Look
 Complex images using  GAMMA's Python integration with the py_gamma module.
+
+usage: compute_offsets.py [-h] [--directory DIRECTORY] reference secondary
+
+Calculate Preliminary Offsets Parameter.
+
+positional arguments:
+  reference             Reference SLCs.
+  secondary             Secondary SLCs.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --directory DIRECTORY, -D DIRECTORY
+                        Project data directory.
+
+PYTHON DEPENDENCIES:
+    argparse: Parser for command-line options, arguments and sub-commands
+           https://docs.python.org/3/library/argparse.html
+    datetime: Basic date and time types
+           https://docs.python.org/3/library/datetime.html#module-datetime
+    tqdm: Progress Bar in Python.
+          https://tqdm.github.io/
+    py_gamma: GAMMA's Python integration with the py_gamma module
+
+UPDATE HISTORY:
+
 """
 # - Python Dependencies
 from __future__ import print_function
@@ -14,11 +42,18 @@ from utils.make_dir import make_dir
 
 def main():
     parser = argparse.ArgumentParser(
-        description="""TEST: Calculate Preliminary Offsets Parameter."""
+        description="""Calculate Preliminary Offsets Parameter."""
     )
     # - Absolute Path to directory containing input data.
     default_dir = os.path.join(os.path.expanduser('~'), 'Desktop',
                                'iceye_gamma_test', 'output')
+
+    parser.add_argument('reference', type=str,
+                        help='Reference SLCs.')
+
+    parser.add_argument('secondary', type=str,
+                        help='Secondary SLCs.')
+
     parser.add_argument('--directory', '-D',
                         type=lambda p: os.path.abspath(os.path.expanduser(p)),
                         default=default_dir,
@@ -30,8 +65,12 @@ def main():
     data_dir = os.path.join(args.directory, 'slc+par')
 
     # - Parameters
-    ref = '152307_20211022T145808'
-    sec = '152566_20211023T145809'
+    ref = args.reference
+    sec = args.secondary
+    # - Ref/sec - possible combination
+    # ref = '152307_20211022T145808'
+    # sec = '152566_20211023T145809'
+
     # - Offset Computation parameter
     algorithm = 1       # - offset estimation algorithm
     rlks = 1   # - number of interferogram range looks (enter -  for default: 1)
@@ -73,7 +112,7 @@ def main():
                    os.path.join(data_dir, sec+'.slc'),
                    os.path.join(data_dir, ref+'.par'),
                    os.path.join(data_dir, sec+'.par'),
-                   out_par,  rlks, azlks, rpos, azpos, offr, offaz,
+                   out_par, rlks, azlks, rpos, azpos, offr, offaz,
                    thres, rwin, azwin)
 
     # - Create symbolic links for each of the .slc and .par files

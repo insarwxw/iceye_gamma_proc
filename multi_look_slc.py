@@ -1,6 +1,30 @@
-"""
-Calculate a multi-look intensity (MLI) image from ICEye Single Look Complex
-using  GAMMA's Python integration with the py_gamma module.
+#!/usr/bin/env python
+u"""
+multi_look_slc.py
+Written by Enrico Ciraci' (03/2022)
+Calculate a multi-looked intensity (MLI) image from the selected ICEye SLCs.
+
+usage: multi_look_slc.py [-h] [--directory DIRECTORY] [--slc SLC]
+
+Calculate a multi-looked intensity (MLI) image from the selected ICEye SLCs.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --directory DIRECTORY, -D DIRECTORY
+                        Project data directory.
+  --slc SLC, -C SLC     Process and single SLC.
+
+PYTHON DEPENDENCIES:
+    argparse: Parser for command-line options, arguments and sub-commands
+           https://docs.python.org/3/library/argparse.html
+    datetime: Basic date and time types
+           https://docs.python.org/3/library/datetime.html#module-datetime
+    tqdm: Progress Bar in Python.
+          https://tqdm.github.io/
+    py_gamma: GAMMA's Python integration with the py_gamma module
+
+UPDATE HISTORY:
+
 """
 # - Python Dependencies
 from __future__ import print_function
@@ -13,8 +37,8 @@ import py_gamma as pg
 
 def main():
     parser = argparse.ArgumentParser(
-        description="""TEST: Calculate a multi-look intensity (MLI)
-        image from ICEye SLCs."""
+        description="""Calculate a multi-looked intensity (MLI)
+        image from the selected ICEye SLCs."""
     )
     # - Absolute Path to directory containing input data.
     default_dir = os.path.join(os.path.expanduser('~'), 'Desktop',
@@ -23,6 +47,9 @@ def main():
                         type=lambda p: os.path.abspath(os.path.expanduser(p)),
                         default=default_dir,
                         help='Project data directory.')
+
+    parser.add_argument('--slc', '-C', type=str,
+                        default=None, help='Process and single SLC.')
 
     args = parser.parse_args()
 
@@ -33,20 +60,20 @@ def main():
     rlks = 10          # - number of range looks (INT)
     azlks = 5          # - number of azimuth looks (INT)
 
-    # - List Directory Content
-    data_dir_list = [os.path.join(data_dir, x) for x in os.listdir(data_dir)
-                     if x.endswith('.slc')]
-
-    for b_input in data_dir_list:
+    if args.slc is not None:
         # - Read input Binary File Name
+        b_input = os.path.join(data_dir, args.slc)
         b_input_name = b_input.split('/')[-1]
         slc_name = os.path.join(data_dir, b_input_name)
-        par_name = os.path.join(data_dir, b_input_name.replace('.slc', '.par'))
-        mli_name = os.path.join(data_dir, b_input_name.replace('.slc', '.mli'))
+        par_name = os.path.join(data_dir,
+                                b_input_name.replace('.slc', '.par'))
+        mli_name = os.path.join(data_dir,
+                                b_input_name.replace('.slc', '.mli'))
         mli_par_name = os.path.join(data_dir,
                                     b_input_name.replace('.slc', '.mli.par'))
         # - Extract SLC and Parameter File
-        pg.multi_look(slc_name, par_name, mli_name, mli_par_name, rlks, azlks)
+        pg.multi_look(slc_name, par_name, mli_name,
+                      mli_par_name, rlks, azlks)
 
         # - Read Multi-Looked SLCs par file
         par_dict = pg.ParFile(mli_par_name).par_dict
@@ -54,6 +81,32 @@ def main():
 
         # - Calculate a raster image from data with power-law scaling
         pg.raspwr(mli_name, n_rsmpl)
+
+    else:
+        # - List Directory Content
+        data_dir_list = [os.path.join(data_dir, x) for x in os.listdir(data_dir)
+                         if x.endswith('.slc')]
+
+        for b_input in data_dir_list:
+            # - Read input Binary File Name
+            b_input_name = b_input.split('/')[-1]
+            slc_name = os.path.join(data_dir, b_input_name)
+            par_name = os.path.join(data_dir,
+                                    b_input_name.replace('.slc', '.par'))
+            mli_name = os.path.join(data_dir,
+                                    b_input_name.replace('.slc', '.mli'))
+            mli_par_name = os.path.join(data_dir,
+                                        b_input_name.replace('.slc', '.mli.par'))
+            # - Extract SLC and Parameter File
+            pg.multi_look(slc_name, par_name, mli_name,
+                          mli_par_name, rlks, azlks)
+
+            # - Read Multi-Looked SLCs par file
+            par_dict = pg.ParFile(mli_par_name).par_dict
+            n_rsmpl = int(par_dict['range_samples'][0])
+
+            # - Calculate a raster image from data with power-law scaling
+            pg.raspwr(mli_name, n_rsmpl)
 
 
 # - run main program
