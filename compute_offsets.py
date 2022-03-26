@@ -112,7 +112,7 @@ def main():
                    os.path.join(data_dir, sec+'.slc'),
                    os.path.join(data_dir, ref+'.par'),
                    os.path.join(data_dir, sec+'.par'),
-                   out_par,  rlks, azlks, rpos, azpos, offr, offaz,
+                   out_par, rlks, azlks, rpos, azpos, offr, offaz,
                    thres, rwin, azwin)
 
     # - Create symbolic links for each of the .slc and .par files

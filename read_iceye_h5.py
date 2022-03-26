@@ -2,7 +2,7 @@
 u"""
 read_iceye_h5.py
 Written by Enrico Ciraci' (03/2022)
-Read ICEye Single Look Complex and Parameter file using  GAMMA's Python
+Read ICEYE Single Look Complex and Parameter file using  GAMMA's Python
 integration with the py_gamma module.
 
 usage: read_iceye_h5.py [-h] [--directory DIRECTORY]
