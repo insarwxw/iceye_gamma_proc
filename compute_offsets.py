@@ -78,7 +78,7 @@ def main():
     # - Offset Computation parameter
     algorithm = 1       # - offset estimation algorithm
     rlks = 1   # - number of interferogram range looks (enter -  for default: 1)
-    azlks = 1 # - number of interferogram azimuth looks (enter - for default: 1)
+    azlks = 1   # - number of interferogram azimuth looks (enter-for default: 1)
     iflg = 0   # -  interactive mode flag (enter -  for default)
 
     # - init_offset - Parameters

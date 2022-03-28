@@ -39,13 +39,21 @@ def main():
                         default=default_dir,
                         help='Project data directory.')
 
+    parser.add_argument('--init_offset', '-I', action='store_true',
+                        help='Determine initial offset between SLC'
+                             'images using correlation of image intensity')
+
     args = parser.parse_args()
 
     # - Path to data dir
     igram_ref = args.reference
     igram_sec = args.secondary
-    data_dir_ref = os.path.join(args.directory, 'pair_diff', igram_ref)
-    data_dir_sec = os.path.join(args.directory, 'pair_diff', igram_sec)
+    if args.init_offset:
+        data_dir_ref = os.path.join(args.directory, 'pair_diff_io', igram_ref)
+        data_dir_sec = os.path.join(args.directory, 'pair_diff_io', igram_sec)
+    else:
+        data_dir_ref = os.path.join(args.directory, 'pair_diff', igram_ref)
+        data_dir_sec = os.path.join(args.directory, 'pair_diff', igram_sec)
 
     # - Verify that the selected interferograms exist
     if not os.path.isdir(data_dir_ref):
@@ -85,7 +93,10 @@ def main():
     sec_base = os.path.join(data_dir_sec, 'base' + igram_sec + '.dat')
 
     # - Create Output Directory
-    out_dir = make_dir(args.directory, 'ddiff_geo')
+    if args.init_offset:
+        out_dir = make_dir(args.directory, 'ddiff_io_geo')
+    else:
+        out_dir = make_dir(args.directory, 'ddiff_geo')
     out_dir = make_dir(out_dir, igram_ref + '--' + igram_sec)
 
     # Change the current working directory
@@ -139,4 +150,4 @@ if __name__ == '__main__':
     start_time = datetime.datetime.now()
     main()
     end_time = datetime.datetime.now()
-    print("# - Computation Time: {}".format(end_time - start_time))
+    print(f'# - Computation Time: {end_time - start_time}')

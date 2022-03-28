@@ -57,18 +57,23 @@ def main():
                             os.path.expanduser(p)),
                         default=default_dir,
                         help='Project data directory.')
+
     parser.add_argument('--slc', '-S',
                         type=str,
                         default=None,
                         help='Considered Single Look Complex.')
+
     parser.add_argument('--rate', '-R',
                         type=int,
                         default=10,
                         help='State Vector Decimation Rate.')
+
     parser.add_argument('--replace', action='store_true',
                         help='Replace Original Parameter File.')
+
     parser.add_argument('--overwrite', action='store_true',
                         help='Overwrite Previously Decimated Parameter File.')
+
     args = parser.parse_args()
 
     if args.slc is None:
@@ -127,20 +132,20 @@ def main():
                     line += '  ' + x
                 print(key+':' + ' '*13 + line, file=p_fid)
 
-        for st in range(1, n_st_vect+1, args.rate):
-            if st == 1:
-                line = f'state_vector_position_{st}'
+        for st_v in range(1, n_st_vect+1, args.rate):
+            if st_v == 1:
+                line = f'state_vector_position_{st_v}'
             else:
-                line = f'state_vector_position_{int(st/args.rate)+1}'
-            for x in slc_par_dict[f'state_vector_position_{st}']:
+                line = f'state_vector_position_{int(st_v/args.rate)+1}'
+            for x in slc_par_dict[f'state_vector_position_{st_v}']:
                 line += '  ' + x
             print(line, file=p_fid)
 
             if st == 1:
-                line = f'state_vector_velocity_{st}'
+                line = f'state_vector_velocity_{st_v}'
             else:
-                line = f'state_vector_velocity_{int(st/args.rate)+1}'
-            for x in slc_par_dict[f'state_vector_velocity_{st}']:
+                line = f'state_vector_velocity_{int(st_v/args.rate)+1}'
+            for x in slc_par_dict[f'state_vector_velocity_{st_v}']:
                 line += '  ' + x
             print(line, file=p_fid)
 
@@ -150,4 +155,4 @@ if __name__ == '__main__':
     start_time = datetime.datetime.now()
     main()
     end_time = datetime.datetime.now()
-    print("# - Computation Time: {}".format(end_time - start_time))
+    print(f'# - Computation Time: {end_time - start_time}')

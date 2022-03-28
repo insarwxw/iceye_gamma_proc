@@ -24,16 +24,23 @@ def main():
     # - Working Directory directory.
     default_dir = os.path.join(os.path.expanduser('~'), 'Desktop',
                                'iceye_gamma_test', 'output')
+
     parser.add_argument('--directory', '-D',
                         type=lambda p: os.path.abspath(
                             os.path.expanduser(p)),
                         default=default_dir,
                         help='Project data directory.')
+
     parser.add_argument('--pair', '-P',
                         type=str,
                         default=None,
                         help='SLC Pair Codes separated by "_" '
                              'reference-secondary')
+
+    parser.add_argument('--init_offset', '-I', action='store_true',
+                        help='Determine initial offset between SLC'
+                             'images using correlation of image intensity')
+
     args = parser.parse_args()
 
     if args.pair is None:
@@ -46,8 +53,12 @@ def main():
     sec_slc = slc_list[1]
 
     # - Data directory
-    data_dir = os.path.join(args.directory,
-                            'pair_diff', ref_slc + '-' + sec_slc)
+    if args.init_offset:
+        data_dir = os.path.join(args.directory,
+                                'pair_diff_io', ref_slc + '-' + sec_slc)
+    else:
+        data_dir = os.path.join(args.directory,
+                                'pair_diff', ref_slc + '-' + sec_slc)
 
     # - Compute Interferogram Baseline Base on SLCs orbit state vectors
     print('# - Estimate baseline from orbit state vectors (base_orbit)')
@@ -116,4 +127,4 @@ if __name__ == '__main__':
     start_time = datetime.datetime.now()
     main()
     end_time = datetime.datetime.now()
-    print("# - Computation Time: {}".format(end_time - start_time))
+    print(f'# - Computation Time: {end_time - start_time}')
