@@ -21,7 +21,7 @@ def main():
     # - Read the system arguments listed after the program
     parser = argparse.ArgumentParser(
         description="""Compute Double-Difference Interferogram between the
-        selected pair of geocoded interferograms.
+        selected pair of Geocoded Interferograms.
         """
     )
     # - Positional Arguments - Reference and Secondary SLCs.
