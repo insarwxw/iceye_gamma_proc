@@ -59,7 +59,7 @@ def main():
                         default=default_dir,
                         help='Project data directory.')
 
-    parser.add_argument('--init_offset', '-I', action='store_true', type=bool,
+    parser.add_argument('--init_offset', '-I', action='store_true',
                         help='Determine initial offset between SLC'
                              'images using correlation of image intensity')
 
