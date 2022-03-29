@@ -141,7 +141,7 @@ def main():
                 line += '  ' + x
             print(line, file=p_fid)
 
-            if st == 1:
+            if st_v == 1:
                 line = f'state_vector_velocity_{st_v}'
             else:
                 line = f'state_vector_velocity_{int(st_v/args.rate)+1}'
