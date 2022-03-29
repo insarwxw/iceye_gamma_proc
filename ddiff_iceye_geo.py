@@ -119,7 +119,7 @@ def main():
 
                     )
 
-    # - Read Double Difference Parameter file
+    # - Show Double Difference on Top of the Reference SLC power image
     pg.rasmph_pwr('coco' + igram_ref + '-' + igram_sec + '.flat.topo_off.geo',
                   ref_pwr, dem_width)
 
