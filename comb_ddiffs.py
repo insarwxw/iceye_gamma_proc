@@ -31,7 +31,7 @@ def main():
     dir_1_listr = [os.path.join(dir_1, dr)
                    for dr in os.listdir(dir_1) if os.path.isdir(dr)]
 
-    for ddiff in dir_1_listr[:1]:
+    for ddiff in dir_1_listr[:2]:
         # - extract interferograms info
         ddiff_name = ddiff.split('/')[-1]
         ref_igram = ddiff_name.split('--')[0]
