@@ -18,8 +18,7 @@ from utils.read_keyword import read_keyword
 
 def main():
     # - data directory
-    data_dir = '/u/mawson-r0/eric/ICEye_2021_PETERMAN/DATA_REPOSITORY/' \
-               'Peterman_Glacier_X7_extended_range_SLC/test.dir/output'
+    data_dir = '/u/mawson-r0/eric/ICEye_2021_PETERMAN/DATA_REPOSITORY/Peterman_Glacier_X7_extended_range_SLC/test.dir/output'
     # -
     dir_1 = os.path.join(data_dir, 'ddiff_geo')
     dir_2 = os.path.join(data_dir, 'ddiff_io_geo')
@@ -29,7 +28,8 @@ def main():
 
     # - list directory
     dir_1_listr = [os.path.join(dir_1, dr)
-                   for dr in os.listdir(dir_1) if os.path.isdir(dr)]
+                   for dr in os.listdir(dir_1) if os.path.isdir(os.path.join(dir_1, dr))]
+    print(dir_1_listr)
 
     for ddiff in dir_1_listr[:2]:
         # - extract interferograms info
