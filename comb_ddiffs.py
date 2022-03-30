@@ -38,6 +38,7 @@ def main():
         ref_igram = ddiff_name.split('--')[0]
         sec_igram = ddiff_name.split('--')[1]
         ref_slc = ref_igram.split('-')[0]
+        ref_slc_pwr = os.pth.join(intf_dir_1, ref_igram, ref_slc+'.pwr1.geo')
         print('# - Geocoded Double Difference: ' + 'coco'+ddiff_name+'.flat.topo_off.geo.filt')
         print('# - Reference Interferogram: ' + ref_igram)
         print('# - Secondary Interferogram: ' + sec_igram)
@@ -65,6 +66,9 @@ def main():
         out_base = os.path.join(out_dir, 'base'+ddiff_name.replace('--', '-') + '.flat.topo_off.geo')
         pg.comb_interfs(ddiff_1, ddiff_2, base_1, base_2, 1, -1, dem_width,
                         out_diff, out_base)
+
+        # - Show Difference
+        pg.rasmph_pwr(out_diff,  ref_slc_pwr,dem_width)
 
 
 # - run main program
