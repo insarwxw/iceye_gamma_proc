@@ -288,7 +288,7 @@ def main() -> None:
 
     # - Show Geocoded interferogram
     pg.rasmph_pwr(interf_output_path,
-                  f'{ref_slc}.pwr1.geo', interf_width)
+                  os.path.join(data_dir, f'{ref_slc}.pwr1.geo'), interf_width)
 
 
 # - run main program
