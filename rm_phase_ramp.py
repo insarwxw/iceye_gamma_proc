@@ -28,8 +28,8 @@ import py_gamma as pg
 from utils.read_keyword import read_keyword
 
 
-def estimate_phase_ramp(dd_phase_complex: np.ndarray, cycle_r: int, cycle_c: int,
-                        slope_r: int = 1, slope_c: int = 1,
+def estimate_phase_ramp(dd_phase_complex: np.ndarray, cycle_r: int,
+                        cycle_c: int, slope_r: int = 1, slope_c: int = 1,
                         s_radius: float = 2, s_step: float = 0.1) -> dict:
     """
     Estimate a phase ramp from the provided input interferogram
@@ -72,13 +72,15 @@ def estimate_phase_ramp(dd_phase_complex: np.ndarray, cycle_r: int, cycle_c: int
         for r_count, n_cycle_r in tqdm(enumerate(list(n_cycle_r_vect_f)),
                                        total=len(n_cycle_r_vect_f), ncols=60):
             for c_count, n_cycle_c in enumerate(list(n_cycle_c_vect_f)):
-                synth_real = slope_c * (2 * np.pi / n_columns) * n_cycle_c * xx_m
-                synth_imag = slope_r * (2 * np.pi / n_rows) * n_cycle_r * yy_m
+                synth_real = slope_c * (2 * np.pi / n_columns) \
+                             * n_cycle_c * xx_m
+                synth_imag = slope_r * (2 * np.pi / n_rows) \
+                             * n_cycle_r * yy_m
                 synth_phase_plane = synth_real + synth_imag
                 synth_complex = np.exp(1j * synth_phase_plane)
 
-                # - Compute Complex Conjugate product between the synthetic phase
-                # - ramp and the input interferogram.
+                # - Compute Complex Conjugate product between the synthetic
+                # - phase ramp and the input interferogram.
                 dd_phase_complex_corrected \
                     = np.angle(dd_phase_complex * np.conj(synth_complex))
                 # - Compute the Mean Absolute value of the phase residuals
@@ -125,10 +127,11 @@ def main() -> None:
     interf_output_path = Path(os.path.join(data_dir, interf_input_path.name
                                            + '_deramped'))
     # - Interferogram Coherence Mask calculated using pg.edf filter
-    coh_mask = Path(os.path.join(data_dir, interf_input_path.name + '.filt.coh'))
+    coh_mask = Path(os.path.join(data_dir, interf_input_path.name
+                                 + '.filt.coh'))
 
     # - Interferogram Parameter File
-    par_file = Path(os.path.join(data_dir, args.par))
+    par_file = os.path.join(data_dir, args.par)
     # - Interferogram Width
     interf_width = int(read_keyword(par_file, 'width'))
 
