@@ -26,6 +26,7 @@ from pathlib import Path
 # - GAMMA's Python integration with the py_gamma module
 import py_gamma as pg
 from utils.read_keyword import read_keyword
+from utils.make_dir import make_dir
 
 
 def estimate_phase_ramp(dd_phase_complex: np.ndarray, cycle_r: int,
@@ -120,15 +121,23 @@ def main() -> None:
                         help='Interferogram Parameter File',
                         default='DEM_gc_par')
     args = parser.parse_args()
-
+    # - Output figures parameters
+    fig_format = 'jpeg'
+    # - Absolute Path to input interferogram
     interf_input_path = Path(args.in_interf)
     # - Extract Data Directory from input file path
     data_dir = interf_input_path.parent
+    # - Create Output Directory
+    out_dir = make_dir(data_dir, 'DERAMP')
+    # -
     interf_output_path = Path(os.path.join(data_dir, interf_input_path.name
                                            + '_deramped'))
     # - Interferogram Coherence Mask calculated using pg.edf filter
     coh_mask = Path(os.path.join(data_dir, interf_input_path.name
                                  + '.filt.coh'))
+
+    # - extract Reference SLC name
+    ref_slc = interf_input_path.name.split('-')[0].replace('coco', '')
 
     # - Interferogram Parameter File
     par_file = os.path.join(data_dir, args.par)
@@ -142,10 +151,11 @@ def main() -> None:
     # - Show Coherence Mask
     plt.figure()
     plt.title('Interferogram Coherence')
-    plt.imshow(coh_in)
+    plt.imshow(coh_in, cmap=plt.get_cmap('viridis'))
     plt.colorbar()
     plt.tight_layout()
-    plt.show()
+    plt.savefig(os.path.join(out_dir, 'coherence_map.'+fig_format),
+                dpi=200, format=fig_format)
     plt.close()
 
     # - Compute Binary Mask using grid point with Coherence > 0
@@ -154,9 +164,10 @@ def main() -> None:
     # - Show Binary Mask
     plt.figure()
     plt.title('Binary Mask')
-    plt.imshow(coh_mask)
+    plt.imshow(coh_mask, cmap=plt.get_cmap('gray'))
     plt.colorbar()
-    plt.show()
+    plt.savefig(os.path.join(out_dir, 'binary_mask.'+fig_format),
+                dpi=200, format=fig_format)
     plt.close()
 
     # - Read Complex Interferogram saved as Gamma Software binary image
@@ -173,28 +184,37 @@ def main() -> None:
     plt.title('Input Interferometric Phase')
     plt.imshow(data_in_r_phase, cmap=plt.cm.get_cmap('jet'))
     plt.colorbar()
-    plt.show()
+    plt.savefig(os.path.join(out_dir, 'input_interferometric_phase.'+fig_format),
+                dpi=200, format=fig_format)
     plt.close()
+    print('# - input_interferometric_phase.'+fig_format
+          + ' - available inside DERAMP directory.')
 
     # - Crop the interferogram over the area where the ramp is more easily
     # - detectable.
-    print('\n\n# - Phase Ramp Estimation Range: ')
+    print('\n\n# - Chose Interferogram sub region that will be used to'
+          'estimate the linear ramp: ')
     row_min = int(input('# - Row Min: '))
     row_max = int(input('# - Row Max: '))
     col_min = int(input('# - Column Min: '))
     col_max = int(input('# - Row Max: '))
 
-    # - Cropped Interferometric Phase Map
+    # - Cropped Interferometric Phase Map: region used to estimate the
+    # - phase ramp.
     data_in_r_phase_c = data_in_r_phase[row_min: row_max, col_min: col_max]
     plt.figure()
     plt.title('Cropped Interferometric Phase Map')
     plt.imshow(data_in_r_phase_c, cmap=plt.cm.get_cmap('jet'))
     plt.colorbar()
-    plt.show()
+    plt.savefig(os.path.join(out_dir,
+                             'cropped_input_interferometric_phase.'+fig_format),
+                dpi=200, format=fig_format)
     plt.close()
+    print('# - cropped_input_interferometric_phase.'+fig_format
+          + ' - available inside DERAMP directory.')
 
     # - Search Parameters
-    print('\n\n# - Phase Ramp Removal Parameters: ')
+    print('\n\n# - Phase Ramp Removal Parameters. Provide first guess: ')
     n_cycles_r = int(input('# - Number of Cycles along Rows: '))
     n_cycles_c = int(input('# - Number of Cycles along Columns: '))
     slope_r = int(input('# - Phase Slope along Rows: '))
@@ -202,7 +222,7 @@ def main() -> None:
     s_radius = int(input('# - Search Radius - if > 0, use Grid Search: '))
 
     # - Estimate Phase Ramp Parameters
-    print('# - Estimate Phase Ramp Parameters.')
+    print('# - Estimating Phase Ramp Parameters.')
     ramp = estimate_phase_ramp(data_in_r_phase_c, n_cycles_r, n_cycles_c,
                                slope_r=slope_r, slope_c=slope_c,
                                s_radius=s_radius)
@@ -231,7 +251,9 @@ def main() -> None:
     plt.title('Estimated Phase Ramp')
     plt.imshow(phase_ramp, cmap=plt.cm.get_cmap('jet'))
     plt.colorbar()
-    plt.show()
+    plt.savefig(os.path.join(out_dir,
+                             'phase_ramp.'+fig_format),
+                dpi=200, format=fig_format)
     plt.close()
 
     # - Compute synthetic ramp
@@ -255,12 +277,18 @@ def main() -> None:
     plt.imshow(np.angle(dd_phase_complex_corrected),
                cmap=plt.cm.get_cmap('jet'))
     plt.colorbar()
-    plt.show()
+    plt.savefig(os.path.join(out_dir,
+                             'deramped_interferogram.'+fig_format),
+                dpi=200, format=fig_format)
     plt.close()
 
     # - Save Deramped Interferogram as a Gamma Software binary image
     pg.write_image(dd_phase_complex_corrected, interf_output_path,
                    dtype='fcomplex')
+
+    # - Show Geocoded interferogram
+    pg.rasmph_pwr(interf_output_path,
+                  f'{ref_slc}.pwr1.geo', interf_width)
 
 
 # - run main program

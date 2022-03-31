@@ -43,6 +43,10 @@ def main():
                         help='Determine initial offset between SLC'
                              'images using correlation of image intensity')
 
+    parser.add_argument('--deramp', action='store_true',
+                        help='If exists, use deramped version of '
+                             'the interferogram.')
+
     args = parser.parse_args()
 
     # - Path to data dir
@@ -70,23 +74,30 @@ def main():
     try:
         dem_param_dict = pg.ParFile(ref_par).par_dict
         dem_width = int(dem_param_dict['width'][0])
-        dem_nlines = int(dem_param_dict['nlines'][0])
     except IndexError:
         dem_width = int(read_keyword(ref_par, 'width'))
-        dem_nlines = int(read_keyword(ref_par, 'nlines'))
 
     # - Reference SLCs for the selected interferograms
-    ref_pair_ref = os.path.join(data_dir_ref, igram_ref.split('-')[0])
-    ref_pair_sec = os.path.join(data_dir_sec, igram_sec.split('-')[0])
+    # ref_pair_ref = os.path.join(data_dir_ref, igram_ref.split('-')[0])
+    # ref_pair_sec = os.path.join(data_dir_sec, igram_sec.split('-')[0])
 
     # - Geocoded Interferograms
     ref_interf = os.path.join(data_dir_ref,
                               'coco' + igram_ref + '.flat.topo_off.geo')
+    if args.deramp:
+        if os.path.isfile(ref_interf+'_deramped'):
+            ref_interf = os.path.join(data_dir_ref,
+                                      'coco' + igram_ref
+                                      + '.flat.topo_off.geo_deramped')
+
     ref_pwr = os.path.join(data_dir_ref, igram_ref.split('-')[0] + '.pwr1.geo')
     # -
     sec_interf = os.path.join(data_dir_sec,
                               'coco' + igram_sec + '.flat.topo_off.geo')
-    sec_pwr = os.path.join(data_dir_sec, igram_sec.split('-')[0] + '.pwr1.geo')
+    if args.deramp:
+        if os.path.isfile(sec_interf + '_deramped'):
+            sec_interf = os.path.join(data_dir_sec, 'coco' + igram_sec
+                                      + '.flat.topo_off.geo_deramped')
 
     # - Path to Interferograms Baseline Files
     ref_base = os.path.join(data_dir_ref, 'base' + igram_ref + '.dat')
