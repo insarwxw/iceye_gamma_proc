@@ -199,7 +199,7 @@ def main() -> None:
     n_cycles_c = int(input('# - Number of Cycles along Columns: '))
     slope_r = int(input('# - Phase Slope along Rows: '))
     slope_c = int(input('# - Phase Slope along Columns: '))
-    s_radius = int(input('# - Search Radius - if >0, use Grid Search: '))
+    s_radius = int(input('# - Search Radius - if > 0, use Grid Search: '))
 
     # - Estimate Phase Ramp Parameters
     print('# - Estimate Phase Ramp Parameters.')
