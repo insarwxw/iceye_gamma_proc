@@ -1,4 +1,5 @@
-"""
+#!/usr/bin/env python
+u"""
 Enrico Ciraci' - 03/2022
 
 Compute Double-Difference Interferogram from ICEYE data.

@@ -1,4 +1,5 @@
-"""
+#!/usr/bin/env python
+u"""
 Enrico Ciraci' - 03/2022
 Test Script:
 Compare Double Difference Interferograms obtained with two different approaches:

@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 """
 Enrico Ciraci' - 03/2022
 
