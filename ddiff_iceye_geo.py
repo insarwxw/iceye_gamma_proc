@@ -188,6 +188,11 @@ def main():
     pg.data2geotiff(ref_par, 'phs.geo', 2,
                     'coco' + igram_ref + '-' + igram_sec
                     + '.flat.topo_off.geo.filt.tiff', -9999)
+    # - Save Coherence Interferogram Map as a GeoTiff
+    pg.data2geotiff(ref_par, 'coco' + igram_ref + '-' + igram_sec
+                    + '.flat.topo_off.geo.filt.coh', 2,
+                    'coco' + igram_ref + '-' + igram_sec
+                    + '.flat.topo_off.geo.filt.coh.tiff', -9999)
 
 
 # - run main program
