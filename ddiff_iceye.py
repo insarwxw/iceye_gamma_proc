@@ -4,6 +4,23 @@ Enrico Ciraci' - 03/2022
 
 Compute Double-Difference Interferogram from ICEYE data.
 - Use data expressed in RADAR Coordinates.
+
+PYTHON DEPENDENCIES:
+    argparse: Parser for command-line options, arguments and sub-commands
+           https://docs.python.org/3/library/argparse.html
+    numpy: The fundamental package for scientific computing with Python
+          https://numpy.org/
+    matplotlib: Visualization with Python
+        https://matplotlib.org/
+    tqdm: Progress Bar in Python.
+          https://tqdm.github.io/
+    datetime: Basic date and time types
+           https://docs.python.org/3/library/datetime.html#module-datetime
+
+    py_gamma: GAMMA's Python integration with the py_gamma module
+
+UPDATE HISTORY:
+
 """
 # - Python dependencies
 from __future__ import print_function

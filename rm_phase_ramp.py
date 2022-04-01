@@ -6,6 +6,15 @@ TEST:
 Estimate and Remove the contribution of a "Linear Ramp" to the Wrapped Phase
 of a Differential InSAR Interferogram.
 
+usage: rm_phase_ramp.py [-h] [--par PAR] in_interf
+
+positional arguments:
+  in_interf          Input Interferogram - Absolute Path
+
+optional arguments:
+  -h, --help         show this help message and exit
+  --par PAR, -P PAR  Interferogram Parameter File
+
 NOTE: In this implementation of the algorithm, a first guess or preliminary
     estimate of the parameters defining the ramp must be provided by the user.
     These parameters include the number of phase cycles characterizing the ramp
@@ -13,6 +22,22 @@ NOTE: In this implementation of the algorithm, a first guess or preliminary
 
 A GRID SEARCH around the user-defined first guess is performed to obtain the
 best estimate of the ramp parameters.
+
+PYTHON DEPENDENCIES:
+    argparse: Parser for command-line options, arguments and sub-commands
+           https://docs.python.org/3/library/argparse.html
+    numpy: The fundamental package for scientific computing with Python
+          https://numpy.org/
+    matplotlib: Visualization with Python
+        https://matplotlib.org/
+    tqdm: Progress Bar in Python.
+          https://tqdm.github.io/
+    datetime: Basic date and time types
+           https://docs.python.org/3/library/datetime.html#module-datetime
+
+    py_gamma: GAMMA's Python integration with the py_gamma module
+
+UPDATE HISTORY:
 """
 # - Python dependencies
 from __future__ import print_function
@@ -197,7 +222,7 @@ def main() -> None:
     row_min = int(input('# - Row Min: '))
     row_max = int(input('# - Row Max: '))
     col_min = int(input('# - Column Min: '))
-    col_max = int(input('# - Row Max: '))
+    col_max = int(input('# - Column Max: '))
 
     # - Cropped Interferometric Phase Map: region used to estimate the
     # - phase ramp.
