@@ -1,0 +1,42 @@
+#!/bin/sh
+# REF: 152307_20211022T145808-152566_20211023T145809
+python ddiff_iceye_geo.py  152307_20211022T145808-152566_20211023T145809 152566_20211023T145809-152735_20211024T145811 --directory=/u/mawson-r0/eric/ICEye_2021_PETERMAN/DATA_REPOSITORY/Peterman_Glacier_X7_extended_range_SLC/test.dir/output --deramp
+python ddiff_iceye_geo.py  152307_20211022T145808-152566_20211023T145809 152735_20211024T145811-152987_20211025T145812 --directory=/u/mawson-r0/eric/ICEye_2021_PETERMAN/DATA_REPOSITORY/Peterman_Glacier_X7_extended_range_SLC/test.dir/output --deramp
+python ddiff_iceye_geo.py  152307_20211022T145808-152566_20211023T145809 152987_20211025T145812-153610_20211026T145813 --directory=/u/mawson-r0/eric/ICEye_2021_PETERMAN/DATA_REPOSITORY/Peterman_Glacier_X7_extended_range_SLC/test.dir/output --deramp
+python ddiff_iceye_geo.py  152307_20211022T145808-152566_20211023T145809 153610_20211026T145813-154067_20211027T145815 --directory=/u/mawson-r0/eric/ICEye_2021_PETERMAN/DATA_REPOSITORY/Peterman_Glacier_X7_extended_range_SLC/test.dir/output --deramp
+python ddiff_iceye_geo.py  152307_20211022T145808-152566_20211023T145809 154067_20211027T145815-154480_20211028T145816 --directory=/u/mawson-r0/eric/ICEye_2021_PETERMAN/DATA_REPOSITORY/Peterman_Glacier_X7_extended_range_SLC/test.dir/output --deramp
+python ddiff_iceye_geo.py  152307_20211022T145808-152566_20211023T145809 154480_20211028T145816-154755_20211029T145817 --directory=/u/mawson-r0/eric/ICEye_2021_PETERMAN/DATA_REPOSITORY/Peterman_Glacier_X7_extended_range_SLC/test.dir/output --deramp
+python ddiff_iceye_geo.py  152307_20211022T145808-152566_20211023T145809 154755_20211029T145817-155108_20211030T145818 --directory=/u/mawson-r0/eric/ICEye_2021_PETERMAN/DATA_REPOSITORY/Peterman_Glacier_X7_extended_range_SLC/test.dir/output --deramp
+
+# REF: 152566_20211023T145809-152735_20211024T145811
+python ddiff_iceye_geo.py  152566_20211023T145809-152735_20211024T145811 152735_20211024T145811-152987_20211025T145812 --directory=/u/mawson-r0/eric/ICEye_2021_PETERMAN/DATA_REPOSITORY/Peterman_Glacier_X7_extended_range_SLC/test.dir/output --deramp
+python ddiff_iceye_geo.py  152566_20211023T145809-152735_20211024T145811 152987_20211025T145812-153610_20211026T145813 --directory=/u/mawson-r0/eric/ICEye_2021_PETERMAN/DATA_REPOSITORY/Peterman_Glacier_X7_extended_range_SLC/test.dir/output --deramp
+python ddiff_iceye_geo.py  152566_20211023T145809-152735_20211024T145811 153610_20211026T145813-154067_20211027T145815 --directory=/u/mawson-r0/eric/ICEye_2021_PETERMAN/DATA_REPOSITORY/Peterman_Glacier_X7_extended_range_SLC/test.dir/output --deramp
+python ddiff_iceye_geo.py  152566_20211023T145809-152735_20211024T145811 154067_20211027T145815-154480_20211028T145816 --directory=/u/mawson-r0/eric/ICEye_2021_PETERMAN/DATA_REPOSITORY/Peterman_Glacier_X7_extended_range_SLC/test.dir/output --deramp
+python ddiff_iceye_geo.py  152566_20211023T145809-152735_20211024T145811 154480_20211028T145816-154755_20211029T145817 --directory=/u/mawson-r0/eric/ICEye_2021_PETERMAN/DATA_REPOSITORY/Peterman_Glacier_X7_extended_range_SLC/test.dir/output --deramp
+python ddiff_iceye_geo.py  152566_20211023T145809-152735_20211024T145811 154755_20211029T145817-155108_20211030T145818 --directory=/u/mawson-r0/eric/ICEye_2021_PETERMAN/DATA_REPOSITORY/Peterman_Glacier_X7_extended_range_SLC/test.dir/output --deramp
+
+# REF: 152735_20211024T145811-152987_20211025T145812
+python ddiff_iceye_geo.py  152735_20211024T145811-152987_20211025T145812 152987_20211025T145812-153610_20211026T145813 --directory=/u/mawson-r0/eric/ICEye_2021_PETERMAN/DATA_REPOSITORY/Peterman_Glacier_X7_extended_range_SLC/test.dir/output --deramp
+python ddiff_iceye_geo.py  152735_20211024T145811-152987_20211025T145812 153610_20211026T145813-154067_20211027T145815 --directory=/u/mawson-r0/eric/ICEye_2021_PETERMAN/DATA_REPOSITORY/Peterman_Glacier_X7_extended_range_SLC/test.dir/output --deramp
+python ddiff_iceye_geo.py  152735_20211024T145811-152987_20211025T145812 154067_20211027T145815-154480_20211028T145816 --directory=/u/mawson-r0/eric/ICEye_2021_PETERMAN/DATA_REPOSITORY/Peterman_Glacier_X7_extended_range_SLC/test.dir/output --deramp
+python ddiff_iceye_geo.py  152735_20211024T145811-152987_20211025T145812 154480_20211028T145816-154755_20211029T145817 --directory=/u/mawson-r0/eric/ICEye_2021_PETERMAN/DATA_REPOSITORY/Peterman_Glacier_X7_extended_range_SLC/test.dir/output --deramp
+python ddiff_iceye_geo.py  152735_20211024T145811-152987_20211025T145812 154755_20211029T145817-155108_20211030T145818 --directory=/u/mawson-r0/eric/ICEye_2021_PETERMAN/DATA_REPOSITORY/Peterman_Glacier_X7_extended_range_SLC/test.dir/output --deramp
+
+# REF: 152987_20211025T145812-153610_20211026T145813
+python ddiff_iceye_geo.py  152987_20211025T145812-153610_20211026T145813 153610_20211026T145813-154067_20211027T145815 --directory=/u/mawson-r0/eric/ICEye_2021_PETERMAN/DATA_REPOSITORY/Peterman_Glacier_X7_extended_range_SLC/test.dir/output --deramp
+python ddiff_iceye_geo.py  152987_20211025T145812-153610_20211026T145813 154067_20211027T145815-154480_20211028T145816 --directory=/u/mawson-r0/eric/ICEye_2021_PETERMAN/DATA_REPOSITORY/Peterman_Glacier_X7_extended_range_SLC/test.dir/output --deramp
+python ddiff_iceye_geo.py  152987_20211025T145812-153610_20211026T145813 154480_20211028T145816-154755_20211029T145817 --directory=/u/mawson-r0/eric/ICEye_2021_PETERMAN/DATA_REPOSITORY/Peterman_Glacier_X7_extended_range_SLC/test.dir/output --deramp
+python ddiff_iceye_geo.py  152987_20211025T145812-153610_20211026T145813 154755_20211029T145817-155108_20211030T145818 --directory=/u/mawson-r0/eric/ICEye_2021_PETERMAN/DATA_REPOSITORY/Peterman_Glacier_X7_extended_range_SLC/test.dir/output --deramp
+
+# REF: 153610_20211026T145813-154067_20211027T145815
+python ddiff_iceye_geo.py  153610_20211026T145813-154067_20211027T145815 154067_20211027T145815-154480_20211028T145816 --directory=/u/mawson-r0/eric/ICEye_2021_PETERMAN/DATA_REPOSITORY/Peterman_Glacier_X7_extended_range_SLC/test.dir/output --deramp
+python ddiff_iceye_geo.py  153610_20211026T145813-154067_20211027T145815 154480_20211028T145816-154755_20211029T145817 --directory=/u/mawson-r0/eric/ICEye_2021_PETERMAN/DATA_REPOSITORY/Peterman_Glacier_X7_extended_range_SLC/test.dir/output --deramp
+python ddiff_iceye_geo.py  153610_20211026T145813-154067_20211027T145815 154755_20211029T145817-155108_20211030T145818 --directory=/u/mawson-r0/eric/ICEye_2021_PETERMAN/DATA_REPOSITORY/Peterman_Glacier_X7_extended_range_SLC/test.dir/output --deramp
+
+# REF: 154067_20211027T145815-154480_20211028T145816
+python ddiff_iceye_geo.py  154067_20211027T145815-154480_20211028T145816 154480_20211028T145816-154755_20211029T145817 --directory=/u/mawson-r0/eric/ICEye_2021_PETERMAN/DATA_REPOSITORY/Peterman_Glacier_X7_extended_range_SLC/test.dir/output --deramp
+python ddiff_iceye_geo.py  154067_20211027T145815-154480_20211028T145816 154755_20211029T145817-155108_20211030T145818 --directory=/u/mawson-r0/eric/ICEye_2021_PETERMAN/DATA_REPOSITORY/Peterman_Glacier_X7_extended_range_SLC/test.dir/output --deramp
+
+# REF: 154480_20211028T145816-154755_20211029T145817
+python ddiff_iceye_geo.py  154480_20211028T145816-154755_20211029T145817 154755_20211029T145817-155108_20211030T145818 --directory=/u/mawson-r0/eric/ICEye_2021_PETERMAN/DATA_REPOSITORY/Peterman_Glacier_X7_extended_range_SLC/test.dir/output --deramp
