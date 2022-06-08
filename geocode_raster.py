@@ -27,11 +27,11 @@ def main() -> None:
 
     args = parser.parse_args()
 
-    if args.pair is None:
-        print('# - Provide selected SLC names as: --path=/dir1/dir2/...')
+    if args.raster is None:
+        print('# - Provide selected Raster names as: --path=/dir1/dir2/...')
         sys.exit()
 
-    ref_slc = args.raster
+    ref_ratser = args.raster
     par_file = args.par
 
     print('# - Calculate terrain-geocoding lookup table and DEM derived '
