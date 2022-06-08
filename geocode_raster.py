@@ -128,7 +128,7 @@ def main() -> None:
                     ref_gcmap,
                     ref_raster+'.geo',
                     dem_width, dem_nlines,
-                    '-', 1
+                    '-', 0
                     )
 
     # - Calculate a raster image from data with power-law scaling
