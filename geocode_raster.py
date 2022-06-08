@@ -16,6 +16,10 @@ def main() -> None:
         description="""Geocode the selected input Raster."""
     )
     # - Absolute Path to selected Raster
+    parser.add_argument('--directory', '-D',
+                        type=str,
+                        default=None,
+                        help='Absolute path to working directory.')
     parser.add_argument('--raster', '-R',
                         type=str,
                         default=None,
@@ -23,7 +27,7 @@ def main() -> None:
     parser.add_argument('--par', '-P',
                         type=str,
                         default=None,
-                        help='Selected raster paramter file.')
+                        help='Selected raster parameter file.')
 
     args = parser.parse_args()
 
@@ -31,8 +35,11 @@ def main() -> None:
         print('# - Provide selected Raster names as: --path=/dir1/dir2/...')
         sys.exit()
 
-    ref_ratser = args.raster
-    par_file = args.par
+    # - Absolute path to Reference raster and to its parameter file
+    ref_raster = os.path.join(args.directory, args.raster)
+    par_file = os.path.join(args.directory(args.directory, args.par))
+    # - Change the current working directory
+    os.chdir(args.directory)
 
     print('# - Calculate terrain-geocoding lookup table and DEM derived '
           'data products.')
@@ -86,6 +93,46 @@ def main() -> None:
               10, 10, 'sar_map_in_dem_geometry',
               '-', '-', 'inc.geo', '-', '-', '-', '-', '2', '-'
               )
+
+    # - Read Raster Parameter Dictionary
+    ras_param_dict = pg.ParFile(par_file).par_dict
+    # - read raster number of columns and rows
+    raster_width = int(ras_param_dict['range_samples'][0])
+    raster_lines = int(ras_param_dict['azimuth_lines'][0])
+    print(f'# - Input Raster Size: {raster_lines} x {raster_width}')
+
+    # - Extract DEM Size from parameter file
+    dem_par_path = os.path.join('.', 'DEM_gc_par')
+    try:
+        dem_param_dict = pg.ParFile(dem_par_path).par_dict
+        dem_width = int(dem_param_dict['width'][0])
+        dem_nlines = int(dem_param_dict['nlines'][0])
+    except IndexError:
+        dem_width = int(read_keyword(dem_par_path, 'width'))
+        dem_nlines = int(read_keyword(dem_par_path, 'nlines'))
+
+    print(f'# - DEM Size: {dem_nlines} x {dem_width}')
+
+    # - Geocode Output interferogram
+    # - Geocode Double Difference
+    # - Reference Interferogram look-up table
+    ref_gcmap = os.path.join('.', 'gc_icemap')
+    dem_par_path = os.path.join('.', 'DEM_gc_par')
+    # -  Width of Geocoding par (reference)
+    dem_width = int(read_keyword(dem_par_path, 'width'))
+    # -  nlines of Geocoding par (secondary)
+    dem_nlines = int(read_keyword(dem_par_path, 'nlines'))
+    # - geocode interferogram
+    pg.geocode_back(ref_raster,
+                    raster_width,
+                    ref_gcmap,
+                    ref_raster+'.geo',
+                    dem_width, dem_nlines,
+                    '-', 1
+                    )
+
+    # - Calculate a raster image from data with power-law scaling
+    pg.raspwr(ref_raster+'.geo', dem_width)
 
 
 # - run main program
