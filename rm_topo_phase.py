@@ -16,7 +16,7 @@ from utils.path_to_dem import path_to_gimp
 from utils.read_keyword import read_keyword
 
 
-def main():
+def main() -> None:
     # - Read the system arguments listed after the program
     parser = argparse.ArgumentParser(
         description="""Geocode Flattened Interferogram and Remove
