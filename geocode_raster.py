@@ -37,7 +37,7 @@ def main() -> None:
 
     # - Absolute path to Reference raster and to its parameter file
     ref_raster = os.path.join(args.directory, args.raster)
-    par_file = os.path.join(args.directory(args.directory, args.par))
+    par_file = os.path.join(args.directory, args.par)
     # - Change the current working directory
     os.chdir(args.directory)
 
