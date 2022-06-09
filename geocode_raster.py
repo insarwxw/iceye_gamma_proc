@@ -42,10 +42,12 @@ def main() -> None:
     # - Change the current working directory
     os.chdir(out_dir)
     # - create symbolic links to input files
-    os.symlink(os.path.join(args.directory, args.raster),
-               os.path.join('.', args.raster))
-    os.symlink(os.path.join(args.directory, args.par),
-               os.path.join('.', args.par))
+    if not os.path.isfile(os.path.join('.', args.raster)):
+        os.symlink(os.path.join(args.directory, args.raster),
+                   os.path.join('.', args.raster))
+    if not os.path.isfile(os.path.join('.', args.par)):
+        os.symlink(os.path.join(args.directory, args.par),
+                   os.path.join('.', args.par))
     # - Absolute path to Reference raster and to its parameter file
     ref_raster = os.path.join(out_dir, args.raster)
     par_file = os.path.join(out_dir, args.par)
