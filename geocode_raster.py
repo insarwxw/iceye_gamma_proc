@@ -147,7 +147,7 @@ def main() -> None:
 
     # - Save Geocoded Raster as a GeoTiff
     print('geotiff conversion')
-    pg.data2geotiff(ref_raster+'.geo.bmp', dem_par_path, 0,
+    pg.data2geotiff(dem_par_path, ref_raster+'.geo.bmp', 0,
                     ref_raster+'.geo.tif')
 
     # - Change Permission Access to all the files contained inside the
