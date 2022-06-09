@@ -26,7 +26,7 @@ def main() -> None:
                         type=str,
                         default=None,
                         help='Selected raster file name.')
-    parser.add_argument('--param', '-P',
+    parser.add_argument('--par', '-P',
                         type=str,
                         default=None,
                         help='Selected raster parameter file.')
