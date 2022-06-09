@@ -6,8 +6,10 @@ import argparse
 import datetime
 # - GAMMA's Python integration with the py_gamma module
 import py_gamma as pg
+# - Utility functions
 from utils.path_to_dem import path_to_gimp
 from utils.read_keyword import read_keyword
+from utils.make_dir import make_dir
 
 
 def main() -> None:
@@ -24,7 +26,7 @@ def main() -> None:
                         type=str,
                         default=None,
                         help='Selected raster file name.')
-    parser.add_argument('--par', '-P',
+    parser.add_argument('--param', '-P',
                         type=str,
                         default=None,
                         help='Selected raster parameter file.')
@@ -35,11 +37,18 @@ def main() -> None:
         print('# - Provide selected Raster names as: --path=/dir1/dir2/...')
         sys.exit()
 
-    # - Absolute path to Reference raster and to its parameter file
-    ref_raster = os.path.join(args.directory, args.raster)
-    par_file = os.path.join(args.directory, args.par)
+    # - create output directory
+    out_dir = make_dir(args.directory, args.raster+'.geocoded')
     # - Change the current working directory
-    os.chdir(args.directory)
+    os.chdir(out_dir)
+    # - create symbolic links to input files
+    os.symlink(os.path.join(args.directory, args.raster),
+               os.path.join('.', args.raster))
+    os.symlink(os.path.join(args.directory, args.par),
+               os.path.join('.', args.par))
+    # - Absolute path to Reference raster and to its parameter file
+    ref_raster = os.path.join(out_dir, args.raster)
+    par_file = os.path.join(out_dir, args.par)
 
     print('# - Calculate terrain-geocoding lookup table and DEM derived '
           'data products.')
@@ -120,7 +129,7 @@ def main() -> None:
     dem_par_path = os.path.join('.', 'DEM_gc_par')
     # -  Width of Geocoding par (reference)
     dem_width = int(read_keyword(dem_par_path, 'width'))
-    # -  nlines of Geocoding par (secondary)
+    # -  #Lines of Geocoding par (secondary)
     dem_nlines = int(read_keyword(dem_par_path, 'nlines'))
     # - geocode interferogram
     pg.geocode_back(ref_raster,
@@ -133,6 +142,15 @@ def main() -> None:
 
     # - Calculate a raster image from data with power-law scaling
     pg.raspwr(ref_raster+'.geo', dem_width)
+
+    # - Save Geocoded Raster as a GeoTiff
+    pg.data2geotiff(ref_raster+'.geo.bmp', dem_par_path, 0,
+                    ref_raster+'.geo.tif')
+
+    # - Change Permission Access to all the files contained inside the
+    # - output directory.
+    for out_file in os.listdir('.'):
+        os.chmod(out_file, 0o0755)
 
 
 # - run main program
