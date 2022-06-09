@@ -51,19 +51,27 @@ def main():
                         type=lambda p: os.path.abspath(os.path.expanduser(p)),
                         default=default_dir,
                         help='Project data directory.')
+
     parser.add_argument('--pair', '-P',
                         type=str,
                         default=None,
                         help='SLC Pair Codes separated by "_" '
                              'reference-secondary')
+
     parser.add_argument('--np', '-N',
                         type=int, default=14,
                         help='Number of Parallel Processes.')
+
     parser.add_argument('--ampcor', '-A',
                         type=str, default='ampcor_large',
                         choices=['ampcor_large', 'ampcor_large2',
                                  'ampcor_superlarge2'],
                         help='AMPCOR Implementation Selected.')
+
+    parser.add_argument('--init_offset', '-I', action='store_true',
+                        help='Determine initial offset between SLC'
+                             'images using correlation of image intensity')
+
     args = parser.parse_args()
 
     if args.pair is None:
@@ -80,7 +88,12 @@ def main():
     sec_slc_path = os.path.join(args.directory, 'slc+par', sec_slc + '.slc')
     sec_par_path = os.path.join(args.directory, 'slc+par', sec_slc + '.par')
     # - output directory
-    out_dir = os.path.join(args.directory, 'pair_diff', ref_slc + '-' + sec_slc)
+    if args.init_offset:
+        out_dir = os.path.join(args.directory, 'pair_diff_io',
+                               ref_slc + '-' + sec_slc)
+    else:
+        out_dir = os.path.join(args.directory, 'pair_diff',
+                               ref_slc + '-' + sec_slc)
     off_par_path = os.path.join(out_dir, ref_slc + '-' + sec_slc + '.par')
 
     if not os.path.isfile(ref_slc_path):

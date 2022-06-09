@@ -1,4 +1,5 @@
-"""
+#!/usr/bin/env python
+u"""
 Enrico Ciraci' - 03/2022
 
 Compute Interferogram for the selected pair.
@@ -24,16 +25,23 @@ def main():
     # - Working Directory directory.
     default_dir = os.path.join(os.path.expanduser('~'), 'Desktop',
                                'iceye_gamma_test', 'output')
+
     parser.add_argument('--directory', '-D',
                         type=lambda p: os.path.abspath(
                             os.path.expanduser(p)),
                         default=default_dir,
                         help='Project data directory.')
+
     parser.add_argument('--pair', '-P',
                         type=str,
                         default=None,
                         help='SLC Pair Codes separated by "_" '
                              'reference-secondary')
+
+    parser.add_argument('--init_offset', '-I', action='store_true',
+                        help='Determine initial offset between SLC'
+                             'images using correlation of image intensity')
+
     args = parser.parse_args()
 
     if args.pair is None:
@@ -46,8 +54,12 @@ def main():
     sec_slc = slc_list[1]
 
     # - Data directory
-    data_dir = os.path.join(args.directory,
-                            'pair_diff', ref_slc + '-' + sec_slc)
+    if args.init_offset:
+        data_dir = os.path.join(args.directory,
+                                'pair_diff_io', ref_slc + '-' + sec_slc)
+    else:
+        data_dir = os.path.join(args.directory,
+                                'pair_diff', ref_slc + '-' + sec_slc)
 
     # - Compute Interferogram Baseline Base on SLCs orbit state vectors
     print('# - Estimate baseline from orbit state vectors (base_orbit)')
@@ -56,11 +68,11 @@ def main():
                   os.path.join(data_dir, f'base{ref_slc}-{sec_slc}.dat'))
 
     # - Add Shebang line to bat file
-    with open(os.path.join(data_dir,
-                           f'bat_inter.{ref_slc}-{sec_slc}'), 'r') as b_fid:
+    with open(os.path.join(data_dir, f'bat_inter.{ref_slc}-{sec_slc}'),
+              'r', encoding='utf8') as b_fid:
         bat_lines = b_fid.readlines()
-    with open(os.path.join(data_dir,
-                           f'./bat_inter.{ref_slc}-{sec_slc}'), 'w') as b_fid:
+    with open(os.path.join(data_dir, f'./bat_inter.{ref_slc}-{sec_slc}'),
+              'w', encoding='utf8') as b_fid:
         print('#!/bin/sh', file=b_fid)
         for f_line in bat_lines:
             print(f_line, file=b_fid)
@@ -107,8 +119,8 @@ def main():
     # - Move offsets calculated by AMPCOR into OFFSETS
     off_file_list = [os.path.join('.', x) for x in os.listdir('.')
                      if '.offmap_' in x]
-    for fm in off_file_list:
-        shutil.move(fm, save_dir)
+    for f_mv in off_file_list:
+        shutil.move(f_mv, save_dir)
 
 
 # - run main program
@@ -116,4 +128,4 @@ if __name__ == '__main__':
     start_time = datetime.datetime.now()
     main()
     end_time = datetime.datetime.now()
-    print("# - Computation Time: {}".format(end_time - start_time))
+    print(f'# - Computation Time: {end_time - start_time}')

@@ -59,6 +59,10 @@ def main():
                         default=default_dir,
                         help='Project data directory.')
 
+    parser.add_argument('--init_offset', '-I', action='store_true',
+                        help='Determine initial offset between SLC'
+                             'images using correlation of image intensity')
+
     args = parser.parse_args()
 
     # - Path to Test directory
@@ -74,7 +78,7 @@ def main():
     # - Offset Computation parameter
     algorithm = 1       # - offset estimation algorithm
     rlks = 1   # - number of interferogram range looks (enter -  for default: 1)
-    azlks = 1  # - number of interferogram azimuth looks (enter - for default: 1)
+    azlks = 1   # - number of interferogram azimuth looks (enter-for default: 1)
     iflg = 0   # -  interactive mode flag (enter -  for default)
 
     # - init_offset - Parameters
@@ -91,7 +95,11 @@ def main():
     out_dir_name = ref + '-' + sec
 
     # - Output Directory
-    out_dir = make_dir(args.directory, 'pair_diff')
+    if args.init_offset:
+        out_dir = make_dir(args.directory, 'pair_diff_io')
+    else:
+        out_dir = make_dir(args.directory, 'pair_diff')
+
     out_dir = make_dir(out_dir, out_dir_name)
     # - output parameter file
     out_par = os.path.join(out_dir, out_dir_name+'.par')
@@ -108,12 +116,13 @@ def main():
 
     # - Determine initial offset between SLC images using correlation
     # - of image intensity
-    pg.init_offset(os.path.join(data_dir, ref+'.slc'),
-                   os.path.join(data_dir, sec+'.slc'),
-                   os.path.join(data_dir, ref+'.par'),
-                   os.path.join(data_dir, sec+'.par'),
-                   out_par, rlks, azlks, rpos, azpos, offr, offaz,
-                   thres, rwin, azwin)
+    if args.init_offset:
+        pg.init_offset(os.path.join(data_dir, ref+'.slc'),
+                       os.path.join(data_dir, sec+'.slc'),
+                       os.path.join(data_dir, ref+'.par'),
+                       os.path.join(data_dir, sec+'.par'),
+                       out_par, rlks, azlks, rpos, azpos, offr, offaz,
+                       thres, rwin, azwin)
 
     # - Create symbolic links for each of the .slc and .par files
     if os.path.isfile(os.path.join(out_dir, ref+'.slc')):

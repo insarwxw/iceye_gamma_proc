@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 """
 Enrico Ciraci' - 03/2022
 
@@ -15,7 +16,7 @@ from utils.path_to_dem import path_to_gimp
 from utils.read_keyword import read_keyword
 
 
-def main():
+def main() -> None:
     # - Read the system arguments listed after the program
     parser = argparse.ArgumentParser(
         description="""Geocode Flattened Interferogram and Remove
@@ -40,6 +41,11 @@ def main():
     parser.add_argument('--filter', '-F', action='store_true',
                         help='Adaptive interferogram filter using the power '
                              'spectral density - (GAMMA - adf)')
+
+    parser.add_argument('--init_offset', '-I', action='store_true',
+                        help='Determine initial offset between SLC'
+                             'images using correlation of image intensity')
+
     args = parser.parse_args()
 
     if args.pair is None:
@@ -52,8 +58,12 @@ def main():
     sec_slc = slc_list[1]
 
     # - Data directory
-    data_dir = os.path.join(args.directory,
-                            'pair_diff', ref_slc + '-' + sec_slc)
+    if args.init_offset:
+        data_dir = os.path.join(args.directory,
+                                'pair_diff_io', ref_slc + '-' + sec_slc)
+    else:
+        data_dir = os.path.join(args.directory,
+                                'pair_diff', ref_slc + '-' + sec_slc)
     # - Change the current working directory
     os.chdir(data_dir)
 
@@ -84,7 +94,7 @@ def main():
     #                            (enter - for none)
     #   u               (output) zenith angle of surface normal vector n
     #                            (angle between z and n, enter - for none)
-    #   v               (output) orientation angle of n (between x and projection
+    #   v               (output) orientation angle of n (between x & projection
     #                            of n in xy plane, enter - for none)
     #   inc             (output) local incidence angle (between surface normal
     #                            and look vector, enter - for none)
@@ -96,8 +106,8 @@ def main():
     #                            enter - for none)
     #   frame           number of DEM pixels to add around area covered by
     #                           SAR image (enter - for default = 8)
-    #   ls_mode         output lookup table values in regions of layover, shadow,
-    #                           or DEM gaps (enter - for default)
+    #   ls_mode         output lookup table values in regions of layover,
+    #                           shadow, or DEM gaps (enter - for default)
     #                     0: set to (0.,0.)
     #                     1: linear interpolation across these regions
     #                           (not available in gc_map2)
@@ -222,4 +232,4 @@ if __name__ == '__main__':
     start_time = datetime.datetime.now()
     main()
     end_time = datetime.datetime.now()
-    print("# - Computation Time: {}".format(end_time - start_time))
+    print(f'# - Computation Time: {end_time - start_time}')

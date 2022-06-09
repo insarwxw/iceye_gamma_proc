@@ -1,8 +1,26 @@
-"""
+#!/usr/bin/env python
+u"""
 Enrico Ciraci' - 03/2022
 
 Compute Double-Difference Interferogram from ICEYE data.
 - Use data expressed in RADAR Coordinates.
+
+PYTHON DEPENDENCIES:
+    argparse: Parser for command-line options, arguments and sub-commands
+           https://docs.python.org/3/library/argparse.html
+    numpy: The fundamental package for scientific computing with Python
+          https://numpy.org/
+    matplotlib: Visualization with Python
+        https://matplotlib.org/
+    tqdm: Progress Bar in Python.
+          https://tqdm.github.io/
+    datetime: Basic date and time types
+           https://docs.python.org/3/library/datetime.html#module-datetime
+
+    py_gamma: GAMMA's Python integration with the py_gamma module
+
+UPDATE HISTORY:
+
 """
 # - Python dependencies
 from __future__ import print_function
@@ -39,13 +57,21 @@ def main():
                         default=default_dir,
                         help='Project data directory.')
 
+    parser.add_argument('--init_offset', '-I', action='store_true',
+                        help='Determine initial offset between SLC'
+                             'images using correlation of image intensity')
+
     args = parser.parse_args()
 
     # - Path to data dir
     igram_ref = args.reference
     igram_sec = args.secondary
-    data_dir_ref = os.path.join(args.directory, 'pair_diff', igram_ref)
-    data_dir_sec = os.path.join(args.directory, 'pair_diff', igram_sec)
+    if args.init_offset:
+        data_dir_ref = os.path.join(args.directory, 'pair_diff_io', igram_ref)
+        data_dir_sec = os.path.join(args.directory, 'pair_diff_io', igram_sec)
+    else:
+        data_dir_ref = os.path.join(args.directory, 'pair_diff', igram_ref)
+        data_dir_sec = os.path.join(args.directory, 'pair_diff', igram_sec)
 
     # - Verify that the selected interferograms exist
     if not os.path.isdir(data_dir_ref):
@@ -84,7 +110,10 @@ def main():
     sec_base = os.path.join(data_dir_sec, 'base' + igram_sec + '.dat')
 
     # - Create Output Directory
-    out_dir = make_dir(args.directory, 'ddiff')
+    if args.init_offset:
+        out_dir = make_dir(args.directory, 'ddiff_io')
+    else:
+        out_dir = make_dir(args.directory, 'ddiff')
     out_dir = make_dir(out_dir, igram_ref + '--' + igram_sec)
     # Change the current working directory
     os.chdir(out_dir)
