@@ -146,6 +146,7 @@ def main() -> None:
     pg.raspwr(ref_raster+'.geo', dem_width)
 
     # - Save Geocoded Raster as a GeoTiff
+    print('geotiff conversion')
     pg.data2geotiff(ref_raster+'.geo.bmp', dem_par_path, 0,
                     ref_raster+'.geo.tif')
 
