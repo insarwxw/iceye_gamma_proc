@@ -1,3 +1,33 @@
+#!/usr/bin/env python
+u"""
+Enrico Ciraci' - 06/2022
+
+Geocode the selected input Raster.
+
+usage: geocode_raster.py [-h] [--directory DIRECTORY] [--raster RASTER] [--par PAR]
+
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --directory DIRECTORY, -D DIRECTORY
+                        Absolute path to working directory.
+  --raster RASTER, -R RASTER
+                        Selected raster file name.
+  --par PAR, -P PAR     Selected raster parameter file.
+
+PYTHON DEPENDENCIES:
+    argparse: Parser for command-line options, arguments and sub-commands
+           https://docs.python.org/3/library/argparse.html
+    numpy: The fundamental package for scientific computing with Python
+          https://numpy.org/
+    datetime: Basic date and time types
+           https://docs.python.org/3/library/datetime.html#module-datetime
+
+    py_gamma: GAMMA's Python integration with the py_gamma module
+
+UPDATE HISTORY:
+
+"""
 # - Python dependencies
 from __future__ import print_function
 import os
