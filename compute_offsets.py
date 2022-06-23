@@ -28,6 +28,7 @@ PYTHON DEPENDENCIES:
     py_gamma: GAMMA's Python integration with the py_gamma module
 
 UPDATE HISTORY:
+    06/22/2022 - Directory parameter converted to positional argument.
 
 """
 # - Python Dependencies
@@ -45,19 +46,13 @@ def main():
         description="""Calculate Preliminary Offsets Parameter."""
     )
     # - Absolute Path to directory containing input data.
-    default_dir = os.path.join(os.path.expanduser('~'), 'Desktop',
-                               'iceye_gamma_test', 'output')
+    parser.add_argument('directory',  help='Project data directory.')
 
     parser.add_argument('reference', type=str,
                         help='Reference SLCs.')
 
     parser.add_argument('secondary', type=str,
                         help='Secondary SLCs.')
-
-    parser.add_argument('--directory', '-D',
-                        type=lambda p: os.path.abspath(os.path.expanduser(p)),
-                        default=default_dir,
-                        help='Project data directory.')
 
     parser.add_argument('--init_offset', '-I', action='store_true',
                         help='Determine initial offset between SLC'
