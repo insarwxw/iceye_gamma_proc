@@ -28,11 +28,13 @@ satellite constellation based on **[GAMMA][]**.
 ### InSAR Workflow
 ```mermaid
   graph LR;
-      A[Compute Offsets]-->D[(Compute Dense Offsets - AMPCOR)];
+      A[Compute Offsets from orbit SV]-->D[(Compute Dense Offsets - AMPCOR)];
       B[Multi Look SLCs]-->D;
       C[Decimate State Vectors]-.->D;
       D-->E[Compute Interferogram];
       E-->F[Computed Double Difference];
+      style D fill:#007b25,stroke:#333,stroke-width:4px
+      style F fill:#0d6ccb,stroke:#333,stroke-width:4px
 
 ```
 
