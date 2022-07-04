@@ -25,7 +25,7 @@ PYTHON DEPENDENCIES:
     py_gamma: GAMMA's Python integration with the py_gamma module
 
 UPDATE HISTORY:
-
+    06/22/2022 - Directory parameter converted to positional argument.
 """
 # - Python Dependencies
 from __future__ import print_function
@@ -44,15 +44,10 @@ def main():
         description="""TEST: Read ICEye Single Look Complex and Parameter."""
     )
     # - Absolute Path to directory containing input data.
-    default_dir = os.path.join(os.path.expanduser('~'), 'Desktop',
-                               'iceye_gamma_test')
-    parser.add_argument('--directory', '-D',
-                        type=lambda p: os.path.abspath(os.path.expanduser(p)),
-                        default=default_dir,
-                        help='Project data directory.')
+    parser.add_argument('directory',  help='Project data directory.')
 
     parser.add_argument('--slc', '-C', type=str,
-                        default=None, help='Process and single SLC.')
+                        default=None, help='Process a single SLC.')
 
     args = parser.parse_args()
 
