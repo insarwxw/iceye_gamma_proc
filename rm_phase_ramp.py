@@ -140,6 +140,9 @@ def main() -> None:
     parser.add_argument('in_interf', type=str, default=None,
                         help='Input Interferogram - Absolute Path')
 
+    parser.add_argument('--coh', '--C', type=str, default=None,
+                        help='Coherence Map - Absolute Path', required=True)
+
     # - Interferogram Parameter File
     parser.add_argument('--par', '-P', type=str,
                         help='Interferogram Parameter File',
@@ -157,8 +160,7 @@ def main() -> None:
     interf_output_path = Path(os.path.join(data_dir, interf_input_path.name
                                            + '_deramped'))
     # - Interferogram Coherence Mask calculated using pg.edf filter
-    coh_mask = Path(os.path.join(data_dir, interf_input_path.name
-                                 + '.coh'))
+    coh_mask = Path(args.coh)
 
     # - extract Reference SLC name
     ref_slc = interf_input_path.name.split('-')[0].replace('coco', '')
