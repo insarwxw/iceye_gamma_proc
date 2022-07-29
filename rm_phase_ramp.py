@@ -319,6 +319,9 @@ def main() -> None:
     # - Show Geocoded interferogram
     pg.rasmph_pwr(interf_output_path, Path(args.pwr), interf_width)
 
+    # - Save Geocoded/Deramped Interferogram in GeoTiff format
+    pg.data2geotiff(par_file, interf_output_path+'.bmp')
+
 
 # - run main program
 if __name__ == '__main__':
