@@ -317,7 +317,7 @@ def main() -> None:
                    dtype='fcomplex')
 
     # - Show Geocoded interferogram
-    pg.rasmph_pwr(Path(args.pwr), interf_width)
+    pg.rasmph_pwr(interf_output_path, Path(args.pwr), interf_width)
 
 
 # - run main program
