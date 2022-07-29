@@ -38,6 +38,7 @@ PYTHON DEPENDENCIES:
     py_gamma: GAMMA's Python integration with the py_gamma module
 
 UPDATE HISTORY:
+07/2022: estimate_phase_ramp() - Updated - Accepts ramp parameters as floats.
 """
 # - Python dependencies
 from __future__ import print_function
@@ -54,8 +55,8 @@ from utils.read_keyword import read_keyword
 from utils.make_dir import make_dir
 
 
-def estimate_phase_ramp(dd_phase_complex: np.ndarray, cycle_r: int,
-                        cycle_c: int, slope_r: int = 1, slope_c: int = 1,
+def estimate_phase_ramp(dd_phase_complex: np.ndarray, cycle_r: float,
+                        cycle_c: float, slope_r: float = 1., slope_c: float = 1.,
                         s_radius: float = 2, s_step: float = 0.1) -> dict:
     """
     Estimate a phase ramp from the provided input interferogram
@@ -98,10 +99,8 @@ def estimate_phase_ramp(dd_phase_complex: np.ndarray, cycle_r: int,
         for r_count, n_cycle_r in tqdm(enumerate(list(n_cycle_r_vect_f)),
                                        total=len(n_cycle_r_vect_f), ncols=60):
             for c_count, n_cycle_c in enumerate(list(n_cycle_c_vect_f)):
-                synth_real = slope_c * (2 * np.pi / n_columns) \
-                             * n_cycle_c * xx_m
-                synth_imag = slope_r * (2 * np.pi / n_rows) \
-                             * n_cycle_r * yy_m
+                synth_real = slope_c * (2 * np.pi / n_columns) * n_cycle_c * xx_m
+                synth_imag = slope_r * (2 * np.pi / n_rows) * n_cycle_r * yy_m
                 synth_phase_plane = synth_real + synth_imag
                 synth_complex = np.exp(1j * synth_phase_plane)
 
@@ -140,11 +139,18 @@ def main() -> None:
     # - Positional Arguments
     parser.add_argument('in_interf', type=str, default=None,
                         help='Input Interferogram - Absolute Path')
-
     # - Interferogram Parameter File
     parser.add_argument('--par', '-P', type=str,
                         help='Interferogram Parameter File',
                         default='DEM_gc_par')
+
+    # - Interferogram Coherence Maps
+    parser.add_argument('--coh', '--C', type=str, default=None,
+                        help='Coherence Map - Absolute Path', required=True)
+
+    # - Interferogram Coherence Maps
+    parser.add_argument('--pwr', '--W', type=str, default=None,
+                        help='Reference SLCs intensity image.', required=True)
     args = parser.parse_args()
     # - Output figures parameters
     fig_format = 'jpeg'
@@ -153,16 +159,12 @@ def main() -> None:
     # - Extract Data Directory from input file path
     data_dir = interf_input_path.parent
     # - Create Output Directory
-    out_dir = make_dir(data_dir, 'DERAMP')
+    out_dir = make_dir(data_dir.__str__(), 'DERAMP')
     # -
     interf_output_path = Path(os.path.join(data_dir, interf_input_path.name
                                            + '_deramped'))
     # - Interferogram Coherence Mask calculated using pg.edf filter
-    coh_mask = Path(os.path.join(data_dir, interf_input_path.name
-                                 + '.filt.coh'))
-
-    # - extract Reference SLC name
-    ref_slc = interf_input_path.name.split('-')[0].replace('coco', '')
+    coh_mask = Path(args.coh)
 
     # - Interferogram Parameter File
     par_file = os.path.join(data_dir, args.par)
@@ -240,11 +242,11 @@ def main() -> None:
 
     # - Search Parameters
     print('\n\n# - Phase Ramp Removal Parameters. Provide first guess: ')
-    n_cycles_r = int(input('# - Number of Cycles along Rows: '))
-    n_cycles_c = int(input('# - Number of Cycles along Columns: '))
-    slope_r = int(input('# - Phase Slope along Rows: '))
-    slope_c = int(input('# - Phase Slope along Columns: '))
-    s_radius = int(input('# - Search Radius - if > 0, use Grid Search: '))
+    n_cycles_r = float(input('# - Number of Cycles along Rows: '))
+    n_cycles_c = float(input('# - Number of Cycles along Columns: '))
+    slope_r = float(input('# - Phase Slope along Rows: '))
+    slope_c = float(input('# - Phase Slope along Columns: '))
+    s_radius = float(input('# - Search Radius - if > 0, use Grid Search: '))
 
     # - Estimate Phase Ramp Parameters
     print('# - Estimating Phase Ramp Parameters.')
@@ -312,8 +314,12 @@ def main() -> None:
                    dtype='fcomplex')
 
     # - Show Geocoded interferogram
-    pg.rasmph_pwr(interf_output_path,
-                  os.path.join(data_dir, f'{ref_slc}.pwr1.geo'), interf_width)
+    pg.rasmph_pwr(interf_output_path, Path(args.pwr), interf_width)
+
+    # - Save Geocoded/Deramped Interferogram in GeoTiff format
+    ref_raster = Path(os.path.join(data_dir, interf_output_path.name + '.bmp'))
+    out_tiff = Path(os.path.join(data_dir, interf_output_path.name + '.tif'))
+    pg.data2geotiff(par_file, ref_raster, 0, out_tiff)
 
 
 # - run main program
