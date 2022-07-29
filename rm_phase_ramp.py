@@ -319,7 +319,8 @@ def main() -> None:
     # - Save Geocoded/Deramped Interferogram in GeoTiff format
     out_tiff = Path(os.path.join(data_dir, interf_output_path.name
                                  + '.bmp'))
-    pg.data2geotiff(par_file, out_tiff)
+    ref_raster = Path(os.path.join(data_dir, interf_output_path.name + '..tif'))
+    pg.data2geotiff(par_file, out_tiff, 0, ref_raster)
 
 
 # - run main program
