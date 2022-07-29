@@ -166,9 +166,6 @@ def main() -> None:
     # - Interferogram Coherence Mask calculated using pg.edf filter
     coh_mask = Path(args.coh)
 
-    # - extract Reference SLC name
-    ref_slc = interf_input_path.name.split('-')[0].replace('coco', '')
-
     # - Interferogram Parameter File
     par_file = os.path.join(data_dir, args.par)
     # - Interferogram Width
@@ -320,7 +317,9 @@ def main() -> None:
     pg.rasmph_pwr(interf_output_path, Path(args.pwr), interf_width)
 
     # - Save Geocoded/Deramped Interferogram in GeoTiff format
-    pg.data2geotiff(par_file, interf_output_path+'.bmp')
+    out_tiff = Path(os.path.join(data_dir, interf_output_path.name
+                                 + '.bmp'))
+    pg.data2geotiff(par_file, out_tiff)
 
 
 # - run main program
