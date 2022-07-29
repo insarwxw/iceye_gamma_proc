@@ -139,14 +139,18 @@ def main() -> None:
     # - Positional Arguments
     parser.add_argument('in_interf', type=str, default=None,
                         help='Input Interferogram - Absolute Path')
-
-    parser.add_argument('--coh', '--C', type=str, default=None,
-                        help='Coherence Map - Absolute Path', required=True)
-
     # - Interferogram Parameter File
     parser.add_argument('--par', '-P', type=str,
                         help='Interferogram Parameter File',
                         default='DEM_gc_par')
+
+    # - Interferogram Coherence Maps
+    parser.add_argument('--coh', '--C', type=str, default=None,
+                        help='Coherence Map - Absolute Path', required=True)
+
+    # - Interferogram Coherence Maps
+    parser.add_argument('--pwr', '--W', type=str, default=None,
+                        help='Reference SLCs intensity image.', required=True)
     args = parser.parse_args()
     # - Output figures parameters
     fig_format = 'jpeg'
@@ -313,8 +317,7 @@ def main() -> None:
                    dtype='fcomplex')
 
     # - Show Geocoded interferogram
-    pg.rasmph_pwr(interf_output_path,
-                  os.path.join(data_dir, f'{ref_slc}.pwr1.geo'), interf_width)
+    pg.rasmph_pwr(Path(args.pwr), interf_width)
 
 
 # - run main program
