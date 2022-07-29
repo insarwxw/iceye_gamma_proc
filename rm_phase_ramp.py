@@ -317,10 +317,9 @@ def main() -> None:
     pg.rasmph_pwr(interf_output_path, Path(args.pwr), interf_width)
 
     # - Save Geocoded/Deramped Interferogram in GeoTiff format
-    out_tiff = Path(os.path.join(data_dir, interf_output_path.name
-                                 + '.bmp'))
-    ref_raster = Path(os.path.join(data_dir, interf_output_path.name + '..tif'))
-    pg.data2geotiff(par_file, out_tiff, 0, ref_raster)
+    ref_raster = Path(os.path.join(data_dir, interf_output_path.name + '.tif'))
+    out_tiff = Path(os.path.join(data_dir, interf_output_path.name + '.bmp'))
+    pg.data2geotiff(par_file, ref_raster, 0, out_tiff)
 
 
 # - run main program
