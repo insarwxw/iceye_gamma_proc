@@ -32,7 +32,7 @@ satellite constellation based on **[GAMMA][]**.
       B[Multi Look SLCs]-->D;
       C[Decimate State Vectors]-.->D;
       D-->E[Compute Interferogram];
-      G-->F[Geocode Interferogram Interferogram];
+      E-->F[Geocode Interferogram Interferogram];
       F-->G[Computed Double Difference];
       style D fill:#007b25,stroke:#333,stroke-width:4px
       style F fill:#0d6ccb,stroke:#333,stroke-width:4px
