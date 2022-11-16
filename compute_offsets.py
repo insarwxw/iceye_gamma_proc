@@ -2,6 +2,8 @@
 u"""
 compute_offsets.py
 
+Written by Enrico Ciraci' (10/2021)
+
 Calculate Preliminary Offsets Parameter File for a pair of ICEye Single Look
 Complex images using  GAMMA's Python integration with the py_gamma module.
 
@@ -10,13 +12,15 @@ usage: compute_offsets.py [-h] [--directory DIRECTORY] reference secondary
 Calculate Preliminary Offsets Parameter.
 
 positional arguments:
-  reference             Reference SLCs.
-  secondary             Secondary SLCs.
+  directory          Project data directory.
+  reference          Reference SLCs.
+  secondary          Secondary SLCs.
 
 optional arguments:
-  -h, --help            show this help message and exit
-  --directory DIRECTORY, -D DIRECTORY
-                        Project data directory.
+  -h, --help         show this help message and exit
+  --init_offset, -I  Determine initial offset between SLCimages using
+                     correlation of image intensity
+
 
 PYTHON DEPENDENCIES:
     argparse: Parser for command-line options, arguments and sub-commands

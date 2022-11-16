@@ -31,5 +31,6 @@ r_off, reference_slc,secondary_slc, resp = 'y'
 FILE_MKDIR,'Save'
 
 ; Display Offsets
-c_off4intf, reference_slc, secondary_slc, rs=30, zs=30, /fill
+; c_off4intf, reference_slc, secondary_slc, rs=30, zs=30, /fill
+c_off4intf, reference_slc, secondary_slc, rs=30, zs=30
 end
