@@ -2,7 +2,7 @@
 import os
 
 
-def path_to_gimp():
+def path_to_gimp() -> str:
     """
     Return absolute path to GIMP DEM and its parameter files.
     :return: str
