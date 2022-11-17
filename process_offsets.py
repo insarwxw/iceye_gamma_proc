@@ -43,9 +43,9 @@ def main() -> None:
 
     # - Process offsets
     r_off_sar(ref_slc, sec_slc)
-    # - Change access permission to preeiminary outputs
+    # - Change access permission to preliminary outputs
     os.chmod('off.off', 0o777)
-    c_off4intf(ref_slc, sec_slc)
+    c_off4intf(ref_slc, sec_slc, range_spacing=30, azimuth_spacing=30)
 
     # - create Save directory
     make_dir(data_dir, 'Save')
