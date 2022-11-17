@@ -43,6 +43,8 @@ def main() -> None:
 
     # - Process offsets
     r_off_sar(ref_slc, sec_slc)
+    # - Change access permission to preeiminary outputs
+    os.chmod('off.off', 0o777)
     c_off4intf(ref_slc, sec_slc)
 
     # - create Save directory
