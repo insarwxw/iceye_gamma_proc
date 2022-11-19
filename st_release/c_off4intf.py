@@ -99,17 +99,15 @@ def c_off4intf(data_dir: str, id1: str, id2: str,
     # - Write Bash Script to run to compute the interferogram
     bat_inter_path = os.path.join(data_dir, 'bat_inter.' + id1 + '-' + id2)
     with open(bat_inter_path, 'w') as i_fid:
-        ref_slc = os.path.join(data_dir, id1 + '.slc')
-        sec_slc = os.path.join(data_dir, id2 + '.slc')
-        ref_par = os.path.join(data_dir, id1 + '.par')
-        sec_par = os.path.join(data_dir, id2 + '.par')
-        offset_par \
-            = os.path.join(data_dir, id1 + '-' + id2 + '.offmap.par.interp')
-        offset_interp \
-            = os.path.join(data_dir, id1 + '-' + id2 + '.offmap.off.new.interp')
-        ref_pwr1 = os.path.join(data_dir, id1 + '.pwr1')
-        sec_par1 = os.path.join(data_dir, id2 + '.pwr2')
-        intef_path = os.path.join(data_dir, 'coco' + id1 + '-' + id2 + '.dat')
+        ref_slc = id1 + '.slc'
+        sec_slc = id2 + '.slc'
+        ref_par = data_dir, id1 + '.par'
+        sec_par = data_dir, id2 + '.par'
+        offset_par = id1 + '-' + id2 + '.offmap.par.interp'
+        offset_interp = id1 + '-' + id2 + '.offmap.off.new.interp'
+        ref_pwr1 = id1 + '.pwr1'
+        sec_par1 = id2 + '.pwr2'
+        intef_path = 'coco' + id1 + '-' + id2 + '.dat'
         nrlk = int(range_spacing / 2)
         nazlk = int(azimuth_spacing / 2)
         rstep = int(range_spacing)
