@@ -44,12 +44,6 @@ def r_off_sar(data_dir: str, id1: str, id2: str, poly_order: int = 3) -> None:
 
     # - Unpack Offsets Map
     x, offx, y, offy, snr0, _, _, _ = np.loadtxt(off_map_path, unpack=True)
-    # try:
-    #     x, offx, y, offy, snr0, _, _, _ = np.loadtxt(off_map_path, unpack=True)
-    # except:
-    #     # - Not really clear what exception this operation is supposed to catch
-    #     print('Something wrong with off.off (offsetmap)')
-    #     return
 
     # - Evaluate Offsets Domain extremes
     xmin = min(x)
@@ -113,11 +107,10 @@ def r_off_sar(data_dir: str, id1: str, id2: str, poly_order: int = 3) -> None:
     with open(os.path.join(data_dir, id1 + '-' + id2 + '.offmap.off'),
               'w') as f_out:
         off_map.byteswap().tofile(f_out)
-    print(os.path.isfile(os.path.join(data_dir, id1 + '-' + id2 + '.offmap.off')))
-    print('# - Change Access Permission.')
-    os.chmod(os.path.join(data_dir, id1 + '-' + id2 + '.offmap.off'), 0o0755)
+    print(os.path.isfile(os.path.join(data_dir, id1 + '-'
+                                      + id2 + '.offmap.off')))
 
-    print('# - Save SNR.')
+    print('# - Save SNR Map.')
     with open(os.path.join(data_dir, id1 + '-' + id2 + '.offmap.snr'),
               'w') as s_out:
         snr_map.byteswap().tofile(s_out)
