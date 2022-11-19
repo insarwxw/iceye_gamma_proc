@@ -30,11 +30,11 @@ def r_off_sar(data_dir: str, id1: str, id2: str, poly_order: int = 3) -> None:
         os.remove(off_map_path)
 
     # - Concatenate all available offset files content into a single file
-    os.system("ls " + id1 + "-" + id2
-              + ".offmap_?  | xargs cat | grep -v '*' |"
+    os.system("ls " + os.path.join(data_dir, id1 + "-" + id2 + ".offmap_?")
+              + "  | xargs cat | grep -v '*' |"
                 f" awk 'length($0)>80' >> {off_map_path}")
-    os.system("ls " + id1 + "-" + id2
-              + ".offmap_??  | xargs cat | grep -v '*' "
+    os.system("ls " + os.path.join(data_dir, id1 + "-" + id2 + ".offmap_??")
+              + "  | xargs cat | grep -v '*' "
                 f"| awk 'length($0)>80' >> {off_map_path}")
 
     # - Verify that the concatenated file has the right format.
