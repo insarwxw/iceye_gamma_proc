@@ -113,6 +113,9 @@ def r_off_sar(data_dir: str, id1: str, id2: str, poly_order: int = 3) -> None:
     with open(os.path.join(data_dir, id1 + '-' + id2 + '.offmap.off'),
               'w') as f_out:
         off_map.byteswap().tofile(f_out)
+    print(os.path.isfile(os.path.join(data_dir, id1 + '-' + id2 + '.offmap.off')))
+    print('# - Change Access Permission.')
+    os.chmod(os.path.join(data_dir, id1 + '-' + id2 + '.offmap.off'), 0o0755)
 
     print('# - Save SNR.')
     with open(os.path.join(data_dir, id1 + '-' + id2 + '.offmap.snr'),
