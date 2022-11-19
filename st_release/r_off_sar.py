@@ -1,19 +1,23 @@
 import numpy as np
 import os
 import py_gamma as pg
-from fparam import off_param, isp_param
+from st_release.fparam import off_param, isp_param
 
 
-def r_off_sar(id1: str, id2: str) -> None:
+def r_off_sar(data_dir: str, id1: str, id2: str, poly_order: int = 3) -> None:
 
-    # - Reference Offsets Map
-    off_in = id1 + '-' + id2 + '.offmap_1.in'
-    # - Full Offsets Map Name
-    off_map = 'off.off'
+    # - Load the firs available offset parameter file and
+    # - extract AMPCOR calculation parameters.
+    off_in = os.path.join(data_dir, id1 + '-' + id2 + '.offmap_1.in')
+
+    # - Full Domain Offsets Map file name
+    off_map_name = 'full_offsets_map.off'
+    off_map_path = os.path.join(data_dir, 'full_offsets_map.off')
 
     with open(off_in, 'r') as f:
         lines = f.readlines()
-    # - Read Offset Map Parameters
+
+    # - Read Offsets Map Parameters
     y_posting = np.int32((lines[4].split()[2]))
     x_posting = np.int32((lines[5].split()[2]))
     r0 = np.int32((lines[9].split()[0]))
@@ -22,54 +26,60 @@ def r_off_sar(id1: str, id2: str) -> None:
     ofw_h = np.int32((lines[6].split()[1]))
 
     # - If previously calculated summary offset map exists, delete it
-    if os.path.isfile(os.path.join('.', off_map)):
-        os.remove(os.path.join('.', off_map))
-    # - Compute a new offset summary
-    os.system("ls " + id1 + "-" + id2 + ".offmap_?  | xargs cat | grep -v '*' |"
-                                        " awk 'length($0)>80' >> off.off")
-    os.system("ls " + id1 + "-" + id2 + ".offmap_??  | xargs cat | grep -v '*'"
-                                        " | awk 'length($0)>80' >> off.off")
+    if os.path.isfile(off_map_path):
+        os.remove(off_map_path)
 
-    # -
-    if os.stat(off_map).st_size < 830:
-        print('Too few lines in off.off. File is (almost) empty..')
-        return
+    # - Concatenate all available offset files content into a single file
+    os.system("ls " + id1 + "-" + id2
+              + ".offmap_?  | xargs cat | grep -v '*' |"
+                f" awk 'length($0)>80' >> {off_map_path}")
+    os.system("ls " + id1 + "-" + id2
+              + ".offmap_??  | xargs cat | grep -v '*' "
+                f"| awk 'length($0)>80' >> {off_map_path}")
 
-    try:
-        x, offx, y, offy, snr0, _, _, _ = np.loadtxt('off.off', unpack=True)
-    except:
-        print('Something wrong with off.off (offsetmap)')
-        return
+    # - Verify that the concatenated file has the right format.
+    if os.stat(off_map_path).st_size < 830:
+        raise ValueError(f"Too few lines in {off_map_name}. "
+                         f"File is (almost) empty.")
 
+    # - Unpack Offsets Map
+    x, offx, y, offy, snr0, _, _, _ = np.loadtxt(off_map_path, unpack=True)
+    # try:
+    #     x, offx, y, offy, snr0, _, _, _ = np.loadtxt(off_map_path, unpack=True)
+    # except:
+    #     # - Not really clear what exception this operation is supposed to catch
+    #     print('Something wrong with off.off (offsetmap)')
+    #     return
+
+    # - Evaluate Offsets Domain extremes
     xmin = min(x)
     xmax = max(x)
     ymin = min(y)
     ymax = max(y)
+    print('# - Offsets Domain Extremes:')
+    print(f'# - xmin: {xmin}, xmax: {xmax}, ymin: {ymin}, ymax: {ymax}')
 
-    print('xmin, xmax, ymin, ymax')
-    print(xmin, xmax, ymin, ymax)
-
+    # - Compute Total Offsets Map Dimensions
     n_pix = np.int32((xmax - xmin) / x_posting) + 1
     n_rec = np.int32((ymax - ymin) / y_posting) + 1
-
     print(f'Offset map dimensions: [{n_pix}, {n_rec}]')
 
-    # - x and y axis are transposed compared to IDL
-    off = np.zeros([n_rec, n_pix], dtype=np.complex64)
-
+    # - Columns and rows are transposed compared to IDL
+    off_map = np.zeros([n_rec, n_pix], dtype=np.complex64)
+    # - off_map index values
     x = np.int32((x - xmin) / x_posting)
     y = np.int32((y - ymin) / y_posting)
+    # - Fill the Offsets Map [Note: Complex Offsets]
+    off_map[y, x] = offx + offy * 1j
+    # - Offsets Signal to Noise Ratio Map
+    snr_map = np.zeros([n_rec, n_pix], dtype=np.float32)
+    snr_map[y, x] = snr0
 
-    off[y, x] = offx + offy * 1j
-
-    snr = np.zeros([n_rec, n_pix], dtype=np.float32)
-    snr[y, x] = snr0
-
-    # - Load ISP parameters
+    # - Load Reference SLC ISP parameters
     p1 = isp_param()
-    p1.load(id1 + '.par')
+    p1.load(os.path.join(data_dir, id1 + '.par'))
 
-    # - Load Offset Parameters
+    # - Generate Offsets Map Parameters File
     poff = off_param()
     poff.r0 = np.int32(r0)
     poff.z0 = np.int32(z0)
@@ -95,52 +105,40 @@ def r_off_sar(id1: str, id2: str) -> None:
     poff.rgsp_i = x_posting * p1.rgsp
     poff.azsp_i = y_posting * p1.azsp
 
-    p1 = isp_param()
-    p1.load(id1 + '.par')
+    # - Update Offsets Parameter File Content
+    poff.write(os.path.join(data_dir, id1 + '-' + id2 + '.offmap.par'))
 
-    poff.write(id1 + '-' + id2 + '.offmap.par')
+    print(f'# - Save {off_map_name}')
+    print(f'# - {off_map_name} data type :', off_map.dtype)
+    with open(os.path.join(data_dir, id1 + '-' + id2 + '.offmap.off'),
+              'w') as f_out:
+        off_map.byteswap().tofile(f_out)
 
-    print('Save off ..')
-    print('dtype off:', off.dtype)
-    with open(id1 + '-' + id2 + '.offmap.off', 'w') as f_out:
-        off.byteswap().tofile(f_out)
+    print('# - Save SNR.')
+    with open(os.path.join(data_dir, id1 + '-' + id2 + '.offmap.snr'),
+              'w') as s_out:
+        snr_map.byteswap().tofile(s_out)
 
-    print('Save snr ..')
-    with open(id1 + '-' + id2 + '.offmap.snr', 'w') as s_out:
-        snr.byteswap().tofile(s_out)
+    # - Run Gamma offset_fit: Range and azimuth offset polynomial estimation
+    pg.offset_fit(os.path.join(data_dir, id1 + '-' + id2 + '.offmap.off'),
+                  os.path.join(data_dir, id1 + '-' + id2 + '.offmap.snr'),
+                  os.path.join(data_dir, id1 + '-' + id2 + '.offmap.par'),
+                  os.path.join(data_dir, 'coffs'),
+                  os.path.join(data_dir, 'coffsets'), '-', poly_order, 0)
 
-    pg.offset_fit('offset_fit ' + id1 + '-' + id2 + '.offmap.off',
-                  id1 + '-' + id2 + '.offmap.snr',
-                  id1 + '-' + id2 + '.offmap.par',
-                  'to', 't1', '-', '3')
-    # cmd = 'offset_fit ' + id1 + '-' + id2 + '.offmap.off ' + id1 + '-' + id2 + '.offmap.snr ' + id1 + '-' + id2 + '.offmap.par to t1 - 3'
-    # print(cmd)
-    # os.system(cmd)
+    # - Run Gamma offset_sub: Subtraction of polynomial
+    # - from range and azimuth offset estimates
+    pg.offset_sub(os.path.join(data_dir, id1 + '-' + id2 + '.offmap.off '),
+                  os.path.join(data_dir, id1 + '-' + id2 + '.offmap.par'),
+                  os.path.join(data_dir, id1 + '-' + id2 + '.offmap.off.new'))
 
-    # cmd = 'offset_sub ' + id1 + '-' + id2 + '.offmap.off ' + id1 + '-' + id2 + '.offmap.par ' + id1 + '-' + id2 + '.offmap.off.new'
-    # print(cmd)
-    # try:
-    #     os.system(
-    #         '/u/mawson-r0/eric/GAMMA/GAMMA_SOFTWARE-20190613/ISP/bin/' + cmd)
-    # except:
-    #     # offset_sub does not exist on the default gamma installation path
-    #     os.system(
-    #         '/u/mawson-r0/eric/GAMMA/GAMMA_SOFTWARE-20190613/ISP/bin/' + cmd)
-    pg.offset_sub('offset_sub ' + id1 + '-' + id2 + '.offmap.off',
-                  id1 + '-' + id2 + '.offmap.par',
-                  id1 + '-' + id2 + '.offmap.off.new')
+    # - Run GAMMA rasmph: Generate 8-bit raster graphics image of the phase
+    # - and intensity of complex data
+    pg.rasmph(os.path.join(data_dir, id1 + '-' + id2 + '.offmap.off.new'),
+              poff.npix, '-', '-', '-', '-', '-', '-', '-',
+              os.path.join(data_dir,id1 + '-' + id2 + '.offmap.off.new.bmp'))
 
-    # cmd = 'rasmph ' + id1 + '-' + id2 + '.offmap.off.new ' + str(
-    #     poff.npix) + ' - - - - - - - ' + id1 + '-' + id2 + '.offmap.off.new.bmp'
-    # print(cmd)
-    # os.system(cmd)
-    pg.rasmph('rasmph ' + id1 + '-' + id2 + '.offmap.off.new',
-              str(poff.npix), '-', '-', '-', '-', '-', '-', '-',
-              id1 + '-' + id2 + '.offmap.off.new.bmp')
-
-    # cmd = 'rm ' + id1 + '-' + id2 + '.offmap.off.new'
-    # print(cmd)
-    # os.system(cmd)
+    # - Remove temporary offset map obtained using Gamma offset_sub
     os.remove(id1 + '-' + id2 + '.offmap.off.new')
 
     return
