@@ -15,12 +15,11 @@ def c_off4intf(data_dir: str, id1: str, id2: str,
     # - Read Offsets Map Parameters and extract
     # - azimuth and range pixel spacing.
     poff = off_param()
-    print(os.path.join(data_dir, id1 + '-' + id2 + '.offmap.par'))
     poff.load(os.path.join(data_dir, id1 + '-' + id2 + '.offmap.par'))
     range_spacing = poff.rgsp
     azimuth_spacing = poff.azsp
-    print('Range spacing :', range_spacing)
-    print('Azimuth spacing :', azimuth_spacing)
+    print('# - Range spacing :', range_spacing)
+    print('# - Azimuth spacing :', azimuth_spacing)
 
     # - Read Offsets Map
     offset_map_path = os.path.join(data_dir, id1 + '-' + id2 + '.offmap.off')
@@ -74,7 +73,7 @@ def c_off4intf(data_dir: str, id1: str, id2: str,
     poff.nrec = int(poff.nrec / poff.azsp * azimuth_spacing)
     poff.npix = int(poff.npix / poff.rgsp * range_spacing)
 
-    print(f'# -Interferogram Grid Shape: [{poff.nrec},{poff.npix}]')
+    print(f'# - Interferogram Grid Shape: [{poff.nrec},{poff.npix}]')
     poff.rgsp = range_spacing
     poff.azsp = azimuth_spacing
     poff.x_end = poff.x_start + (poff.npix - 1) * poff.rgsp
@@ -105,6 +104,8 @@ def c_off4intf(data_dir: str, id1: str, id2: str,
         ref_par = os.path.join(data_dir, id1 + '.par')
         sec_par = os.path.join(data_dir, id2 + '.par')
         offset_par \
+            = os.path.join(data_dir, id1 + '-' + id2 + '.offmap.par.interp')
+        offset_interp \
             = os.path.join(data_dir, id1 + '-' + id2 + '.offmap.off.new.interp')
         ref_pwr1 = os.path.join(data_dir, id1 + '.pwr1')
         sec_par1 = os.path.join(data_dir, id2 + '.pwr2')
@@ -114,8 +115,8 @@ def c_off4intf(data_dir: str, id1: str, id2: str,
         rstep = int(range_spacing)
         zstep = int(azimuth_spacing)
         i_fid.write(f'{interf_bin} {ref_slc} {sec_slc} {ref_par} {sec_par} '
-                    f'{offset_par} {ref_pwr1} {sec_par1} {intef_path} '
-                    f'{nrlk} {nazlk} {rstep} {zstep}')
+                    f'{offset_par} {offset_interp} {ref_pwr1} {sec_par1} '
+                    f'{intef_path} {nrlk} {nazlk} {rstep} {zstep}')
 
     # - Change access permissions to the bash script
     os.chmod(bat_inter_path, 0o777)
