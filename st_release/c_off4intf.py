@@ -101,8 +101,8 @@ def c_off4intf(data_dir: str, id1: str, id2: str,
     with open(bat_inter_path, 'w') as i_fid:
         ref_slc = id1 + '.slc'
         sec_slc = id2 + '.slc'
-        ref_par = data_dir, id1 + '.par'
-        sec_par = data_dir, id2 + '.par'
+        ref_par = id1 + '.par'
+        sec_par = id2 + '.par'
         offset_par = id1 + '-' + id2 + '.offmap.par.interp'
         offset_interp = id1 + '-' + id2 + '.offmap.off.new.interp'
         ref_pwr1 = id1 + '.pwr1'
