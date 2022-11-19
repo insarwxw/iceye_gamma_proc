@@ -136,10 +136,10 @@ def r_off_sar(data_dir: str, id1: str, id2: str, poly_order: int = 3) -> None:
     # - and intensity of complex data
     pg.rasmph(os.path.join(data_dir, id1 + '-' + id2 + '.offmap.off.new'),
               poff.npix, '-', '-', '-', '-', '-', '-', '-',
-              os.path.join(data_dir,id1 + '-' + id2 + '.offmap.off.new.bmp'))
+              os.path.join(data_dir, id1 + '-' + id2 + '.offmap.off.new.bmp'))
 
     # - Remove temporary offset map obtained using Gamma offset_sub
-    os.remove(id1 + '-' + id2 + '.offmap.off.new')
+    os.remove(os.path.join(data_dir, id1 + '-' + id2 + '.offmap.off.new'))
 
     return
 
