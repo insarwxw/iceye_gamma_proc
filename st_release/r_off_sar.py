@@ -131,7 +131,7 @@ def r_off_sar(data_dir: str, id1: str, id2: str, poly_order: int = 3) -> None:
 
     # - Run Gamma offset_sub: Subtraction of polynomial
     # - from range and azimuth offset estimates
-    pg.offset_sub(os.path.join(data_dir, id1 + '-' + id2 + '.offmap.off '),
+    pg.offset_sub(os.path.join(data_dir, id1 + '-' + id2 + '.offmap.off'),
                   os.path.join(data_dir, id1 + '-' + id2 + '.offmap.par'),
                   os.path.join(data_dir, id1 + '-' + id2 + '.offmap.off.new'))
 
