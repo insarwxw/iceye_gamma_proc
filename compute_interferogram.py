@@ -73,7 +73,8 @@ def main():
         bat_lines = b_fid.readlines()
     with open(os.path.join(data_dir, f'./bat_inter.{ref_slc}-{sec_slc}'),
               'w', encoding='utf8') as b_fid:
-        print('#!/bin/sh', file=b_fid)
+        if not bat_lines[0].startswith('#!'):
+            print('#!/bin/sh', file=b_fid)
         for f_line in bat_lines:
             print(f_line, file=b_fid)
 
