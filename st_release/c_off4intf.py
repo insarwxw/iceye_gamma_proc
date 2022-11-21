@@ -1,9 +1,9 @@
 import os
 import numpy as np
-from st_release.fparam import off_param, isp_param
-from median_filter_off import median_filter_off
 from scipy.signal import medfilt
-from congrid2d import congrid2d
+from st_release.fparam import off_param, isp_param
+from st_release.madian_filter_off import median_filter_off
+from st_release.congrid2d import congrid2d
 
 import py_gamma as pg
 
@@ -31,17 +31,19 @@ def c_off4intf(data_dir: str, id1: str, id2: str,
         * (np.arange(poff.npix, dtype='float32').reshape([1, poff.npix]))
     y = np.ones([1, poff.npix], dtype='float32') \
         * np.arange(poff.nrec, dtype='float32').reshape([poff.nrec, 1])
+
     # - Generate Range and Azimuth axes
     # - Note multiplication for pixel spacing.
     x_var = poff.x_start + x * poff.rgsp
     y_var = poff.y_start + y * poff.azsp
+
     # - Generate Polynomial Ramp
     ramp_offx = poff.xoff[0] + x_var * poff.xoff[1] + y_var * poff.xoff[2]
     ramp_offy = poff.yoff[0] + x_var * poff.yoff[1] + y_var * poff.yoff[2]
 
     # - Remove Erroneous Offsets s by apply Median Filter.
-    medfilt_size = 9
-    medthre = 1
+    medfilt_size = 9        # - Median filter Kernel Size
+    medthre = 1             # - Median filter Threshold
     mask = median_filter_off(off_map, size=medfilt_size, thre=medthre)
 
     # - Set Outliers Mask borders equal to 1

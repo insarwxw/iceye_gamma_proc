@@ -63,6 +63,7 @@ def r_off_sar(data_dir: str, id1: str, id2: str, poly_order: int = 3) -> None:
     # - off_map index values
     x = np.int32((x - xmin) / x_posting)
     y = np.int32((y - ymin) / y_posting)
+
     # - Fill the Offsets Map [Note: Complex Offsets]
     off_map[y, x] = offx + offy * 1j
     # - Offsets Signal to Noise Ratio Map
@@ -107,8 +108,6 @@ def r_off_sar(data_dir: str, id1: str, id2: str, poly_order: int = 3) -> None:
     with open(os.path.join(data_dir, id1 + '-' + id2 + '.offmap.off'),
               'w') as f_out:
         off_map.byteswap().tofile(f_out)
-    print(os.path.isfile(os.path.join(data_dir, id1 + '-'
-                                      + id2 + '.offmap.off')))
 
     print('# - Save SNR Map.')
     with open(os.path.join(data_dir, id1 + '-' + id2 + '.offmap.snr'),
@@ -119,8 +118,7 @@ def r_off_sar(data_dir: str, id1: str, id2: str, poly_order: int = 3) -> None:
     pg.offset_fit(os.path.join(data_dir, id1 + '-' + id2 + '.offmap.off'),
                   os.path.join(data_dir, id1 + '-' + id2 + '.offmap.snr'),
                   os.path.join(data_dir, id1 + '-' + id2 + '.offmap.par'),
-                  os.path.join(data_dir, 'coffs'),
-                  os.path.join(data_dir, 'coffsets'), '-', poly_order, 0)
+                  '-', '-', '-', poly_order, 0)
 
     # - Run Gamma offset_sub: Subtraction of polynomial
     # - from range and azimuth offset estimates
@@ -136,9 +134,3 @@ def r_off_sar(data_dir: str, id1: str, id2: str, poly_order: int = 3) -> None:
 
     # - Remove temporary offset map obtained using Gamma offset_sub
     os.remove(os.path.join(data_dir, id1 + '-' + id2 + '.offmap.off.new'))
-
-    return
-
-
-
-
