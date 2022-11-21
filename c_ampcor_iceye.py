@@ -74,11 +74,9 @@ def main():
 
     args = parser.parse_args()
 
-
     # - Reference and Secondary SLCs
-    slc_list = args.pair.split('-')
-    ref_slc = slc_list[0]
-    sec_slc = slc_list[1]
+    ref_slc = args.reference
+    sec_slc = args.secondary
     # -
     ref_slc_path = os.path.join(args.directory, ref_slc + '.slc')
     ref_par_path = os.path.join(args.directory, ref_slc + '.par')
