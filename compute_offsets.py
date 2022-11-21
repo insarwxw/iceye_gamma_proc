@@ -35,6 +35,7 @@ PYTHON DEPENDENCIES:
 
 UPDATE HISTORY:
     06/22/2022 - Directory parameter converted to positional argument.
+        By default, the current directory is used as working directory.
 
 """
 # - Python Dependencies
