@@ -78,7 +78,7 @@ def main() -> None:
     args = parser.parse_args()
 
     # - Read SLC par file
-    slc_par_path = os.path.join(args.directory, 'slc+par', args.slc+'.par')
+    slc_par_path = os.path.join(args.directory, args.slc+'.par')
 
     # - Verify if a decimated version of the state vector parameter file
     # - already exists inside the data directory.
