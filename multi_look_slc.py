@@ -8,11 +8,15 @@ usage: multi_look_slc.py [-h] [--directory DIRECTORY] [--slc SLC]
 
 Calculate a multi-looked intensity (MLI) image from the selected ICEye SLCs.
 
-optional arguments:
+positional arguments:
+  slc                   Calculate a multi-look intensity (MLI) image
+                        from an SLC image.
+
+options:
   -h, --help            show this help message and exit
   --directory DIRECTORY, -D DIRECTORY
                         Project data directory.
-  --slc SLC, -C SLC     Process and single SLC.
+
 
 PYTHON DEPENDENCIES:
     argparse: Parser for command-line options, arguments and sub-commands
@@ -24,7 +28,7 @@ PYTHON DEPENDENCIES:
     py_gamma: GAMMA's Python integration with the py_gamma module
 
 UPDATE HISTORY:
-
+11/21/2022: slc - converted from optional argument to positional argument.
 """
 # - Python Dependencies
 from __future__ import print_function
@@ -41,15 +45,16 @@ def main():
         image from the selected ICEye SLCs."""
     )
     # - Absolute Path to directory containing input data.
-    default_dir = os.path.join(os.path.expanduser('~'), 'Desktop',
-                               'iceye_gamma_test', 'output', 'slc+par')
+    default_dir = os.getcwd()
+
+    parser.add_argument('slc', type=str, default=None,
+                        help='Calculate a multi-look intensity (MLI) '
+                             'image from an SLC image.')
+
     parser.add_argument('--directory', '-D',
                         type=lambda p: os.path.abspath(os.path.expanduser(p)),
                         default=default_dir,
                         help='Project data directory.')
-
-    parser.add_argument('--slc', '-C', type=str,
-                        default=None, help='Process and single SLC.')
 
     args = parser.parse_args()
 
