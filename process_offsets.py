@@ -1,10 +1,10 @@
+#!/usr/bin/env python
 u"""
 process_offsets.py
 Written by Enrico Ciraci' (11/2022)
 
 Preliminary Python implementation of process_offsets.pro in Python.
 """
-
 # - Python Dependencies
 from __future__ import print_function
 import os

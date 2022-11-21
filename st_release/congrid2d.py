@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 from osgeo import gdal, osr
 import numpy as np
 
