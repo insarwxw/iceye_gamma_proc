@@ -115,16 +115,18 @@ def c_off4intf(data_dir: str, id1: str, id2: str,
         print(len(ind_xoff), len(ind_yoff))
         fill_kernel_size = 15
         f_kernel = np.ones((fill_kernel_size, fill_kernel_size))
-        # while len(ind_xoff) & len(ind_yoff):
-        xoff_masked \
-            = interpolate_replace_nans(xoff_masked, f_kernel,
-                                       convolve=convolve, boundary='extend')
-        yoff_masked \
-            = interpolate_replace_nans(yoff_masked, f_kernel,
-                                       convolve=convolve, boundary='extend')
-        ind_xoff = np.isnan(xoff_masked)
-        ind_yoff = np.isnan(yoff_masked)
-        print(len(ind_xoff), len(ind_yoff))
+        while len(np.nonzero(np.isnan(ind_xoff)[0])) & \
+                len(np.nonzero(np.isnan(ind_yoff)[0])):
+            xoff_masked \
+                = interpolate_replace_nans(xoff_masked, f_kernel,
+                                           convolve=convolve, boundary='extend')
+            yoff_masked \
+                = interpolate_replace_nans(yoff_masked, f_kernel,
+                                           convolve=convolve, boundary='extend')
+            ind_xoff = np.isnan(xoff_masked)
+            ind_yoff = np.isnan(yoff_masked)
+            print(len(np.nonzero(np.isnan(ind_xoff)[0])),
+                  len(np.nonzero(np.isnan(ind_xoff)[0])))
 
     # - Subtract Polynomial Ramp from Offsets Map
     xoff_masked -= ramp_offx
