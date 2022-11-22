@@ -123,8 +123,12 @@ def c_off4intf(data_dir: str, id1: str, id2: str,
     poff.y_end = poff.y_start + (poff.nrec - 1) * poff.azsp
 
     # - Interpolate Offsets to Interferogram Grid
-    x_off = congrid2d(xoff_masked.filled(0), [poff.nrec, poff.npix], NoData=0)
-    y_off = congrid2d(yoff_masked.filled(0), [poff.nrec, poff.npix], NoData=0)
+    # x_off = congrid2d(xoff_masked.filled(0), [poff.nrec, poff.npix], NoData=0)
+    # y_off = congrid2d(yoff_masked.filled(0), [poff.nrec, poff.npix], NoData=0)
+    xoff_masked[np.inan(xoff_masked)] = 0
+    yoff_masked[np.inan(yoff_masked)] = 0
+    x_off = congrid2d(xoff_masked, [poff.nrec, poff.npix], NoData=0)
+    y_off = congrid2d(yoff_masked, [poff.nrec, poff.npix], NoData=0)
 
     # - Save Offsets as a complex array
     off_masked = x_off + 1j * y_off
