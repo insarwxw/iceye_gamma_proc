@@ -3,7 +3,7 @@
 import os
 import numpy as np
 from scipy.signal import medfilt
-from astropy.convolution import convolve
+from astropy.convolution import convolve, interpolate_replace_nans
 from st_release.fparam import off_param, isp_param
 from st_release.madian_filter_off import median_filter_off
 from st_release.congrid2d import congrid2d
@@ -15,6 +15,7 @@ def c_off4intf(data_dir: str, id1: str, id2: str,
                range_spacing=None, azimuth_spacing=None,
                filter_strategy=1,
                smooth=False,
+               fill=False,
                interf_bin: str = '$ST_PATH/COMMON/GAMMA_OLD'
                                  '/bin/interf_offset64b'
                ) -> None:
@@ -30,6 +31,7 @@ def c_off4intf(data_dir: str, id1: str, id2: str,
     if azimuth_spacing is None:
         azimuth_spacing = int(150. / poff.azsp)
 
+    print('# - Running c_off4int.py')
     print('# - Range spacing :', range_spacing)
     print('# - Azimuth spacing :', azimuth_spacing)
 
@@ -97,14 +99,18 @@ def c_off4intf(data_dir: str, id1: str, id2: str,
     else:
         raise ValueError('# - Unknown filtering strategy selected.')
 
+    smth_kernel_size = 7
+    kernel = np.ones((smth_kernel_size, smth_kernel_size))
     # - Smooth Offsets
     if smooth:
-        smth_kernel_size = 7
-        kernel = np.ones((smth_kernel_size, smth_kernel_size))
         xoff_masked \
             = convolve(xoff_masked, kernel)
         yoff_masked \
             = convolve(yoff_masked, kernel)
+    # - Fill Missing Values
+    if fill:
+        xoff_masked = interpolate_replace_nans(xoff_masked, kernel)
+        yoff_masked = interpolate_replace_nans(yoff_masked, kernel)
 
     # - Subtract Polynomial Ramp from Offsets Map
     xoff_masked -= ramp_offx
