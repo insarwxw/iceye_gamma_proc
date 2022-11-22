@@ -45,7 +45,7 @@ def main() -> None:
     # -
     c_off4intf(data_dir, ref_slc, sec_slc,
                range_spacing=30, azimuth_spacing=30,
-               filter_strategy=2, fill=True,
+               filter_strategy=2, fill=False,
                smooth=True)
 
     # - create Save directory
