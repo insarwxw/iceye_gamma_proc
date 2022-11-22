@@ -109,8 +109,11 @@ def c_off4intf(data_dir: str, id1: str, id2: str,
             = convolve(yoff_masked, kernel, boundary='extend')
     # - Fill Missing Values
     if fill:
-        xoff_masked = interpolate_replace_nans(xoff_masked, kernel)
-        yoff_masked = interpolate_replace_nans(yoff_masked, kernel)
+        print('# - Filling Gaps.')
+        xoff_masked \
+            = interpolate_replace_nans(xoff_masked, kernel, convolve='convolve')
+        yoff_masked \
+            = interpolate_replace_nans(yoff_masked, kernel, convolve='convolve')
 
     # - Subtract Polynomial Ramp from Offsets Map
     xoff_masked -= ramp_offx
