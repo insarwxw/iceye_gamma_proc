@@ -104,9 +104,9 @@ def c_off4intf(data_dir: str, id1: str, id2: str,
     # - Smooth Offsets
     if smooth:
         xoff_masked \
-            = convolve(xoff_masked, kernel)
+            = convolve(xoff_masked, kernel, boundary='extend')
         yoff_masked \
-            = convolve(yoff_masked, kernel)
+            = convolve(yoff_masked, kernel, boundary='extend')
     # - Fill Missing Values
     if fill:
         xoff_masked = interpolate_replace_nans(xoff_masked, kernel)
