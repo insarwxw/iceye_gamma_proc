@@ -43,7 +43,10 @@ def main() -> None:
     r_off_sar(data_dir, ref_slc, sec_slc)
 
     # -
-    c_off4intf(data_dir, ref_slc, sec_slc)
+    c_off4intf(data_dir, ref_slc, sec_slc,
+               range_spacing=30, azimuth_spacing=30,
+               filter_strategy=2,
+               smooth=True)
 
     # - create Save directory
     make_dir(data_dir, 'Save')
