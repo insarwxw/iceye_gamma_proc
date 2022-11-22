@@ -102,9 +102,9 @@ def c_off4intf(data_dir: str, id1: str, id2: str,
         smth_kernel_size = 7
         kernel = np.ones((smth_kernel_size, smth_kernel_size))
         xoff_masked \
-            = convolve(xoff_masked, kernel, mode='same', method='direct')
+            = convolve(xoff_masked, kernel)
         yoff_masked \
-            = convolve(yoff_masked, kernel, mode='same', method='direct')
+            = convolve(yoff_masked, kernel)
 
     # - Subtract Polynomial Ramp from Offsets Map
     xoff_masked -= ramp_offx
