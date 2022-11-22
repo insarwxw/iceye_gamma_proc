@@ -116,10 +116,10 @@ def c_off4intf(data_dir: str, id1: str, id2: str,
         ind_yoff = np.isnan(yoff_masked)
         print(ind_xoff)
         print(ind_yoff)
-        print(np.nonzero(np.isnan(ind_xoff)))
-        print(np.nonzero(np.isnan(ind_yoff)))
-        print(np.where(np.isnan(ind_xoff)))
-        print(np.where(np.isnan(ind_yoff)))
+        print(np.nonzero(np.isnan(xoff_masked)))
+        print(np.nonzero(np.isnan(yoff_masked)))
+        print(np.where(np.isnan(xoff_masked)))
+        print(np.where(np.isnan(yoff_masked)))
         xoff_masked \
             = interpolate_replace_nans(xoff_masked, f_kernel,
                                        convolve=convolve, boundary='extend')
