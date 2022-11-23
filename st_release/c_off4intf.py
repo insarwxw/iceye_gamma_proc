@@ -131,6 +131,7 @@ def c_off4intf(data_dir: str, id1: str, id2: str,
         print(np.nonzero(np.isnan(yoff_masked)))
         print(np.where(np.isnan(xoff_masked)))
         print(np.where(np.isnan(yoff_masked)))
+        print('C-a')
         print(len(np.nonzero(np.isnan(xoff_masked))[0]))
         print(len(np.nonzero(np.isnan(yoff_masked))[0]))
     #     print(len(ind_xoff), len(ind_yoff))
