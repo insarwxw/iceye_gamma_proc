@@ -113,16 +113,22 @@ def c_off4intf(data_dir: str, id1: str, id2: str,
         fill_kernel_size = 15
         f_kernel = np.ones((fill_kernel_size, fill_kernel_size))
 
-        while len(np.nonzero(np.isnan(xoff_masked))[0]) & \
-            len(np.nonzero(np.isnan(yoff_masked))[0]):
-            xoff_masked \
-                = interpolate_replace_nans(xoff_masked, f_kernel,
-                                           convolve=convolve, boundary='extend')
-            yoff_masked \
-                = interpolate_replace_nans(yoff_masked, f_kernel,
-                                           convolve=convolve, boundary='extend')
-            print(len(np.nonzero(np.isnan(xoff_masked))[0]))
-            print(len(np.nonzero(np.isnan(yoff_masked))[0]))
+        # while len(np.nonzero(np.isnan(xoff_masked))[0]) & \
+        #     len(np.nonzero(np.isnan(yoff_masked))[0]):
+        #     xoff_masked \
+        #         = interpolate_replace_nans(xoff_masked, f_kernel,
+        #                                    convolve=convolve, boundary='extend')
+        #     yoff_masked \
+        #         = interpolate_replace_nans(yoff_masked, f_kernel,
+        #                                    convolve=convolve, boundary='extend')
+        #     print(len(np.nonzero(np.isnan(xoff_masked))[0]))
+        #     print(len(np.nonzero(np.isnan(yoff_masked))[0]))
+        xoff_masked \
+            = interpolate_replace_nans(xoff_masked, f_kernel,
+                                       convolve=convolve, boundary='extend')
+        yoff_masked \
+            = interpolate_replace_nans(yoff_masked, f_kernel,
+                                       convolve=convolve, boundary='extend')
 
     # - Subtract Polynomial Ramp from Offsets Map
     xoff_masked -= ramp_offx
