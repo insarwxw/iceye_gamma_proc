@@ -3,6 +3,7 @@
 import numpy as np
 
 
+
 def read_keyword(file, keyword, delimiter=":", rm_unit=None, multi_val=None):
     f = open(file, 'r')
     s = ''

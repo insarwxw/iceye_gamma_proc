@@ -26,9 +26,7 @@ def main() -> None:
             """
     )
     # - Working Directory directory.
-    default_dir = '/u/mawson-r0/eric/ICEye_2021_PETERMAN/DATA_REPOSITORY/' \
-                  'Peterman_Glacier_X7_extended_range_SLC/test.dir/output'
-
+    default_dir = os.getcwd()
     parser.add_argument('--directory', '-D',
                         type=lambda p: os.path.abspath(
                             os.path.expanduser(p)),

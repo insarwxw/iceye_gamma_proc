@@ -1,5 +1,5 @@
 import numpy as np
-from read_keyword import read_keyword
+from st_release.read_keyword import read_keyword
 
 
 class geo_param:  # {{{
