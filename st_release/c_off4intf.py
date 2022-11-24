@@ -138,7 +138,7 @@ def c_off4intf(data_dir: str, id1: str, id2: str,
         print('# - Filling Gaps Offsets Map by interpolation.')
         mask = np.ones(np.shape(xoff_masked))
         mask[np.where(np.isnan(xoff_masked))] = 0
-        ind_mask = np.where(mask == 0)
+
         xoff_masked = fillnodata(xoff_masked, mask=mask,
                                  max_search_distance=1000,
                                  smoothing_iterations=10)

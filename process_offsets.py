@@ -21,8 +21,7 @@ options:
   --directory DIRECTORY, -D DIRECTORY
                         Data directory.
   --fill, -F            Fill gaps in offsets.
-  --rm_ramp, -R         Remove ramp from offsets
-  --smooth, -S          Smooth offsets
+  --smooth, -S          Smooth offsets.
 
 PYTHON DEPENDENCIES:
     argparse: Parser for command-line options, arguments and sub-commands
@@ -64,12 +63,9 @@ def main() -> None:
     # - Fill gaps in offsets
     parser.add_argument('--fill', '-F', action='store_true',
                         help='Fill gaps in offsets.')
-    # - Remove ramp from offsets
-    parser.add_argument('--rm_ramp', '-R', action='store_true',
-                        help='Remove ramp from offsets')
     # - Smooth offsets
     parser.add_argument('--smooth', '-S', action='store_true',
-                        help='Smooth offsets')
+                        help='Smooth offsets.')
 
     args = parser.parse_args()
 
