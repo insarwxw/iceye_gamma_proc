@@ -59,7 +59,10 @@ def main():
     parser.add_argument('secondary', type=str,
                         help='Secondary SLCs.')
 
-    parser.add_argument('--directory', '-D',  help='Project data directory.',
+    parser.add_argument('--directory', '-D',  help='Data directory.',
+                        default=os.getcwd())
+
+    parser.add_argument('--out_directory', '-O', help='Output directory.',
                         default=os.getcwd())
 
     parser.add_argument('--init_offset', '-I', action='store_true',
@@ -70,6 +73,7 @@ def main():
 
     # - Path to Test directory
     data_dir = args.directory
+    out_dir = args.out_directory
 
     # - Parameters
     ref = args.reference
@@ -95,20 +99,10 @@ def main():
     azwin = 512  # - azimuth window size (default: 512)
 
     # - Output directory name
-    out_dir_name = ref + '-' + sec
-
-    # - Output Directory
-    if args.init_offset:
-        out_dir = make_dir(os.path.join(args.directory, '..'),
-                           'pair_diff_io')
-    else:
-        out_dir = make_dir(os.path.join(args.directory, '..'),
-                           'pair_diff')
-
-    out_dir = make_dir(out_dir, out_dir_name)
+    out_name = ref + '-' + sec
 
     # - output parameter file
-    out_par = os.path.join(out_dir, out_dir_name+'.par')
+    out_par = os.path.join(out_dir, out_name + '.par')
 
     # - Create Offset Parameter File
     pg.create_offset(os.path.join(data_dir, ref+'.par'),
@@ -131,25 +125,26 @@ def main():
                        thres, rwin, azwin)
 
     # - Create symbolic links for each of the .slc and .par files
-    if os.path.isfile(os.path.join(out_dir, ref+'.slc')):
-        os.remove(os.path.join(out_dir, ref+'.slc'))
-    os.symlink(os.path.join(data_dir, ref+'.slc'),
-               os.path.join(out_dir, ref+'.slc'))
-    # -
-    if os.path.isfile(os.path.join(out_dir, ref+'.par')):
-        os.remove(os.path.join(out_dir, ref+'.par'))
-    os.symlink(os.path.join(data_dir, ref+'.par'),
-               os.path.join(out_dir, ref+'.par'))
-    # -
-    if os.path.isfile(os.path.join(out_dir, sec+'.slc')):
-        os.remove(os.path.join(out_dir, sec+'.slc'))
-    os.symlink(os.path.join(data_dir, sec+'.slc'),
-               os.path.join(out_dir, sec+'.slc'))
-    # -
-    if os.path.isfile(os.path.join(out_dir, sec+'.par')):
-        os.remove(os.path.join(out_dir, sec+'.par'))
-    os.symlink(os.path.join(data_dir, sec+'.par'),
-               os.path.join(out_dir, sec+'.par'))
+    if out_dir != data_dir:
+        if os.path.isfile(os.path.join(out_dir, ref+'.slc')):
+            os.remove(os.path.join(out_dir, ref+'.slc'))
+        os.symlink(os.path.join(data_dir, ref+'.slc'),
+                   os.path.join(out_dir, ref+'.slc'))
+        # -
+        if os.path.isfile(os.path.join(out_dir, ref+'.par')):
+            os.remove(os.path.join(out_dir, ref+'.par'))
+        os.symlink(os.path.join(data_dir, ref+'.par'),
+                   os.path.join(out_dir, ref+'.par'))
+        # -
+        if os.path.isfile(os.path.join(out_dir, sec+'.slc')):
+            os.remove(os.path.join(out_dir, sec+'.slc'))
+        os.symlink(os.path.join(data_dir, sec+'.slc'),
+                   os.path.join(out_dir, sec+'.slc'))
+        # -
+        if os.path.isfile(os.path.join(out_dir, sec+'.par')):
+            os.remove(os.path.join(out_dir, sec+'.par'))
+        os.symlink(os.path.join(data_dir, sec+'.par'),
+                   os.path.join(out_dir, sec+'.par'))
 
 
 # - run main program

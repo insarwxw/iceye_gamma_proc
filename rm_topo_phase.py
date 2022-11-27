@@ -136,7 +136,7 @@ def main() -> None:
               path_to_dem(args.dem)['par'],     # - DEM segment used...
               'DEMice_gc',      # - DEM segment used for output products...
               'gc_icemap',      # - geocoding lookup table (fcomplex)
-              100, 100, 'sar_map_in_dem_geometry',
+              10, 10, 'sar_map_in_dem_geometry',
               '-', '-', 'inc.geo', '-', '-', '-', '-', '2', '-'
               )
 
