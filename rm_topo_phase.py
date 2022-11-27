@@ -125,11 +125,17 @@ def main() -> None:
     #   r_ovr           range over-sampling factor for nn-thinned
     #                          layover/shadow mode (enter - for default: 2.0)
 
-    pg.gc_map(ref_slc+'.par',
-              igram_par_path,
-              path_to_dem(args.dem)['path'],
-              path_to_dem(args.dem)['dem'],
-              'DEM_gc_par', 'DEMice_gc', 'gc_icemap',
+    dem_par = os.path.join(path_to_dem(args.dem)['path'],
+                           path_to_dem(args.dem)['par'])
+    dem = os.path.join(path_to_dem(args.dem)['path'],
+                       path_to_dem(args.dem)['dem'])
+    pg.gc_map(ref_slc+'.par',   # - SLC image parameter fil
+              igram_par_path,   # - ISP offset/interferogram parameter file
+              dem_par,          # - DEM/MAP parameter file
+              dem,               # - DEM data file (or constant height value)
+              path_to_dem(args.dem)['par'],     # - DEM segment used...
+              'DEMice_gc',      # - DEM segment used for output products...
+              'gc_icemap',      # - geocoding lookup table (fcomplex)
               10, 10, 'sar_map_in_dem_geometry',
               '-', '-', 'inc.geo', '-', '-', '-', '-', '2', '-'
               )
