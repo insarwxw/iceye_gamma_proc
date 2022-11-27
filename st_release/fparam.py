@@ -1,3 +1,14 @@
+#!/usr/bin/env python
+u"""
+c_off4intf.py
+Written by  Enrico Ciraci' - 11/2022
+Originally written by  Jeremie Mouginot - 2018
+
+Contains set of classes that can be used to read and write parameters
+files for GAMMA software.
+
+"""
+
 import numpy as np
 from st_release.read_keyword import read_keyword
 
