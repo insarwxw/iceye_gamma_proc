@@ -1,0 +1,11 @@
+name: p310env
+channels:
+  - conda-forge
+dependencies:
+  - numpy
+  - scipy
+  - astropy
+  - gdal
+  - matplotlib
+  - h5py
+  - tqdm
