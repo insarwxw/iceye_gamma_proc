@@ -129,14 +129,14 @@ def main() -> None:
                            path_to_dem(args.dem)['par'])
     dem = os.path.join(path_to_dem(args.dem)['path'],
                        path_to_dem(args.dem)['dem'])
-    pg.gc_map(ref_slc+'.par',   # - SLC image parameter fil
+    pg.gc_map(ref_slc+'.par',   # - SLC image parameter file
               igram_par_path,   # - ISP offset/interferogram parameter file
               dem_par,          # - DEM/MAP parameter file
               dem,               # - DEM data file (or constant height value)
               path_to_dem(args.dem)['par'],     # - DEM segment used...
               'DEMice_gc',      # - DEM segment used for output products...
               'gc_icemap',      # - geocoding lookup table (fcomplex)
-              10, 10, 'sar_map_in_dem_geometry',
+              100, 100, 'sar_map_in_dem_geometry',
               '-', '-', 'inc.geo', '-', '-', '-', '-', '2', '-'
               )
 
