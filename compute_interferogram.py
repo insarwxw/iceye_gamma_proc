@@ -3,6 +3,21 @@ u"""
 Enrico Ciraci' - 03/2022
 
 Compute Interferogram for the selected pair.
+
+usage: compute_interferogram.py [-h] [--directory DIRECTORY]
+                        [--pair PAIR] [--init_offset]
+
+Compute Interferogram for the selected pair.
+
+options:
+  -h, --help            show this help message and exit
+  --directory DIRECTORY, -D DIRECTORY
+                        Project data directory.
+  --pair PAIR, -P PAIR  SLC Pair Codes separated by "_"
+                        reference-secondary
+  --init_offset, -I     Determine initial offset between SLC images
+                        using correlation of image intensity
+
 """
 # - Python dependencies
 from __future__ import print_function
@@ -38,7 +53,7 @@ def main():
 
     parser.add_argument('--init_offset', '-I', action='store_true',
                         help='Determine initial offset between SLC'
-                             'images using correlation of image intensity')
+                             ' images using correlation of image intensity')
 
     args = parser.parse_args()
 

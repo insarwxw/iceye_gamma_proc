@@ -28,6 +28,7 @@ PYTHON DEPENDENCIES:
            https://docs.python.org/3/library/argparse.html
     numpy: The fundamental package for scientific computing with Python
           https://numpy.org/
+    py_gamma: GAMMA's Python integration with the py_gamma module
 
 UPDATE HISTORY:
     06/22/2022 - Directory parameter converted to positional argument.

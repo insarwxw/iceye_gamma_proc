@@ -3,6 +3,32 @@
 Enrico Ciraci' - 03/2022
 
 Remove Topographic Contribution from Flattened Interferogram.
+
+usage: rm_topo_phase.py [-h] [--directory DIRECTORY]
+                        [--filter] reference secondary dem
+
+Geocode Flattened Interferogram and Remove Topographic Contribution
+to Interferometric Phase.
+
+positional arguments:
+  reference             Reference SLCs.
+  secondary             Secondary SLCs.
+  dem                   Digital Elevation Model
+
+options:
+  -h, --help            show this help message and exit
+  --directory DIRECTORY, -D DIRECTORY
+                        Data directory.
+  --filter, -F          Adaptive interferogram filter using the power spectral
+                        density - (GAMMA - adf)
+
+PYTHON DEPENDENCIES:
+    argparse: Parser for command-line options, arguments and sub-commands
+           https://docs.python.org/3/library/argparse.html
+    py_gamma: GAMMA's Python integration with the py_gamma module
+
+UPDATE HISTORY:
+
 """
 # - Python dependencies
 from __future__ import print_function
@@ -49,6 +75,10 @@ def main() -> None:
     # - Reference and Secondary SLCs
     ref_slc = args.reference
     sec_slc = args.secondary
+
+    # - Directory containing the SLCs
+    data_dir = args.directory
+    os.chdir(data_dir)
 
     # - Extract Interferogram Size from parameter file
     igram_par_path = os.path.join('.',
