@@ -54,18 +54,18 @@ def main():
     # - Reference SLCs
     parser.add_argument('reference', type=str,
                         help='Reference SLCs.')
-
+    # - Secondary SLCs
     parser.add_argument('secondary', type=str,
                         help='Secondary SLCs.')
-
+    # - Data Directory
     parser.add_argument('--directory', '-D',
                         help='Data directory.',
                         default=os.getcwd())
-
+    # - Number of Parallel Processes
     parser.add_argument('--np', '-N',
                         type=int, default=14,
                         help='Number of Parallel Processes.')
-
+    # - AMPCOR Binary Selected
     parser.add_argument('--ampcor', '-A',
                         type=str, default='ampcor_large',
                         choices=['ampcor_large', 'ampcor_large2',

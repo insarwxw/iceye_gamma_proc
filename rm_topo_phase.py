@@ -12,7 +12,7 @@ import argparse
 import datetime
 # - GAMMA's Python integration with the py_gamma module
 import py_gamma as pg
-from utils.path_to_dem import path_to_gimp
+from utils.path_to_dem import path_to_dem
 from utils.read_keyword import read_keyword
 
 
@@ -22,27 +22,23 @@ def main() -> None:
         description="""Geocode Flattened Interferogram and Remove
         Topographic Contribution to Interferometric Phase. """
     )
-    # - Working Directory directory.
-    default_dir = os.environ['PYTHONDATA']
+    # - Reference SLCs
+    parser.add_argument('reference', type=str,
+                        help='Reference SLCs.')
+    # - Secondary SLCs
+    parser.add_argument('secondary', type=str,
+                        help='Secondary SLCs.')
+    # - Digital Elevation Model
+    parser.add_argument('dem', type=str,
+                        help='Digital Elevation Model')
+    # - Data Directory
     parser.add_argument('--directory', '-D',
-                        type=lambda p: os.path.abspath(
-                            os.path.expanduser(p)),
-                        default=default_dir,
-                        help='Project data directory.')
-
-    parser.add_argument('--pair', '-P',
-                        type=str,
-                        default=None,
-                        help='SLC Pair Codes separated by "_" '
-                             'reference-secondary')
+                        help='Data directory.',
+                        default=os.getcwd())
 
     parser.add_argument('--filter', '-F', action='store_true',
                         help='Adaptive interferogram filter using the power '
                              'spectral density - (GAMMA - adf)')
-
-    parser.add_argument('--init_offset', '-I', action='store_true',
-                        help='Determine initial offset between SLC'
-                             'images using correlation of image intensity')
 
     args = parser.parse_args()
 
@@ -51,19 +47,8 @@ def main() -> None:
         sys.exit()
 
     # - Reference and Secondary SLCs
-    slc_list = args.pair.split('-')
-    ref_slc = slc_list[0]
-    sec_slc = slc_list[1]
-
-    # - Data directory
-    if args.init_offset:
-        data_dir = os.path.join(args.directory,
-                                'pair_diff_io', ref_slc + '-' + sec_slc)
-    else:
-        data_dir = os.path.join(args.directory,
-                                'pair_diff', ref_slc + '-' + sec_slc)
-    # - Change the current working directory
-    os.chdir(data_dir)
+    ref_slc = args.reference
+    sec_slc = args.secondary
 
     # - Extract Interferogram Size from parameter file
     igram_par_path = os.path.join('.',
@@ -116,8 +101,8 @@ def main() -> None:
 
     pg.gc_map(ref_slc+'.par',
               igram_par_path,
-              os.path.join(path_to_gimp(), 'DEM_gc_par'),
-              os.path.join(path_to_gimp(), 'gimpdem100.dat'),
+              path_to_dem(args.dem)['path'],
+              path_to_dem(args.dem)['dem'],
               'DEM_gc_par', 'DEMice_gc', 'gc_icemap',
               10, 10, 'sar_map_in_dem_geometry',
               '-', '-', 'inc.geo', '-', '-', '-', '-', '2', '-'
