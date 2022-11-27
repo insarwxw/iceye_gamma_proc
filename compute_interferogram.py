@@ -23,9 +23,7 @@ def main():
             """
     )
     # - Working Directory directory.
-    default_dir = os.path.join(os.path.expanduser('~'), 'Desktop',
-                               'iceye_gamma_test', 'output')
-
+    default_dir = os.environ['PYTHONDATA']
     parser.add_argument('--directory', '-D',
                         type=lambda p: os.path.abspath(
                             os.path.expanduser(p)),
@@ -73,7 +71,8 @@ def main():
         bat_lines = b_fid.readlines()
     with open(os.path.join(data_dir, f'./bat_inter.{ref_slc}-{sec_slc}'),
               'w', encoding='utf8') as b_fid:
-        print('#!/bin/sh', file=b_fid)
+        if not bat_lines[0].startswith('#!'):
+            print('#!/bin/sh', file=b_fid)
         for f_line in bat_lines:
             print(f_line, file=b_fid)
 
@@ -87,6 +86,7 @@ def main():
     igram_par_path = os.path.join('.',
                                   f'{ref_slc}-{sec_slc}.offmap.par.interp')
     igram_param_dict = pg.ParFile(igram_par_path).par_dict
+
     # - read interferogram number of columns
     n_col = int(igram_param_dict['interferogram_width'][0])
 

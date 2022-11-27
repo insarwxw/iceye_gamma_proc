@@ -26,7 +26,7 @@ PYTHON DEPENDENCIES:
     py_gamma: GAMMA's Python integration with the py_gamma module
 
 UPDATE HISTORY:
-
+    06/22/2022 - By default, the current directory is used as working directory.
 """
 # - Python dependencies
 from __future__ import print_function
@@ -50,7 +50,7 @@ def main() -> None:
     # - Absolute Path to selected Raster
     parser.add_argument('--directory', '-D',
                         type=str,
-                        default=None,
+                        default=os.getcwd(),
                         help='Absolute path to working directory.')
     parser.add_argument('--raster', '-R',
                         type=str,

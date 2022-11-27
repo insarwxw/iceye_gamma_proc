@@ -12,11 +12,12 @@ Decimate the number of state vectors available inside the considered SLC
 parameter file.
 
 positional arguments:
-  directory             Project data directory.
   slc                   Considered Single Look Complex.
 
-optional arguments:
+options:
   -h, --help            show this help message and exit
+  --directory DIRECTORY, -D DIRECTORY
+                        Project data directory.
   --rate RATE, -R RATE  State Vector Decimation Rate.
   --replace             Replace Original Parameter File.
   --overwrite           Overwrite Previously Decimated Parameter File.
@@ -33,6 +34,7 @@ PYTHON DEPENDENCIES:
 
 UPDATE HISTORY:
     06/22/2022 - Directory parameter converted to positional argument.
+            By default, the current directory is used as working directory.
 """
 # - Python dependencies
 from __future__ import print_function
@@ -54,11 +56,13 @@ def main() -> None:
         the considered SLC parameter file.
         """
     )
-    # - Absolute Path to directory containing input data.
-    parser.add_argument('directory',  help='Project data directory.')
-
+    # - Sslected Single Look Complex
     parser.add_argument('slc', type=str, default=None,
                         help='Considered Single Look Complex.')
+
+    # - Data directory. By default, the current directory is used.
+    parser.add_argument('--directory', '-D', help='Project data directory.',
+                        default=os.getcwd())
 
     parser.add_argument('--rate', '-R',
                         type=int,
@@ -74,7 +78,7 @@ def main() -> None:
     args = parser.parse_args()
 
     # - Read SLC par file
-    slc_par_path = os.path.join(args.directory, 'slc+par', args.slc+'.par')
+    slc_par_path = os.path.join(args.directory, args.slc+'.par')
 
     # - Verify if a decimated version of the state vector parameter file
     # - already exists inside the data directory.

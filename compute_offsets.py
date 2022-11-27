@@ -12,14 +12,16 @@ usage: compute_offsets.py [-h] [--directory DIRECTORY] reference secondary
 Calculate Preliminary Offsets Parameter.
 
 positional arguments:
-  directory          Project data directory.
-  reference          Reference SLCs.
-  secondary          Secondary SLCs.
+  reference             Reference SLCs.
+  secondary             Secondary SLCs.
 
-optional arguments:
-  -h, --help         show this help message and exit
-  --init_offset, -I  Determine initial offset between SLCimages using
-                     correlation of image intensity
+options:
+  -h, --help            show this help message and exit
+  --directory DIRECTORY, -D DIRECTORY
+                        Project data directory.
+  --init_offset, -I     Determine initial offset between SLCimages using
+                        correlation of image intensity
+
 
 
 PYTHON DEPENDENCIES:
@@ -33,6 +35,7 @@ PYTHON DEPENDENCIES:
 
 UPDATE HISTORY:
     06/22/2022 - Directory parameter converted to positional argument.
+        By default, the current directory is used as working directory.
 
 """
 # - Python Dependencies
@@ -50,13 +53,14 @@ def main():
         description="""Calculate Preliminary Offsets Parameter."""
     )
     # - Absolute Path to directory containing input data.
-    parser.add_argument('directory',  help='Project data directory.')
-
     parser.add_argument('reference', type=str,
                         help='Reference SLCs.')
 
     parser.add_argument('secondary', type=str,
                         help='Secondary SLCs.')
+
+    parser.add_argument('--directory', '-D',  help='Project data directory.',
+                        default=os.getcwd())
 
     parser.add_argument('--init_offset', '-I', action='store_true',
                         help='Determine initial offset between SLC'
@@ -65,7 +69,7 @@ def main():
     args = parser.parse_args()
 
     # - Path to Test directory
-    data_dir = os.path.join(args.directory, 'slc+par')
+    data_dir = args.directory
 
     # - Parameters
     ref = args.reference
@@ -95,11 +99,14 @@ def main():
 
     # - Output Directory
     if args.init_offset:
-        out_dir = make_dir(args.directory, 'pair_diff_io')
+        out_dir = make_dir(os.path.join(args.directory, '..'),
+                           'pair_diff_io')
     else:
-        out_dir = make_dir(args.directory, 'pair_diff')
+        out_dir = make_dir(os.path.join(args.directory, '..'),
+                           'pair_diff')
 
     out_dir = make_dir(out_dir, out_dir_name)
+
     # - output parameter file
     out_par = os.path.join(out_dir, out_dir_name+'.par')
 

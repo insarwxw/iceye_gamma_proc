@@ -49,8 +49,7 @@ def main():
                         help='Secondary Interferogram')
 
     # - Working Directory directory.
-    default_dir = os.path.join(os.path.expanduser('~'), 'Desktop',
-                               'iceye_gamma_test', 'output')
+    default_dir = os.environ['PYTHONDATA']
     parser.add_argument('--directory', '-D',
                         type=lambda p: os.path.abspath(
                             os.path.expanduser(p)),

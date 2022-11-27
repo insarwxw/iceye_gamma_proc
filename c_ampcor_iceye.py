@@ -10,13 +10,18 @@ NOTE: Before Running this script, a preliminary constant offset between the
       must have been calculated.
 
 COMMAND LINE OPTIONS:
-  -h, --help            show this help message and exit
-  --directory DIRECTORY, -D DIRECTORY :Project data directory.
-  --pair PAIR, -P PAIR  SLC Pair passes as CSV - reference,secondary
-  --np NP, -N NP        Number of Parallel Processes.
-  --ampcor, -A {ampcor_large,ampcor_large2,ampcor_superlarge2}
-         -> AMPCOR Implementation Selected.
+  positional arguments:
+  reference             Reference SLCs.
+  secondary             Secondary SLCs.
 
+options:
+  -h, --help            show this help message and exit
+  --directory DIRECTORY, -D DIRECTORY
+                        Data directory.
+  --np NP, -N NP        Number of Parallel Processes.
+  --ampcor {ampcor_large,ampcor_large2,ampcor_superlarge2},
+    -A {ampcor_large,ampcor_large2,ampcor_superlarge2}
+             AMPCOR Binary Selected.
 
 PYTHON DEPENDENCIES:
     argparse: Parser for command-line options, arguments and sub-commands
@@ -25,6 +30,8 @@ PYTHON DEPENDENCIES:
           https://numpy.org/
 
 UPDATE HISTORY:
+    06/22/2022 - Directory parameter converted to positional argument.
+        By default, the current directory is used as working directory.
 """
 # - Python dependencies
 from __future__ import print_function
@@ -44,19 +51,16 @@ def main():
         description="""Create the bat file to run AMPCOR.
             """
     )
-    # - Working Directory directory.
-    default_dir = os.path.join(os.path.expanduser('~'), 'Desktop',
-                               'iceye_gamma_test', 'output')
-    parser.add_argument('--directory', '-D',
-                        type=lambda p: os.path.abspath(os.path.expanduser(p)),
-                        default=default_dir,
-                        help='Project data directory.')
+    # - Reference SLCs
+    parser.add_argument('reference', type=str,
+                        help='Reference SLCs.')
 
-    parser.add_argument('--pair', '-P',
-                        type=str,
-                        default=None,
-                        help='SLC Pair Codes separated by "_" '
-                             'reference-secondary')
+    parser.add_argument('secondary', type=str,
+                        help='Secondary SLCs.')
+
+    parser.add_argument('--directory', '-D',
+                        help='Data directory.',
+                        default=os.getcwd())
 
     parser.add_argument('--np', '-N',
                         type=int, default=14,
@@ -66,34 +70,20 @@ def main():
                         type=str, default='ampcor_large',
                         choices=['ampcor_large', 'ampcor_large2',
                                  'ampcor_superlarge2'],
-                        help='AMPCOR Implementation Selected.')
-
-    parser.add_argument('--init_offset', '-I', action='store_true',
-                        help='Determine initial offset between SLC'
-                             'images using correlation of image intensity')
+                        help='AMPCOR Binary Selected.')
 
     args = parser.parse_args()
 
-    if args.pair is None:
-        print('# - Provide selected SLC names as: --pair=Ref_Code_Sec_Code')
-        sys.exit()
-
     # - Reference and Secondary SLCs
-    slc_list = args.pair.split('-')
-    ref_slc = slc_list[0]
-    sec_slc = slc_list[1]
+    ref_slc = args.reference
+    sec_slc = args.secondary
     # -
-    ref_slc_path = os.path.join(args.directory, 'slc+par', ref_slc + '.slc')
-    ref_par_path = os.path.join(args.directory, 'slc+par', ref_slc + '.par')
-    sec_slc_path = os.path.join(args.directory, 'slc+par', sec_slc + '.slc')
-    sec_par_path = os.path.join(args.directory, 'slc+par', sec_slc + '.par')
-    # - output directory
-    if args.init_offset:
-        out_dir = os.path.join(args.directory, 'pair_diff_io',
-                               ref_slc + '-' + sec_slc)
-    else:
-        out_dir = os.path.join(args.directory, 'pair_diff',
-                               ref_slc + '-' + sec_slc)
+    ref_slc_path = os.path.join(args.directory, ref_slc + '.slc')
+    ref_par_path = os.path.join(args.directory, ref_slc + '.par')
+    sec_slc_path = os.path.join(args.directory, sec_slc + '.slc')
+    sec_par_path = os.path.join(args.directory, sec_slc + '.par')
+    # - output directory -  use the same directory containing the SLCs
+    out_dir = args.directory
     off_par_path = os.path.join(out_dir, ref_slc + '-' + sec_slc + '.par')
 
     if not os.path.isfile(ref_slc_path):
