@@ -18,8 +18,8 @@ def path_to_dem(dem: str) -> dict:
     elif dem.lower() in ['ais', 'antarctica', 'bedmap2']:
         # - Bedmap2 DEM
         return {'path': os.path.join(os.environ['DAT_PATH'],
-                                     'ANTARCTICA', 'DEM', 'BEDMAP2'),
-                'dem': 'bedmap2_surface.dat',
+                                     'ANTARCTICA', 'DEM', 'BEDMAP2', '900m'),
+                'dem': 'bedmap2_surface_900m.dat',
                 'par': 'DEM_gc_par',
                 }
     else:
