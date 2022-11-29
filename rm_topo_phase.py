@@ -10,6 +10,10 @@ usage: rm_topo_phase.py [-h] [--directory DIRECTORY]
 Geocode Flattened Interferogram and Remove Topographic Contribution
 to Interferometric Phase.
 
+NOTE: Applying the Adaptive interferogram filter at this step is deprecated but
+still available as an option. The filter should be applied after the computation
+of the double difference interferogram.
+
 positional arguments:
   reference             Reference SLCs.
   secondary             Secondary SLCs.
@@ -136,7 +140,7 @@ def main() -> None:
               path_to_dem(args.dem)['par'],     # - DEM segment used...
               'DEMice_gc',      # - DEM segment used for output products...
               'gc_icemap',      # - geocoding lookup table (fcomplex)
-              10, 10, 'sar_map_in_dem_geometry',
+              1, 1, 'sar_map_in_dem_geometry',
               '-', '-', 'inc.geo', '-', '-', '-', '-', '2', '-'
               )
 
