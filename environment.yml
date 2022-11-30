@@ -2,9 +2,9 @@ name: p310env
 channels:
   - conda-forge
 dependencies:
-  - numpy
+  - numpy >=1.23.3
   - scipy
-  - astropy
+  - astropy >=5.1.1
   - gdal
   - matplotlib
   - h5py
