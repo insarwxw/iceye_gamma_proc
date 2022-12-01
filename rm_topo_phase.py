@@ -128,19 +128,18 @@ def main() -> None:
     #                     3: nn-thinned (not available in gc_map2)
     #   r_ovr           range over-sampling factor for nn-thinned
     #                          layover/shadow mode (enter - for default: 2.0)
-
-    dem_par = os.path.join(path_to_dem(args.dem)['path'],
-                           path_to_dem(args.dem)['par'])
-    dem = os.path.join(path_to_dem(args.dem)['path'],
-                       path_to_dem(args.dem)['dem'])
+    dem_info = path_to_dem(args.dem)
+    dem_par = os.path.join(dem_info['path'], dem_info['par'])
+    dem = os.path.join(dem_info['path'], dem_info['dem'])
     pg.gc_map(ref_slc+'.par',   # - SLC image parameter file
               igram_par_path,   # - ISP offset/interferogram parameter file
               dem_par,          # - DEM/MAP parameter file
               dem,               # - DEM data file (or constant height value)
-              path_to_dem(args.dem)['par'],     # - DEM segment used...
+              dem_info['par'],     # - DEM segment used...
               'DEMice_gc',      # - DEM segment used for output products...
               'gc_icemap',      # - geocoding lookup table (fcomplex)
-              100, 100, 'sar_map_in_dem_geometry',
+              dem_info['oversample'], dem_info['oversample'],
+              'sar_map_in_dem_geometry',
               '-', '-', 'inc.geo', '-', '-', '-', '-', '2', '-'
               )
 
