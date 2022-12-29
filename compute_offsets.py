@@ -21,6 +21,8 @@ options:
                         Project data directory.
   --init_offset, -I     Determine initial offset between SLCimages using
                         correlation of image intensity
+  --resample_azimuth    Resample Secondary - Update Azimuth Resolution
+  --resample_slc_prf    Resample Secondary - Update Secondary PRF.
 
 
 
@@ -36,6 +38,7 @@ PYTHON DEPENDENCIES:
 UPDATE HISTORY:
     06/22/2022 - Directory parameter converted to positional argument.
         By default, the current directory is used as working directory.
+    12/29/2022 - resample_azimuth/resample_slc_prf options added.
 
 """
 # - Python Dependencies
@@ -45,10 +48,11 @@ import argparse
 import datetime
 # - GAMMA's Python integration with the py_gamma module
 import py_gamma as pg
-from utils.make_dir import make_dir
+# - st_release
+from st_release.resample_slc import resample_slc_azimuth, resample_slc_prf
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(
         description="""Calculate Preliminary Offsets Parameter."""
     )
@@ -69,6 +73,14 @@ def main():
                         help='Determine initial offset between SLC'
                              'images using correlation of image intensity')
 
+    parser.add_argument('--resample_azimuth',
+                        help='Resample Secondary - Update Azimuth Resolution',
+                        action='store_true')
+
+    parser.add_argument('--resample_slc_prf',
+                        help='Resample Secondary - Update Secondary PRF.',
+                        action='store_true')
+
     args = parser.parse_args()
 
     # - Path to Test directory
@@ -76,11 +88,8 @@ def main():
     out_dir = args.out_directory
 
     # - Parameters
-    ref = args.reference
-    sec = args.secondary
-    # - Ref/sec - possible combination
-    # ref = '152307_20211022T145808'
-    # sec = '152566_20211023T145809'
+    ref = args.reference    # Reference SLC
+    sec = args.secondary    # Secondary SLC
 
     # - Offset Computation parameter
     algorithm = 1       # - offset estimation algorithm
@@ -145,6 +154,20 @@ def main():
             os.remove(os.path.join(out_dir, sec+'.par'))
         os.symlink(os.path.join(data_dir, sec+'.par'),
                    os.path.join(out_dir, sec+'.par'))
+
+    # - if selected Normalize SLCs Azimuth Resolution
+    if args.resample_azimuth and args.resample_slc_prf:
+        raise ValueError('Select a single resampling method.')
+
+    if args.resample_azimuth:
+        print('#  - Resample Secondary SLCs')
+        print('#  - Update SLCs Azimuth Resolution')
+        resample_slc_azimuth(out_dir, ref, sec, multi_look=True)
+
+    if args.resample_slc_prf:
+        print('#  - Resample Secondary SLCs')
+        print('#  - Update SLCs PRF')
+        resample_slc_prf(out_dir, ref, sec, multi_look=True)
 
 
 # - run main program

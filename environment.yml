@@ -1,4 +1,4 @@
-name: p310env
+name: pygamma_env
 channels:
   - conda-forge
 dependencies:
@@ -9,3 +9,4 @@ dependencies:
   - matplotlib
   - h5py
   - tqdm
+  - pylint
