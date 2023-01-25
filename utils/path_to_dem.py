@@ -12,7 +12,8 @@ def path_to_dem(dem: str) -> dict:
     # - Get absolute path to DEM and its parameter files
     if dem.lower() in ['gis', 'gimp', 'greenland']:
         # - GIMP DEM
-        return {'path': os.path.join(dem_path, 'GIMP_DEM'),
+        return {#'path': os.path.join(dem_path, 'GREENLAND/DEM'),
+                'path': os.path.join(dem_path, 'GREENLAND', 'DEM'),
                 'dem': 'gimpdem100.dat',    # - DEM binary
                 'par': 'DEM_gc_par',        # - DEM parameters
                 'oversample': 10,           # - DEM oversampling factor

@@ -117,18 +117,18 @@ def compute_dense_offsets(data_dir: str, out_dir: str,
     c_search_w = search_w
     c_skip = skip
     print(f'#  - Search Window: {c_search_w}, Skip: {c_skip}')
-    # pg.offset_pwr_tracking(
-    #     os.path.join(data_dir, f'{ref}.slc'),
-    #     os.path.join(data_dir, f'{sec}.slc'),
-    #     os.path.join(data_dir, f'{ref}.par'),
-    #     os.path.join(data_dir, f'{sec}.par'),
-    #     os.path.join(data_dir, f'{pair_name}.par'),
-    #     os.path.join(out_dir, f'{pair_name}.offmap'),
-    #     os.path.join(out_dir, f'{pair_name}.offmap.ccp'),
-    #     c_search_w, c_search_w,
-    #     os.path.join(out_dir, f'{pair_name}.offmap.txt'),
-    #     '-', '-', c_skip, c_skip, '-', '-', '-', '-', '-', '-',
-    # )
+    pg.offset_pwr_tracking(
+        os.path.join(data_dir, f'{ref}.slc'),
+        os.path.join(data_dir, f'{sec}.slc'),
+        os.path.join(data_dir, f'{ref}.par'),
+        os.path.join(data_dir, f'{sec}.par'),
+        os.path.join(data_dir, f'{pair_name}.par'),
+        os.path.join(out_dir, f'{pair_name}.offmap'),
+        os.path.join(out_dir, f'{pair_name}.offmap.ccp'),
+        c_search_w, c_search_w,
+        os.path.join(out_dir, f'{pair_name}.offmap.txt'),
+        '-', '-', c_skip, c_skip, '-', '-', '-', '-', '-', '-',
+    )
 
     # - Read the offset parameter file
     off_param = pg.ParFile(os.path.join(out_dir, f'{pair_name}.par'))
@@ -338,7 +338,7 @@ def main() -> None:
     ref = args.reference        # - Reference SLC
     sec = args.secondary        # - Secondary SLC
 
-    # # - Create New ISP Parameter file
+    # - Create New ISP Parameter file
     # create_isp_par(data_dir, ref, sec)
     #
     # # - Estimate Range and Azimuth Preliminary
@@ -372,88 +372,88 @@ def main() -> None:
     #               )
     # # - Create New ISP Parameter file
     # create_isp_par(data_dir, ref, f'{sec}.reg')
-
-    # - Compute Dense Offsets Map between the reference SLC and the
-    # - registered secondary SLC.
-    compute_dense_offsets(data_dir, out_dir, ref, f'{sec}.reg', off_filter=1,
-                          search_w=64, off_smooth=True, off_fill=False)
-
-    # - Generate a copy of the dense offsets parameter file
-    shutil.copy(os.path.join(data_dir, f'{ref}-{sec}.reg.par'),
-                os.path.join(data_dir, f'dense_offsets.par'))
-
-    # - Resample the registered secondary SLC to the reference SLC
-    # - using the using a 2-D offset map computed above.
-    pg.SLC_interp_map(os.path.join(data_dir, f'{sec}.reg.slc'),
-                      os.path.join(data_dir, f'{ref}.par'),
-                      os.path.join(data_dir, f'{sec}.reg.par'),
-                      os.path.join(data_dir, f'{ref}-{sec}.reg.par'),
-                      os.path.join(data_dir, f'{sec}.reg2.slc'),
-                      os.path.join(data_dir, f'{sec}.reg2.par'),
-                      os.path.join(data_dir, f'dense_offsets.par'),
-                      os.path.join(data_dir, f'{ref}-{sec}.reg.offmap.'
-                                             f'res.filt'),
-                      '-', '-', 0, 7
-                      )
-
-    # - Generate a new parameter file ISP offset and interferogram
-    # - parameter files.
-    # - Create New ISP Parameter file
-    create_isp_par(data_dir, ref, f'{sec}.reg2')
-
-    # - Compute Interferogram
-    pg.SLC_intf(os.path.join(data_dir, f'{ref}.slc'),
-                os.path.join(data_dir, f'{sec}.reg2.slc'),
-                os.path.join(data_dir, f'{ref}.par'),
-                os.path.join(data_dir, f'{sec}.reg2.par'),
-                os.path.join(data_dir, f'{ref}-{sec}.reg2.par'),
-                os.path.join(data_dir, f'coco{ref}-{sec}.reg2.intf'),
-                32, 32      # number of range/azimuth looks
-                )
-    # - Estimate baseline from orbit state vectors
-    pg.base_orbit(os.path.join(data_dir, f'{ref}.par'),
-                  os.path.join(data_dir, f'{sec}.reg2.par'),
-                  os.path.join(data_dir, f'base{ref}-{sec}.reg2.dat'),
-                  )
-
-    # - Estimate and Remove Flat Earth Contribution from the Interferogram
-    pg.ph_slope_base(os.path.join(data_dir, f'coco{ref}-{sec}.reg2.intf'),
-                     os.path.join(data_dir, f'{ref}.par'),
-                     os.path.join(data_dir, f'{ref}-{sec}.reg2.par'),
-                     os.path.join(data_dir, f'base{ref}-{sec}.reg2.dat'),
-                     os.path.join(data_dir, f'coco{ref}-{sec}.reg2.intf.flat'),
-                     )
-    # - Calculate a multi-look intensity (MLI) image from the reference SLC
-    pg.multi_look(os.path.join(data_dir, f'{ref}.slc'),
-                  os.path.join(data_dir, f'{ref}.par'),
-                  os.path.join(data_dir, f'{ref}.mli'),
-                  os.path.join(data_dir, f'{ref}.mli.par'),
-                  32, 32
-                  )
-
-    # - Extract interferogram dimensions from its parameter file
-    igram_param_dict \
-        = pg.ParFile(os.path.join(data_dir, f'{ref}-{sec}.reg2.par'),).par_dict
-    # - read interferogram number of columns
-    interf_width = int(igram_param_dict['interferogram_width'][0])
-    interf_lines = int(igram_param_dict['interferogram_azimuth_lines'][0])
-    print(f'# - Interferogram Size: {interf_lines} x {interf_width}')
-
-    # - Adaptive interferogram filter using the power spectral density
-    pg.adf(os.path.join(data_dir, f'coco{ref}-{sec}.reg2.intf.flat'),
-           os.path.join(data_dir, f'coco{ref}-{sec}.reg2.intf.flat.filt'),
-           os.path.join(data_dir, f'coco{ref}-{sec}.reg2.intf.flat.coh'),
-           interf_width
-           )
-
-    # - Generate 8-bit greyscale raster image of intensity multi-looked SLC
-    pg9.raspwr(os.path.join(data_dir, f'{ref}.mli'), interf_width)
-
-    # - Show Output Interferogram
-    pg9.rasmph_pwr(
-        os.path.join(data_dir, f'coco{ref}-{sec}.reg2.intf.flat.filt'),
-        os.path.join(data_dir, f'{ref}.mli.bmp'), interf_width
-    )
+    #
+    # # - Compute Dense Offsets Map between the reference SLC and the
+    # # - registered secondary SLC.
+    # compute_dense_offsets(data_dir, out_dir, ref, f'{sec}.reg', off_filter=1,
+    #                       search_w=64, off_smooth=True, off_fill=False)
+    #
+    # # - Generate a copy of the dense offsets parameter file
+    # shutil.copy(os.path.join(data_dir, f'{ref}-{sec}.reg.par'),
+    #             os.path.join(data_dir, f'dense_offsets.par'))
+    #
+    # # - Resample the registered secondary SLC to the reference SLC
+    # # - using the using a 2-D offset map computed above.
+    # pg.SLC_interp_map(os.path.join(data_dir, f'{sec}.reg.slc'),
+    #                   os.path.join(data_dir, f'{ref}.par'),
+    #                   os.path.join(data_dir, f'{sec}.reg.par'),
+    #                   os.path.join(data_dir, f'{ref}-{sec}.reg.par'),
+    #                   os.path.join(data_dir, f'{sec}.reg2.slc'),
+    #                   os.path.join(data_dir, f'{sec}.reg2.par'),
+    #                   os.path.join(data_dir, f'dense_offsets.par'),
+    #                   os.path.join(data_dir, f'{ref}-{sec}.reg.offmap.'
+    #                                          f'res.filt'),
+    #                   '-', '-', 0, 7
+    #                   )
+    #
+    # # - Generate a new parameter file ISP offset and interferogram
+    # # - parameter files.
+    # # - Create New ISP Parameter file
+    # create_isp_par(data_dir, ref, f'{sec}.reg2')
+    #
+    # # - Compute Interferogram
+    # pg.SLC_intf(os.path.join(data_dir, f'{ref}.slc'),
+    #             os.path.join(data_dir, f'{sec}.reg2.slc'),
+    #             os.path.join(data_dir, f'{ref}.par'),
+    #             os.path.join(data_dir, f'{sec}.reg2.par'),
+    #             os.path.join(data_dir, f'{ref}-{sec}.reg2.par'),
+    #             os.path.join(data_dir, f'coco{ref}-{sec}.reg2.intf'),
+    #             32, 32      # number of range/azimuth looks
+    #             )
+    # # - Estimate baseline from orbit state vectors
+    # pg.base_orbit(os.path.join(data_dir, f'{ref}.par'),
+    #               os.path.join(data_dir, f'{sec}.reg2.par'),
+    #               os.path.join(data_dir, f'base{ref}-{sec}.reg2.dat'),
+    #               )
+    #
+    # # - Estimate and Remove Flat Earth Contribution from the Interferogram
+    # pg.ph_slope_base(os.path.join(data_dir, f'coco{ref}-{sec}.reg2.intf'),
+    #                  os.path.join(data_dir, f'{ref}.par'),
+    #                  os.path.join(data_dir, f'{ref}-{sec}.reg2.par'),
+    #                  os.path.join(data_dir, f'base{ref}-{sec}.reg2.dat'),
+    #                  os.path.join(data_dir, f'coco{ref}-{sec}.reg2.intf.flat'),
+    #                  )
+    # # - Calculate a multi-look intensity (MLI) image from the reference SLC
+    # pg.multi_look(os.path.join(data_dir, f'{ref}.slc'),
+    #               os.path.join(data_dir, f'{ref}.par'),
+    #               os.path.join(data_dir, f'{ref}.mli'),
+    #               os.path.join(data_dir, f'{ref}.mli.par'),
+    #               32, 32
+    #               )
+    #
+    # # - Extract interferogram dimensions from its parameter file
+    # igram_param_dict \
+    #     = pg.ParFile(os.path.join(data_dir, f'{ref}-{sec}.reg2.par'),).par_dict
+    # # - read interferogram number of columns
+    # interf_width = int(igram_param_dict['interferogram_width'][0])
+    # interf_lines = int(igram_param_dict['interferogram_azimuth_lines'][0])
+    # print(f'# - Interferogram Size: {interf_lines} x {interf_width}')
+    #
+    # # - Adaptive interferogram filter using the power spectral density
+    # pg.adf(os.path.join(data_dir, f'coco{ref}-{sec}.reg2.intf.flat'),
+    #        os.path.join(data_dir, f'coco{ref}-{sec}.reg2.intf.flat.filt'),
+    #        os.path.join(data_dir, f'coco{ref}-{sec}.reg2.intf.flat.coh'),
+    #        interf_width
+    #        )
+    #
+    # # - Generate 8-bit greyscale raster image of intensity multi-looked SLC
+    # pg9.raspwr(os.path.join(data_dir, f'{ref}.mli'), interf_width)
+    #
+    # # - Show Output Interferogram
+    # pg9.rasmph_pwr(
+    #     os.path.join(data_dir, f'coco{ref}-{sec}.reg2.intf.flat.filt'),
+    #     os.path.join(data_dir, f'{ref}.mli.bmp'), interf_width
+    # )
 
     # - Estimate and Remove Topographic Phase from the flattened interferogram
     dem = args.dem
