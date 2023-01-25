@@ -117,18 +117,18 @@ def compute_dense_offsets(data_dir: str, out_dir: str,
     c_search_w = search_w
     c_skip = skip
     print(f'#  - Search Window: {c_search_w}, Skip: {c_skip}')
-    pg.offset_pwr_tracking(
-        os.path.join(data_dir, f'{ref}.slc'),
-        os.path.join(data_dir, f'{sec}.slc'),
-        os.path.join(data_dir, f'{ref}.par'),
-        os.path.join(data_dir, f'{sec}.par'),
-        os.path.join(data_dir, f'{pair_name}.par'),
-        os.path.join(out_dir, f'{pair_name}.offmap'),
-        os.path.join(out_dir, f'{pair_name}.offmap.ccp'),
-        c_search_w, c_search_w,
-        os.path.join(out_dir, f'{pair_name}.offmap.txt'),
-        '-', '-', c_skip, c_skip, '-', '-', '-', '-', '-', '-',
-    )
+    # pg.offset_pwr_tracking(
+    #     os.path.join(data_dir, f'{ref}.slc'),
+    #     os.path.join(data_dir, f'{sec}.slc'),
+    #     os.path.join(data_dir, f'{ref}.par'),
+    #     os.path.join(data_dir, f'{sec}.par'),
+    #     os.path.join(data_dir, f'{pair_name}.par'),
+    #     os.path.join(out_dir, f'{pair_name}.offmap'),
+    #     os.path.join(out_dir, f'{pair_name}.offmap.ccp'),
+    #     c_search_w, c_search_w,
+    #     os.path.join(out_dir, f'{pair_name}.offmap.txt'),
+    #     '-', '-', c_skip, c_skip, '-', '-', '-', '-', '-', '-',
+    # )
 
     # - Read the offset parameter file
     off_param = pg.ParFile(os.path.join(out_dir, f'{pair_name}.par'))
@@ -206,9 +206,9 @@ def compute_dense_offsets(data_dir: str, out_dir: str,
 
     # - Run GAMMA rasmph: Generate 8-bit raster graphics image of the phase
     # - and intensity of complex data - Show Interpolated Offsets Map
-    pg.rasmph(os.path.join(out_dir, f'{pair_name}.offmap.res'),
-              rn_smp, '-', '-', '-', '-', '-', '-', '-',
-              os.path.join(out_dir, f'{pair_name}.offmap.res.bmp'))
+    pg9.rasmph(os.path.join(out_dir, f'{pair_name}.offmap.res'),
+               rn_smp, '-', '-', '-', '-', '-', '-', '-',
+               os.path.join(out_dir, f'{pair_name}.offmap.res.bmp'))
 
     # - Process Offsets Map
     # - > Remove Outliers
@@ -294,7 +294,7 @@ def compute_dense_offsets(data_dir: str, out_dir: str,
         .tofile(os.path.join(out_dir, f'{pair_name}.offmap.res.filt'))
 
     # - Show Smoothed Offsets Map
-    pg.rasmph(os.path.join(out_dir, f'{pair_name}.offmap.res.filt'), rn_smp)
+    pg9.rasmph(os.path.join(out_dir, f'{pair_name}.offmap.res.filt'), rn_smp)
 
 
 def main() -> None:
@@ -338,40 +338,40 @@ def main() -> None:
     ref = args.reference        # - Reference SLC
     sec = args.secondary        # - Secondary SLC
 
-    # - Create New ISP Parameter file
-    create_isp_par(data_dir, ref, sec)
-
-    # - Estimate Range and Azimuth Preliminary
-    # - Registration offset fields Preliminary Offset
-    pg.offset_pwr(os.path.join(data_dir, f'{ref}.slc'),
-                  os.path.join(data_dir, f'{sec}.slc'),
-                  os.path.join(data_dir, f'{ref}.par'),
-                  os.path.join(data_dir, f'{sec}.par'),
-                  os.path.join(data_dir, f'{ref}-{sec}.par'),
-                  os.path.join(data_dir, f'sparse_offsets'),
-                  os.path.join(data_dir, f'sparse_offsets.ccp'),
-                  64, 64,  os.path.join(data_dir, f'sparse_offsets.txt'),
-                  '-', 64, 128
-                  )
-    # - Estimate range and azimuth offset polynomial
-    # - Update ISP parameter file - offsets polynomial
-    pg.offset_fit(os.path.join(data_dir, f'sparse_offsets'),
-                  os.path.join(data_dir, f'sparse_offsets.ccp'),
-                  os.path.join(data_dir, f'{ref}-{sec}.par'),
-                  '-', '-', '-', 3)
-
-    # - SLC_interp - registers SLC-2 to the reference geometry,
-    # -              that is the geometry of SLC-1.
-    pg.SLC_interp(os.path.join(data_dir, f'{sec}.slc'),
-                  os.path.join(data_dir, f'{ref}.par'),
-                  os.path.join(data_dir, f'{sec}.par'),
-                  os.path.join(data_dir, f'{ref}-{sec}.par'),
-                  os.path.join(data_dir, f'{sec}.reg.slc'),
-                  os.path.join(data_dir, f'{sec}.reg.par'),
-                  '-', '-', 0, 7
-                  )
-    # - Create New ISP Parameter file
-    create_isp_par(data_dir, ref, f'{sec}.reg')
+    # # - Create New ISP Parameter file
+    # create_isp_par(data_dir, ref, sec)
+    #
+    # # - Estimate Range and Azimuth Preliminary
+    # # - Registration offset fields Preliminary Offset
+    # pg.offset_pwr(os.path.join(data_dir, f'{ref}.slc'),
+    #               os.path.join(data_dir, f'{sec}.slc'),
+    #               os.path.join(data_dir, f'{ref}.par'),
+    #               os.path.join(data_dir, f'{sec}.par'),
+    #               os.path.join(data_dir, f'{ref}-{sec}.par'),
+    #               os.path.join(data_dir, f'sparse_offsets'),
+    #               os.path.join(data_dir, f'sparse_offsets.ccp'),
+    #               64, 64,  os.path.join(data_dir, f'sparse_offsets.txt'),
+    #               '-', 64, 128
+    #               )
+    # # - Estimate range and azimuth offset polynomial
+    # # - Update ISP parameter file - offsets polynomial
+    # pg.offset_fit(os.path.join(data_dir, f'sparse_offsets'),
+    #               os.path.join(data_dir, f'sparse_offsets.ccp'),
+    #               os.path.join(data_dir, f'{ref}-{sec}.par'),
+    #               '-', '-', '-', 3)
+    #
+    # # - SLC_interp - registers SLC-2 to the reference geometry,
+    # # -              that is the geometry of SLC-1.
+    # pg.SLC_interp(os.path.join(data_dir, f'{sec}.slc'),
+    #               os.path.join(data_dir, f'{ref}.par'),
+    #               os.path.join(data_dir, f'{sec}.par'),
+    #               os.path.join(data_dir, f'{ref}-{sec}.par'),
+    #               os.path.join(data_dir, f'{sec}.reg.slc'),
+    #               os.path.join(data_dir, f'{sec}.reg.par'),
+    #               '-', '-', 0, 7
+    #               )
+    # # - Create New ISP Parameter file
+    # create_isp_par(data_dir, ref, f'{sec}.reg')
 
     # - Compute Dense Offsets Map between the reference SLC and the
     # - registered secondary SLC.
