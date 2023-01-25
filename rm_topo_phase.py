@@ -198,7 +198,6 @@ def main() -> None:
                   f'{ref_slc}.pwr1', interf_width)
 
     # - Geocode Output interferogram
-    # - Geocode Double Difference
     # - Reference Interferogram look-up table
     ref_gcmap = os.path.join('.', 'gc_icemap')
     dem_par_path = os.path.join('.', 'DEM_gc_par')

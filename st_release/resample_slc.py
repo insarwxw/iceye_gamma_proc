@@ -154,8 +154,9 @@ def resample_slc_prf(data_dir: str, ref: str, sec: str,
         os.path.join(data_dir, f'{sec}.par'),
         os.path.join(data_dir, f'{sec}_r.par'),
         os.path.join(data_dir, f'{sec}_r.slc'),
-        '-',    # - use default interpolation method - bicubic spline
+        6,      # - use default interpolation method Bspline [4] / Lanczos [6]
         1,      # - input/output data type - FCOMPLEX
+        7,      # - interpolation function order
     )
 
     # - Generate new offset file

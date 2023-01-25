@@ -4,7 +4,7 @@ multi_look_slc.py
 Written by Enrico Ciraci' (03/2022)
 Calculate a multi-looked intensity (MLI) image from the selected ICEye SLCs.
 
-usage: multi_look_slc.py [-h] [--directory DIRECTORY] [--slc SLC]
+usage: multi_look_slc.py [-h] [--directory DIRECTORY] slc
 
 Calculate a multi-looked intensity (MLI) image from the selected ICEye SLCs.
 
