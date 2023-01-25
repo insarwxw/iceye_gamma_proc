@@ -36,6 +36,7 @@ import shutil
 import numpy as np
 # - GAMMA's Python integration with the py_gamma module
 import py_gamma as pg
+import py_gamma2019 as pg9
 # - ST_Release dependencies
 from scipy.signal import medfilt
 from astropy.convolution import convolve, Box2DKernel
@@ -446,10 +447,10 @@ def main() -> None:
            )
 
     # - Generate 8-bit greyscale raster image of intensity multi-looked SLC
-    pg.raspwr(os.path.join(data_dir, f'{ref}.mli'), interf_width)
+    pg9.raspwr(os.path.join(data_dir, f'{ref}.mli'), interf_width)
 
     # - Show Output Interferogram
-    pg.rasmph_pwr(
+    pg9.rasmph_pwr(
         os.path.join(data_dir, f'coco{ref}-{sec}.reg2.intf.flat.filt'),
         os.path.join(data_dir, f'{ref}.mli.bmp'), interf_width
     )
@@ -497,7 +498,7 @@ def main() -> None:
                     'gc_icemap',
                     os.path.join(data_dir, f'{ref}.mli.geo'),
                     dem_width, dem_nlines)
-    pg.raspwr(os.path.join(data_dir, f'{ref}.mli.geo'), dem_width)
+    pg9.raspwr(os.path.join(data_dir, f'{ref}.mli.geo'), dem_width)
 
     # - Remove Interferometric Phase component due to surface Topography.
     # - Simulate unwrapped interferometric phase using DEM height.
@@ -520,14 +521,13 @@ def main() -> None:
                               f'coco{ref}-{sec}.reg2.intf.flat.topo_off'), 1
                  )
     # - Show interferogram w/o topographic phase
-    pg.rasmph_pwr(os.path.join(data_dir,
-                               f'coco{ref}-{sec}.reg2.intf.flat.topo_off'),
-                  os.path.join(data_dir, f'{ref}.mli'), interf_width)
+    pg9.rasmph_pwr(os.path.join(data_dir,
+                                f'coco{ref}-{sec}.reg2.intf.flat.topo_off'),
+                   os.path.join(data_dir, f'{ref}.mli'), interf_width)
 
     # - Geocode Output interferogram
     # - Reference Interferogram look-up table
     ref_gcmap = os.path.join('.', 'gc_icemap')
-    dem_par_path = os.path.join('.', 'DEM_gc_par')
 
     # - geocode interferogram
     pg.geocode_back(
@@ -538,7 +538,7 @@ def main() -> None:
     )
 
     # - Show Geocoded interferogram
-    pg.rasmph_pwr(
+    pg9.rasmph_pwr(
         os.path.join(data_dir, f'coco{ref}-{sec}.reg2.intf.flat.topo_off.geo'),
         os.path.join(data_dir, f'{ref}.mli.geo'),  dem_width
     )
@@ -552,9 +552,10 @@ def main() -> None:
                             f'coco{ref}-{sec}.flat.topo_off.filt.coh'),
                dem_width)
         # - Show filtered interferogram
-        pg.rasmph_pwr(os.path.join(data_dir, f'coco{ref}-{sec}'
-                                             f'.flat.topo_off.filt'),
-                      os.path.join(data_dir, f'{ref}.pwr1.geo'), dem_width)
+        pg9.rasmph_pwr(
+            os.path.join(data_dir, f'coco{ref}-{sec}.flat.topo_off.filt'),
+            os.path.join(data_dir, f'{ref}.pwr1.geo'), dem_width
+        )
 
         # - Smooth Geocoded Interferogram
         pg.adf(os.path.join(data_dir, f'coco{ref}-{sec}.flat.topo_off.geo'),
@@ -564,9 +565,10 @@ def main() -> None:
                             f'coco{ref}-{sec}.flat.topo_off.geo.filt.coh'),
                dem_width)
         # - Show filtered interferogram
-        pg.rasmph_pwr(os.path.join(data_dir,
-                                   f'coco{ref}-{sec}.flat.topo_off.geo.filt'),
-                      os.path.join(data_dir, f'{ref}.pwr1.geo'), dem_width)
+        pg9.rasmph_pwr(
+            os.path.join(data_dir, f'coco{ref}-{sec}.flat.topo_off.geo.filt'),
+            os.path.join(data_dir, f'{ref}.pwr1.geo'), dem_width
+        )
 
     # - Change Permission Access to all the files contained inside the
     # - output directory.
