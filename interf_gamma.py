@@ -431,12 +431,12 @@ def main() -> None:
     #               32, 32
     #               )
     #
-    # # - Extract interferogram dimensions from its parameter file
-    # igram_param_dict \
-    #     = pg.ParFile(os.path.join(data_dir, f'{ref}-{sec}.reg2.par'),).par_dict
-    # # - read interferogram number of columns
-    # interf_width = int(igram_param_dict['interferogram_width'][0])
-    # interf_lines = int(igram_param_dict['interferogram_azimuth_lines'][0])
+    # - Extract interferogram dimensions from its parameter file
+    igram_param_dict \
+        = pg.ParFile(os.path.join(data_dir, f'{ref}-{sec}.reg2.par'),).par_dict
+    # - read interferogram number of columns
+    interf_width = int(igram_param_dict['interferogram_width'][0])
+    interf_lines = int(igram_param_dict['interferogram_azimuth_lines'][0])
     print(f'# - Interferogram Size: {interf_lines} x {interf_width}')
 
     # - Adaptive interferogram filter using the power spectral density
