@@ -34,7 +34,7 @@ def path_to_dem(dem: str) -> dict:
             # - DEM binary
             'dem': 'TDX_DEM_500m.filtered.ASTER_PEN.BEDMAP2.v2.dat',
             'par': 'DEM_gc_par',            # - DEM parameters
-            'oversample': 50,              # - DEM oversampling factor
+            'oversample': 50,               # - DEM oversampling factor
             }
     else:
         raise ValueError(f'Unknown DEM selected: {dem}')
