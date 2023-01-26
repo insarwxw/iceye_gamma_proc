@@ -21,11 +21,17 @@ def path_to_dem(dem: str) -> dict:
     elif dem.lower() in ['ais', 'antarctica', 'bedmap2']:
         # - BEDMAP2 DEM
         dem_path = os.environ['PYTHONDATA']
+        # return {#'path': os.path.join(dem_path, 'ANTARCTICA', 'DEM', 'BEDMAP2'),
+        #         'path': os.path.join(dem_path, 'bedmap2'),
+        #         'dem': 'bedmap2_surface.dat',   # - DEM binary
+        #         'par': 'DEM_gc_par',            # - DEM parameters
+        #         'oversample': 100,              # - DEM oversampling factor
+        #         }
         return {#'path': os.path.join(dem_path, 'ANTARCTICA', 'DEM', 'BEDMAP2'),
-                'path': os.path.join(dem_path, 'bedmap2'),
-                'dem': 'bedmap2_surface.dat',   # - DEM binary
+                'path': os.path.join(dem_path, 'TanDEM-X_500m'),
+                'dem': 'TDX_DEM_500m.filtered.ASTER_PEN.BEDMAP2.v2.dat',   # - DEM binary
                 'par': 'DEM_gc_par',            # - DEM parameters
-                'oversample': 100,              # - DEM oversampling factor
+                'oversample': 50,              # - DEM oversampling factor
                 }
     else:
         raise ValueError(f'Unknown DEM selected: {dem}')

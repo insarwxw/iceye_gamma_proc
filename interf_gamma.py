@@ -339,7 +339,7 @@ def main() -> None:
     sec = args.secondary        # - Secondary SLC
 
     # - Create New ISP Parameter file
-    # create_isp_par(data_dir, ref, sec)
+    create_isp_par(data_dir, ref, sec)
 
     # - Estimate Range and Azimuth Preliminary
     # - Registration offset fields Preliminary Offset
