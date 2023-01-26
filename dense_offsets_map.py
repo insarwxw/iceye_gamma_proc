@@ -65,6 +65,7 @@ import datetime
 import numpy as np
 # - GAMMA's Python integration with the py_gamma module
 import py_gamma as pg
+import py_gamma2019 as pg9
 # - ST_Release dependencies
 from scipy.signal import medfilt
 from astropy.convolution import convolve, Box2DKernel
@@ -320,9 +321,9 @@ def main() -> None:
 
     # - Run GAMMA rasmph: Generate 8-bit raster graphics image of the phase
     # - and intensity of complex data - Show Interpolated Offsets Map
-    pg.rasmph(os.path.join(out_dir, f'{pair_name}.offmap.res'),
-              rn_smp,  '-', '-', '-', '-', '-', '-', '-',
-              os.path.join(out_dir, f'{pair_name}.offmap.res.bmp'))
+    pg9.rasmph(os.path.join(out_dir, f'{pair_name}.offmap.res'),
+               rn_smp,  '-', '-', '-', '-', '-', '-', '-',
+               os.path.join(out_dir, f'{pair_name}.offmap.res.bmp'))
 
     # - Process Offsets Map
     # - > Remove Outliers
@@ -408,7 +409,7 @@ def main() -> None:
         .tofile(os.path.join(out_dir, f'{pair_name}.offmap.res.filt'))
 
     # - Show Smoothed Offsets Map
-    pg.rasmph(os.path.join(out_dir, f'{pair_name}.offmap.res.filt'), rn_smp)
+    pg9.rasmph(os.path.join(out_dir, f'{pair_name}.offmap.res.filt'), rn_smp)
 
     if args.intf:
         offsets = os.path.join(out_dir, f'{pair_name}_doffs_noramp_smooth')
