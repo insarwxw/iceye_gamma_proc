@@ -8,8 +8,8 @@ def path_to_dem(dem: str) -> dict:
     :param dem: DEM name.
     :return: dictionary with absolute paths to DEM and its parameter files.
     """
-    # dem_path = os.environ['DAT_PATH']   # - DAT_PATH
-    dem_path = os.environ['PYTHONDATA']   # - DAT_PATH
+    dem_path = os.environ['DAT_PATH']   # - DAT_PATH
+    # dem_path = os.environ['PYTHONDATA']   # - DAT_PATH
     # - Get absolute path to DEM and its parameter files
     if dem.lower() in ['gis', 'gimp', 'greenland']:
         # - GIMP DEM
@@ -29,9 +29,9 @@ def path_to_dem(dem: str) -> dict:
         #         }
         return {
             # - Path to DEM directory
-            # 'path': os.path.join(dem_path, 'ANTARCTICA',
-            #                      'DEM', 'TanDEM-X_500m'),
-            'path': os.path.join(dem_path, 'TanDEM-X_500m'),
+            'path': os.path.join(dem_path, 'ANTARCTICA',
+                                 'DEM', 'TanDEM-X_500m'),
+            # 'path': os.path.join(dem_path, 'TanDEM-X_500m'),
             # - DEM binary
             'dem': 'TDX_DEM_500m.filtered.ASTER_PEN.BEDMAP2.v2.dat',
             'par': 'DEM_gc_par',            # - DEM parameters
