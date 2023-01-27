@@ -31,6 +31,7 @@ def path_to_dem(dem: str) -> dict:
             # - Path to DEM directory
             'path': os.path.join(dem_path, 'ANTARCTICA',
                                  'DEM', 'TanDEM-X_500m'),
+            # 'path': os.path.join(dem_path, 'TanDEM-X_500m'),
             # - DEM binary
             'dem': 'TDX_DEM_500m.filtered.ASTER_PEN.BEDMAP2.v2.dat',
             'par': 'DEM_gc_par',            # - DEM parameters
