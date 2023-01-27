@@ -328,6 +328,10 @@ def main() -> None:
                         help='Keep intermediate processing outputs.',
                         action='store_true')
 
+    parser.add_argument('--pdoff', '-p',
+                        help='Compute preliminary dense offsets field.',
+                        action='store_true')
+
     args = parser.parse_args()
 
     # - Path to Test directory
@@ -343,16 +347,31 @@ def main() -> None:
 
     # - Estimate Range and Azimuth Preliminary
     # - Registration offset fields Preliminary Offset
-    pg.offset_pwr(os.path.join(data_dir, f'{ref}.slc'),
-                  os.path.join(data_dir, f'{sec}.slc'),
-                  os.path.join(data_dir, f'{ref}.par'),
-                  os.path.join(data_dir, f'{sec}.par'),
-                  os.path.join(data_dir, f'{ref}-{sec}.par'),
-                  os.path.join(data_dir, f'sparse_offsets'),
-                  os.path.join(data_dir, f'sparse_offsets.ccp'),
-                  64, 64,  os.path.join(data_dir, f'sparse_offsets.txt'),
-                  '-', 64, 128
-                  )
+    if args.pdoff:
+        pg.offset_pwr_tracking(
+            os.path.join(data_dir, f'{ref}.slc'),
+            os.path.join(data_dir, f'{sec}.slc'),
+            os.path.join(data_dir, f'{ref}.par'),
+            os.path.join(data_dir, f'{sec}.par'),
+            os.path.join(data_dir, f'{ref}-{sec}.par'),
+            os.path.join(out_dir, f'sparse_offsets'),
+            os.path.join(out_dir, f'sparse_offsets.ccp'),
+            64, 64,
+            os.path.join(out_dir, f'sparse_offsets.txt'),
+            '-', '-', 32, 32, '-', '-', '-', '-', '-', '-',
+        )
+    else:
+        pg.offset_pwr(os.path.join(data_dir, f'{ref}.slc'),
+                      os.path.join(data_dir, f'{sec}.slc'),
+                      os.path.join(data_dir, f'{ref}.par'),
+                      os.path.join(data_dir, f'{sec}.par'),
+                      os.path.join(data_dir, f'{ref}-{sec}.par'),
+                      os.path.join(data_dir, f'sparse_offsets'),
+                      os.path.join(data_dir, f'sparse_offsets.ccp'),
+                      64, 64,  os.path.join(data_dir, f'sparse_offsets.txt'),
+                      '-', 64, 128
+                      )
+
     # - Estimate range and azimuth offset polynomial
     # - Update ISP parameter file - offsets polynomial
     pg.offset_fit(os.path.join(data_dir, f'sparse_offsets'),

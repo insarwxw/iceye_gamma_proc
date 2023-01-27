@@ -2,6 +2,6 @@
 directory: /u/mawson-r0/eric/ICEye_2022_PETERMAN/processed_data/output
 in_dir: pair_diff.rsmp
 out_dir: ddiff_geo.rsmp
-reference: 561733_20220509T145701.rsmp-561734_20220510T145702.rsmp
-secondary: 574411_20220512T145702.rsmp-574412_20220513T145701.rsmp
+reference: 1345482_20221018T221331.rsmp-1345483_20221019T221328.rsmp
+secondary: 1345483_20221019T221328.rsmp-1345484_20221020T221324.rsmp
 pwr_suff: .mli.geo
