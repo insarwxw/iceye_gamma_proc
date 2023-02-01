@@ -133,7 +133,7 @@ def resample_slc_prf(data_dir: str, ref: str, sec: str,
     sec_param.set_value('prf', ref_az_prf)
     sec_param.set_value('azimuth_pixel_spacing', azimuth_pixel_spacing)
     sec_param.set_value('azimuth_line_time', azimuth_line_time)
-    sec_param.set_value('azimuth_lines', azimuth_lines)
+    sec_param.set_value('azimuth_lines', int(azimuth_lines))
     sec_param.set_value('center_time', center_time)
     sec_param.set_value('end_time', end_time)
 

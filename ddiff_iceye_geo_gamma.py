@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 u"""
-Enrico Ciraci' - 03/2022
+Enrico Ciraci' - 01/2023
 
 Compute Double-Difference Interferogram from ICEYE data.
 -> Use Geocoded Interferograms.
@@ -54,7 +54,7 @@ from utils.make_dir import make_dir
 from utils.read_keyword import read_keyword
 
 
-def main():
+def main() -> None:
     # - Read the system arguments listed after the program
     parser = argparse.ArgumentParser(
         description="""Compute Double-Difference Interferogram between the

@@ -80,7 +80,7 @@ def main() -> None:
     slc_param.set_value('prf', prf)
     slc_param.set_value('azimuth_pixel_spacing', azimuth_pixel_spacing)
     slc_param.set_value('azimuth_line_time', azimuth_line_time)
-    slc_param.set_value('azimuth_lines', azimuth_lines)
+    slc_param.set_value('azimuth_lines', int(azimuth_lines))
     slc_param.set_value('center_time', center_time)
     slc_param.set_value('end_time', end_time)
 
