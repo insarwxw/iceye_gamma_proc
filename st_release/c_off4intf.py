@@ -22,7 +22,7 @@ from st_release.madian_filter_off import median_filter_off
 from st_release.congrid2d import congrid2d
 from st_release.fill_nodata import fill_nodata
 # - GAMMA Python Binding
-import py_gamma as pg
+import py_gamma2019 as pg9
 
 
 def c_off4intf(data_dir: str, id1: str, id2: str,
@@ -177,8 +177,8 @@ def c_off4intf(data_dir: str, id1: str, id2: str,
 
     # - Run GAMMA rasmph: Generate 8-bit raster graphics image of the phase
     # - and intensity of complex data - Show Interpolated Offsets Map
-    pg.rasmph(os.path.join(data_dir, id1 + '-' + id2
-                           + '.offmap.off.new.interp'), poff.npix)
+    pg9.rasmph(os.path.join(data_dir, id1 + '-' + id2
+                            + '.offmap.off.new.interp'), poff.npix)
 
     # - Write Bash Script to run to compute the interferogram
     bat_inter_path = os.path.join(data_dir, 'bat_inter.' + id1 + '-' + id2)
