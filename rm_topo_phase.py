@@ -180,7 +180,7 @@ def main() -> None:
     # - Geocoding of Reference SLC power using a geocoding lookup table
     pg.geocode_back(ref_slc + '.pwr1', interf_width, 'gc_icemap',
                     ref_slc + '.pwr1.geo', dem_width, dem_nlines)
-    pg.raspwr(ref_slc + '.pwr1.geo', dem_width)
+    pg9.raspwr(ref_slc + '.pwr1.geo', dem_width)
 
     # - Remove Interferometric Phase component due to surface Topography.
     # - Simulate unwrapped interferometric phase using DEM height.
