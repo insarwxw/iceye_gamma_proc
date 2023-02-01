@@ -42,6 +42,7 @@ import argparse
 import datetime
 # - GAMMA's Python integration with the py_gamma module
 import py_gamma as pg
+import py_gamma2019 as pg9
 from utils.path_to_dem import path_to_dem
 from utils.read_keyword import read_keyword
 
@@ -194,8 +195,8 @@ def main() -> None:
     pg.sub_phase(f'coco{ref_slc}-{sec_slc}.flat', 'sim_phase', 'DIFF_par',
                  f'coco{ref_slc}-{sec_slc}.flat.topo_off', 1)
     # - Show interferogram w/o topographic phase
-    pg.rasmph_pwr(f'coco{ref_slc}-{sec_slc}.flat.topo_off',
-                  f'{ref_slc}.pwr1', interf_width)
+    pg9.rasmph_pwr(f'coco{ref_slc}-{sec_slc}.flat.topo_off',
+                   f'{ref_slc}.pwr1', interf_width)
 
     # - Geocode Output interferogram
     # - Reference Interferogram look-up table
@@ -215,8 +216,8 @@ def main() -> None:
                     )
 
     # - Show Geocoded interferogram
-    pg.rasmph_pwr(f'coco{ref_slc}-{sec_slc}.flat.topo_off.geo',
-                  f'{ref_slc}.pwr1.geo', dem_width)
+    pg9.rasmph_pwr(f'coco{ref_slc}-{sec_slc}.flat.topo_off.geo',
+                   f'{ref_slc}.pwr1.geo', dem_width)
 
     if args.filter:
         # - Smooth the obtained interferogram with pg.adf
@@ -226,8 +227,8 @@ def main() -> None:
                f'coco{ref_slc}-{sec_slc}.flat.topo_off.filt.coh',
                dem_width)
         # - Show filtered interferogram
-        pg.rasmph_pwr(f'coco{ref_slc}-{sec_slc}.flat.topo_off.filt',
-                      f'{ref_slc}.pwr1.geo', dem_width)
+        pg9.rasmph_pwr(f'coco{ref_slc}-{sec_slc}.flat.topo_off.filt',
+                       f'{ref_slc}.pwr1.geo', dem_width)
 
         # - Smooth Geocoded Interferogram
         pg.adf(f'coco{ref_slc}-{sec_slc}.flat.topo_off.geo',
@@ -235,8 +236,8 @@ def main() -> None:
                f'coco{ref_slc}-{sec_slc}.flat.topo_off.geo.filt.coh',
                dem_width)
         # - Show filtered interferogram
-        pg.rasmph_pwr(f'coco{ref_slc}-{sec_slc}.flat.topo_off.geo.filt',
-                      f'{ref_slc}.pwr1.geo', dem_width)
+        pg9.rasmph_pwr(f'coco{ref_slc}-{sec_slc}.flat.topo_off.geo.filt',
+                       f'{ref_slc}.pwr1.geo', dem_width)
 
     # - Change Permission Access to all the files contained inside the
     # - output directory.

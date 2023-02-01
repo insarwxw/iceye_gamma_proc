@@ -28,6 +28,7 @@ import argparse
 import datetime
 # - GAMMA's Python integration with the py_gamma module
 import py_gamma as pg
+import py_gamma2019 as pg9
 from utils.make_dir import make_dir
 
 
@@ -109,8 +110,8 @@ def main():
     # - plotted on top of the reference intensity image.
     print('# - Generate 8-bit raster image of the interferogram '
           'plotted on top of the reference SLC intensity image')
-    pg.rasmph_pwr(os.path.join('.', f'coco{ref_slc}-{sec_slc}.dat'),
-                  os.path.join('.', f'{ref_slc}.pwr1'), n_col)
+    pg9.rasmph_pwr(os.path.join('.', f'coco{ref_slc}-{sec_slc}.dat'),
+                   os.path.join('.', f'{ref_slc}.pwr1'), n_col)
 
     # - Remove Flat Earth Phase contribution to differential phase
     # - ph_slope_base -> Subtract/add interferogram Flat-Earth phase trend as
@@ -121,8 +122,8 @@ def main():
                      f'{ref_slc}-{sec_slc}.offmap.par.interp',
                      f'base{ref_slc}-{sec_slc}.dat',
                      f'coco{ref_slc}-{sec_slc}.flat')
-    pg.rasmph_pwr(os.path.join('.', f'coco{ref_slc}-{sec_slc}.flat'),
-                  os.path.join('.', f'{ref_slc}.pwr1'), n_col)
+    pg9.rasmph_pwr(os.path.join('.', f'coco{ref_slc}-{sec_slc}.flat'),
+                   os.path.join('.', f'{ref_slc}.pwr1'), n_col)
 
     # - Change Permission Access to all the files contained inside the
     # - output directory.
