@@ -69,11 +69,9 @@ def main():
 
     # - Data directory
     if args.init_offset:
-        data_dir = os.path.join(args.directory,
-                                'pair_diff_io', ref_slc + '-' + sec_slc)
+        data_dir = os.path.join(args.directory, ref_slc + '-' + sec_slc)
     else:
-        data_dir = os.path.join(args.directory,
-                                'pair_diff', ref_slc + '-' + sec_slc)
+        data_dir = os.path.join(args.directory, ref_slc + '-' + sec_slc)
 
     # - Compute Interferogram Baseline Base on SLCs orbit state vectors
     print('# - Estimate baseline from orbit state vectors (base_orbit)')
