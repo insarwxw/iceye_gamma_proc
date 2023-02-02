@@ -104,8 +104,8 @@ def main():
         sys.exit()
 
     # - other parameters - ampcor skip
-    range_spacing = 32
-    line_spacing = 32
+    range_spacing = 30
+    line_spacing = 30
 
     # - bat file name
     bat_id = os.path.join(out_dir, f'bat_{ref_slc}-{sec_slc}')

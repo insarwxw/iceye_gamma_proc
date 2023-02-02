@@ -577,7 +577,7 @@ def main() -> None:
         pg9.rasmph_pwr(
             os.path.join(data_dir,
                          f'coco{ref}-{sec}.reg2.intf.flat.topo_off.filt'),
-            os.path.join(data_dir, f'{ref}.mli.geo'), dem_width
+            os.path.join(data_dir, f'{ref}.mli'), interf_width
         )
 
         # - Smooth Geocoded Interferogram
