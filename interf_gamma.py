@@ -565,28 +565,36 @@ def main() -> None:
     if args.filter:
         # - Smooth the obtained interferogram with pg.adf
         # - Adaptive interferogram filter using the power spectral density.
-        pg.adf(os.path.join(data_dir, f'coco{ref}-{sec}.flat.topo_off'),
-               os.path.join(data_dir, f'coco{ref}-{sec}.flat.topo_off.filt'),
+        pg.adf(os.path.join(data_dir,
+                            f'coco{ref}-{sec}.reg2.intf.flat.topo_off'),
                os.path.join(data_dir,
-                            f'coco{ref}-{sec}.flat.topo_off.filt.coh'),
+                            f'coco{ref}-{sec}.reg2.intf.flat.topo_off.filt'),
+               os.path.join(data_dir,
+                            f'coco{ref}-{sec}.reg2.intf.flat.'
+                            f'topo_off.filt.coh'),
                dem_width)
         # - Show filtered interferogram
         pg9.rasmph_pwr(
-            os.path.join(data_dir, f'coco{ref}-{sec}.flat.topo_off.filt'),
-            os.path.join(data_dir, f'{ref}.pwr1.geo'), dem_width
+            os.path.join(data_dir,
+                         f'coco{ref}-{sec}.reg2.intf.flat.topo_off.filt'),
+            os.path.join(data_dir, f'{ref}.mli.geo'), dem_width
         )
 
         # - Smooth Geocoded Interferogram
-        pg.adf(os.path.join(data_dir, f'coco{ref}-{sec}.flat.topo_off.geo'),
+        pg.adf(os.path.join(data_dir,
+                            f'coco{ref}-{sec}.reg2.intf.flat.topo_off.geo'),
                os.path.join(data_dir,
-                            f'coco{ref}-{sec}.flat.topo_off.geo.filt'),
+                            f'coco{ref}-{sec}.reg2.intf.flat.'
+                            f'topo_off.geo.filt'),
                os.path.join(data_dir,
-                            f'coco{ref}-{sec}.flat.topo_off.geo.filt.coh'),
+                            f'coco{ref}-{sec}.reg2.intf.flat.topo_off.geo.'
+                            f'filt.coh'),
                dem_width)
         # - Show filtered interferogram
         pg9.rasmph_pwr(
-            os.path.join(data_dir, f'coco{ref}-{sec}.flat.topo_off.geo.filt'),
-            os.path.join(data_dir, f'{ref}.pwr1.geo'), dem_width
+            os.path.join(data_dir,
+                         f'coco{ref}-{sec}.reg2.intf.flat.topo_off.geo.filt'),
+            os.path.join(data_dir, f'{ref}.mli.geo'), dem_width
         )
 
     # - Change Permission Access to all the files contained inside the
