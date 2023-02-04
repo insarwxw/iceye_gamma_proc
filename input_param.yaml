@@ -1,0 +1,7 @@
+# Description: Input parameters for the processing of the ICEye data
+directory: /u/mawson-r0/eric/eciraci/ICEye_2022_THWAITES/ASCENDING_RIGHT/output/
+in_dir: pair_diff.rsmp
+out_dir: ddiff_geo.rsmp
+reference: 1345471_20221030T234726.rsmp-1395315_20221031T234717.rsmp
+secondary: 1395315_20221031T234717.rsmp-1395303_20221101T234709.rsmp
+pwr_suff: .mli.geo

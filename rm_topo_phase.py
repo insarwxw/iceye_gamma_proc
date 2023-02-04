@@ -3,6 +3,36 @@
 Enrico Ciraci' - 03/2022
 
 Remove Topographic Contribution from Flattened Interferogram.
+
+usage: rm_topo_phase.py [-h] [--directory DIRECTORY]
+                        [--filter] reference secondary dem
+
+Geocode Flattened Interferogram and Remove Topographic Contribution
+to Interferometric Phase.
+
+NOTE: Applying the Adaptive interferogram filter at this step is deprecated but
+still available as an option. The filter should be applied after the computation
+of the double difference interferogram.
+
+positional arguments:
+  reference             Reference SLCs.
+  secondary             Secondary SLCs.
+  dem                   Digital Elevation Model
+
+options:
+  -h, --help            show this help message and exit
+  --directory DIRECTORY, -D DIRECTORY
+                        Data directory.
+  --filter, -F          Adaptive interferogram filter using the power spectral
+                        density - (GAMMA - adf)
+
+PYTHON DEPENDENCIES:
+    argparse: Parser for command-line options, arguments and sub-commands
+           https://docs.python.org/3/library/argparse.html
+    py_gamma: GAMMA's Python integration with the py_gamma module
+
+UPDATE HISTORY:
+
 """
 # - Python dependencies
 from __future__ import print_function
@@ -12,7 +42,8 @@ import argparse
 import datetime
 # - GAMMA's Python integration with the py_gamma module
 import py_gamma as pg
-from utils.path_to_dem import path_to_gimp
+import py_gamma2019 as pg9
+from utils.path_to_dem import path_to_dem
 from utils.read_keyword import read_keyword
 
 
@@ -22,47 +53,32 @@ def main() -> None:
         description="""Geocode Flattened Interferogram and Remove
         Topographic Contribution to Interferometric Phase. """
     )
-    # - Working Directory directory.
-    default_dir = os.environ['PYTHONDATA']
+    # - Reference SLCs
+    parser.add_argument('reference', type=str,
+                        help='Reference SLCs.')
+    # - Secondary SLCs
+    parser.add_argument('secondary', type=str,
+                        help='Secondary SLCs.')
+    # - Digital Elevation Model
+    parser.add_argument('dem', type=str,
+                        help='Digital Elevation Model')
+    # - Data Directory
     parser.add_argument('--directory', '-D',
-                        type=lambda p: os.path.abspath(
-                            os.path.expanduser(p)),
-                        default=default_dir,
-                        help='Project data directory.')
-
-    parser.add_argument('--pair', '-P',
-                        type=str,
-                        default=None,
-                        help='SLC Pair Codes separated by "_" '
-                             'reference-secondary')
+                        help='Data directory.',
+                        default=os.getcwd())
 
     parser.add_argument('--filter', '-F', action='store_true',
                         help='Adaptive interferogram filter using the power '
                              'spectral density - (GAMMA - adf)')
 
-    parser.add_argument('--init_offset', '-I', action='store_true',
-                        help='Determine initial offset between SLC'
-                             'images using correlation of image intensity')
-
     args = parser.parse_args()
 
-    if args.pair is None:
-        print('# - Provide selected SLC names as: --pair=Ref_Code_Sec_Code')
-        sys.exit()
-
     # - Reference and Secondary SLCs
-    slc_list = args.pair.split('-')
-    ref_slc = slc_list[0]
-    sec_slc = slc_list[1]
+    ref_slc = args.reference
+    sec_slc = args.secondary
 
-    # - Data directory
-    if args.init_offset:
-        data_dir = os.path.join(args.directory,
-                                'pair_diff_io', ref_slc + '-' + sec_slc)
-    else:
-        data_dir = os.path.join(args.directory,
-                                'pair_diff', ref_slc + '-' + sec_slc)
-    # - Change the current working directory
+    # - Directory containing the SLCs
+    data_dir = args.directory
     os.chdir(data_dir)
 
     # - Extract Interferogram Size from parameter file
@@ -113,13 +129,18 @@ def main() -> None:
     #                     3: nn-thinned (not available in gc_map2)
     #   r_ovr           range over-sampling factor for nn-thinned
     #                          layover/shadow mode (enter - for default: 2.0)
-
-    pg.gc_map(ref_slc+'.par',
-              igram_par_path,
-              os.path.join(path_to_gimp(), 'DEM_gc_par'),
-              os.path.join(path_to_gimp(), 'gimpdem100.dat'),
-              'DEM_gc_par', 'DEMice_gc', 'gc_icemap',
-              10, 10, 'sar_map_in_dem_geometry',
+    dem_info = path_to_dem(args.dem)
+    dem_par = os.path.join(dem_info['path'], dem_info['par'])
+    dem = os.path.join(dem_info['path'], dem_info['dem'])
+    pg.gc_map(ref_slc+'.par',   # - SLC image parameter file
+              igram_par_path,   # - ISP offset/interferogram parameter file
+              dem_par,          # - DEM/MAP parameter file
+              dem,               # - DEM data file (or constant height value)
+              dem_info['par'],     # - DEM segment used...
+              'DEMice_gc',      # - DEM segment used for output products...
+              'gc_icemap',      # - geocoding lookup table (fcomplex)
+              dem_info['oversample'], dem_info['oversample'],
+              'sar_map_in_dem_geometry',
               '-', '-', 'inc.geo', '-', '-', '-', '-', '2', '-'
               )
 
@@ -159,7 +180,7 @@ def main() -> None:
     # - Geocoding of Reference SLC power using a geocoding lookup table
     pg.geocode_back(ref_slc + '.pwr1', interf_width, 'gc_icemap',
                     ref_slc + '.pwr1.geo', dem_width, dem_nlines)
-    pg.raspwr(ref_slc + '.pwr1.geo', dem_width)
+    pg9.raspwr(ref_slc + '.pwr1.geo', dem_width)
 
     # - Remove Interferometric Phase component due to surface Topography.
     # - Simulate unwrapped interferometric phase using DEM height.
@@ -174,11 +195,10 @@ def main() -> None:
     pg.sub_phase(f'coco{ref_slc}-{sec_slc}.flat', 'sim_phase', 'DIFF_par',
                  f'coco{ref_slc}-{sec_slc}.flat.topo_off', 1)
     # - Show interferogram w/o topographic phase
-    pg.rasmph_pwr(f'coco{ref_slc}-{sec_slc}.flat.topo_off',
-                  f'{ref_slc}.pwr1', interf_width)
+    pg9.rasmph_pwr(f'coco{ref_slc}-{sec_slc}.flat.topo_off',
+                   f'{ref_slc}.pwr1', interf_width)
 
     # - Geocode Output interferogram
-    # - Geocode Double Difference
     # - Reference Interferogram look-up table
     ref_gcmap = os.path.join('.', 'gc_icemap')
     dem_par_path = os.path.join('.', 'DEM_gc_par')
@@ -196,8 +216,8 @@ def main() -> None:
                     )
 
     # - Show Geocoded interferogram
-    pg.rasmph_pwr(f'coco{ref_slc}-{sec_slc}.flat.topo_off.geo',
-                  f'{ref_slc}.pwr1.geo', dem_width)
+    pg9.rasmph_pwr(f'coco{ref_slc}-{sec_slc}.flat.topo_off.geo',
+                   f'{ref_slc}.pwr1.geo', dem_width)
 
     if args.filter:
         # - Smooth the obtained interferogram with pg.adf
@@ -207,8 +227,8 @@ def main() -> None:
                f'coco{ref_slc}-{sec_slc}.flat.topo_off.filt.coh',
                dem_width)
         # - Show filtered interferogram
-        pg.rasmph_pwr(f'coco{ref_slc}-{sec_slc}.flat.topo_off.filt',
-                      f'{ref_slc}.pwr1.geo', dem_width)
+        pg9.rasmph_pwr(f'coco{ref_slc}-{sec_slc}.flat.topo_off.filt',
+                       f'{ref_slc}.pwr1.geo', dem_width)
 
         # - Smooth Geocoded Interferogram
         pg.adf(f'coco{ref_slc}-{sec_slc}.flat.topo_off.geo',
@@ -216,8 +236,8 @@ def main() -> None:
                f'coco{ref_slc}-{sec_slc}.flat.topo_off.geo.filt.coh',
                dem_width)
         # - Show filtered interferogram
-        pg.rasmph_pwr(f'coco{ref_slc}-{sec_slc}.flat.topo_off.geo.filt',
-                      f'{ref_slc}.pwr1.geo', dem_width)
+        pg9.rasmph_pwr(f'coco{ref_slc}-{sec_slc}.flat.topo_off.geo.filt',
+                       f'{ref_slc}.pwr1.geo', dem_width)
 
     # - Change Permission Access to all the files contained inside the
     # - output directory.

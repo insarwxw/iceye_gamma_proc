@@ -3,6 +3,21 @@ u"""
 Enrico Ciraci' - 03/2022
 
 Compute Interferogram for the selected pair.
+
+usage: compute_interferogram.py [-h] [--directory DIRECTORY]
+                        [--pair PAIR] [--init_offset]
+
+Compute Interferogram for the selected pair.
+
+options:
+  -h, --help            show this help message and exit
+  --directory DIRECTORY, -D DIRECTORY
+                        Project data directory.
+  --pair PAIR, -P PAIR  SLC Pair Codes separated by "_"
+                        reference-secondary
+  --init_offset, -I     Determine initial offset between SLC images
+                        using correlation of image intensity
+
 """
 # - Python dependencies
 from __future__ import print_function
@@ -13,6 +28,7 @@ import argparse
 import datetime
 # - GAMMA's Python integration with the py_gamma module
 import py_gamma as pg
+import py_gamma2019 as pg9
 from utils.make_dir import make_dir
 
 
@@ -38,7 +54,7 @@ def main():
 
     parser.add_argument('--init_offset', '-I', action='store_true',
                         help='Determine initial offset between SLC'
-                             'images using correlation of image intensity')
+                             ' images using correlation of image intensity')
 
     args = parser.parse_args()
 
@@ -53,11 +69,9 @@ def main():
 
     # - Data directory
     if args.init_offset:
-        data_dir = os.path.join(args.directory,
-                                'pair_diff_io', ref_slc + '-' + sec_slc)
+        data_dir = os.path.join(args.directory, ref_slc + '-' + sec_slc)
     else:
-        data_dir = os.path.join(args.directory,
-                                'pair_diff', ref_slc + '-' + sec_slc)
+        data_dir = os.path.join(args.directory, ref_slc + '-' + sec_slc)
 
     # - Compute Interferogram Baseline Base on SLCs orbit state vectors
     print('# - Estimate baseline from orbit state vectors (base_orbit)')
@@ -94,8 +108,8 @@ def main():
     # - plotted on top of the reference intensity image.
     print('# - Generate 8-bit raster image of the interferogram '
           'plotted on top of the reference SLC intensity image')
-    pg.rasmph_pwr(os.path.join('.', f'coco{ref_slc}-{sec_slc}.dat'),
-                  os.path.join('.', f'{ref_slc}.pwr1'), n_col)
+    pg9.rasmph_pwr(os.path.join('.', f'coco{ref_slc}-{sec_slc}.dat'),
+                   os.path.join('.', f'{ref_slc}.pwr1'), n_col)
 
     # - Remove Flat Earth Phase contribution to differential phase
     # - ph_slope_base -> Subtract/add interferogram Flat-Earth phase trend as
@@ -106,8 +120,8 @@ def main():
                      f'{ref_slc}-{sec_slc}.offmap.par.interp',
                      f'base{ref_slc}-{sec_slc}.dat',
                      f'coco{ref_slc}-{sec_slc}.flat')
-    pg.rasmph_pwr(os.path.join('.', f'coco{ref_slc}-{sec_slc}.flat'),
-                  os.path.join('.', f'{ref_slc}.pwr1'), n_col)
+    pg9.rasmph_pwr(os.path.join('.', f'coco{ref_slc}-{sec_slc}.flat'),
+                   os.path.join('.', f'{ref_slc}.pwr1'), n_col)
 
     # - Change Permission Access to all the files contained inside the
     # - output directory.

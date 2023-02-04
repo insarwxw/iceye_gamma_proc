@@ -4,7 +4,7 @@ multi_look_slc.py
 Written by Enrico Ciraci' (03/2022)
 Calculate a multi-looked intensity (MLI) image from the selected ICEye SLCs.
 
-usage: multi_look_slc.py [-h] [--directory DIRECTORY] [--slc SLC]
+usage: multi_look_slc.py [-h] [--directory DIRECTORY] slc
 
 Calculate a multi-looked intensity (MLI) image from the selected ICEye SLCs.
 
@@ -42,7 +42,7 @@ import py_gamma as pg
 def main():
     parser = argparse.ArgumentParser(
         description="""Calculate a multi-looked intensity (MLI)
-        image from the selected ICEye SLCs."""
+        image from the selected ICEYE SLCs."""
     )
     # - Absolute Path to directory containing input data.
     default_dir = os.getcwd()
@@ -51,9 +51,7 @@ def main():
                         help='Calculate a multi-look intensity (MLI) '
                              'image from an SLC image.')
 
-    parser.add_argument('--directory', '-D',
-                        type=lambda p: os.path.abspath(os.path.expanduser(p)),
-                        default=default_dir,
+    parser.add_argument('--directory', '-D', type=str, default=os.getcwd(),
                         help='Project data directory.')
 
     args = parser.parse_args()

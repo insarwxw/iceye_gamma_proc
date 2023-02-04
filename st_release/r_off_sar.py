@@ -19,6 +19,7 @@ import os
 from st_release.fparam import off_param, isp_param
 # - GAMMA Python Binding
 import py_gamma as pg
+import py_gamma2019 as pg9
 
 
 def r_off_sar(data_dir: str, id1: str, id2: str, poly_order: int = 3) -> None:
@@ -154,9 +155,9 @@ def r_off_sar(data_dir: str, id1: str, id2: str, poly_order: int = 3) -> None:
 
     # - Run GAMMA rasmph: Generate 8-bit raster graphics image of the phase
     # - and intensity of complex data
-    pg.rasmph(os.path.join(data_dir, id1 + '-' + id2 + '.offmap.off.new'),
-              poff.npix, '-', '-', '-', '-', '-', '-', '-',
-              os.path.join(data_dir, id1 + '-' + id2 + '.offmap.off.new.bmp'))
+    pg9.rasmph(os.path.join(data_dir, id1 + '-' + id2 + '.offmap.off.new'),
+               poff.npix, '-', '-', '-', '-', '-', '-', '-',
+               os.path.join(data_dir, id1 + '-' + id2 + '.offmap.off.new.bmp'))
 
     # - Remove temporary offset map obtained using Gamma offset_sub
     os.remove(os.path.join(data_dir, id1 + '-' + id2 + '.offmap.off.new'))

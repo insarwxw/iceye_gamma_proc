@@ -15,14 +15,14 @@ This script is a new Python implementation of:
 import os
 import numpy as np
 from scipy.signal import medfilt
-from astropy.convolution import convolve
+from astropy.convolution import convolve, Box2DKernel
 # - ST_Release dependencies
 from st_release.fparam import off_param
 from st_release.madian_filter_off import median_filter_off
 from st_release.congrid2d import congrid2d
 from st_release.fill_nodata import fill_nodata
 # - GAMMA Python Binding
-import py_gamma as pg
+import py_gamma2019 as pg9
 
 
 def c_off4intf(data_dir: str, id1: str, id2: str,
@@ -57,8 +57,8 @@ def c_off4intf(data_dir: str, id1: str, id2: str,
         azimuth_spacing = int(150. / poff.azsp)
 
     print('# - Running c_off4int.py')
-    print('# - Range spacing :', range_spacing)
-    print('# - Azimuth spacing :', azimuth_spacing)
+    print(f'# - Range spacing : {range_spacing}')
+    print(f'# - Azimuth spacing : {azimuth_spacing}')
 
     # - Read Offsets Map
     offset_map_path = os.path.join(data_dir, id1 + '-' + id2 + '.offmap.off')
@@ -99,40 +99,39 @@ def c_off4intf(data_dir: str, id1: str, id2: str,
     mask[:, poff.npix - 2:] = 1
     mask[0:2, :] = 1
     mask[poff.nrec - 2:, :] = 1
-    # - Apply Outliers Mask to Offsets Map
-    xoff_masked = np.ma.array(off_map.real, mask=mask)
-    yoff_masked = np.ma.array(off_map.imag, mask=mask)
 
-    # - Run as 3x3 median filter to locate isolated offsets values - offsets
+    # - Apply Outliers Mask to Offsets Map
+    xoff_masked = off_map.real.copy()
+    yoff_masked = off_map.imag.copy()
+    xoff_masked[mask] = 0
+    yoff_masked[mask] = 0
+
+    # - Run as 5x5 median filter to locate isolated offsets values - offsets
     # - surrounded by zeros and set them to zero.
     # - Find more details in step2 of off_filter.pro
-    xoff_masked.mask \
-        = (xoff_masked.mask
-           | (medfilt(xoff_masked.filled(fill_value=0), 3) == 0)
-           | (medfilt(yoff_masked.filled(fill_value=0), 3) == 0))
+    g_mask = (mask | (medfilt(xoff_masked, 5) == 0)
+              | (medfilt(yoff_masked, 5) == 0))
+    xoff_masked[g_mask] = np.nan
+    yoff_masked[g_mask] = np.nan
 
-    yoff_masked.mask\
-        = (yoff_masked.mask
-           | (medfilt(xoff_masked.filled(fill_value=0), 3) == 0)
-           | (medfilt(yoff_masked.filled(fill_value=0), 3) == 0))
+    # - Smooth Offsets Map using a 3x3 Median Filter
+    xoff_masked = medfilt(xoff_masked, 3)
+    yoff_masked = medfilt(yoff_masked, 3)
 
-    # - Smooth Offsets
+    # - Smooth Offsets suing 7x7 Boxcar Filter
     smth_kernel_size = 7
-    kernel = np.ones((smth_kernel_size, smth_kernel_size))
+    kernel = Box2DKernel(smth_kernel_size)
     if smooth:
         xoff_masked \
             = convolve(xoff_masked, kernel, boundary='extend')
         yoff_masked \
             = convolve(yoff_masked, kernel, boundary='extend')
-    else:
-        xoff_masked = xoff_masked.filled(fill_value=np.nan)
-        yoff_masked = yoff_masked.filled(fill_value=np.nan)
 
-    # - Set to Zero offsets pixels that have a zero value in one of the
-    # - two directions.
+    # - Set to NaN offsets pixels that have a zero value in
+    # - either of the two directions.
     ind_zero = np.where((xoff_masked == 0) | (yoff_masked == 0))
-    xoff_masked[ind_zero] = 0
-    yoff_masked[ind_zero] = 0
+    xoff_masked[ind_zero] = np.nan
+    yoff_masked[ind_zero] = np.nan
 
     # - Fill Missing Values
     if fill:
@@ -178,8 +177,8 @@ def c_off4intf(data_dir: str, id1: str, id2: str,
 
     # - Run GAMMA rasmph: Generate 8-bit raster graphics image of the phase
     # - and intensity of complex data - Show Interpolated Offsets Map
-    pg.rasmph(os.path.join(data_dir, id1 + '-' + id2
-                           + '.offmap.off.new.interp'), poff.npix)
+    pg9.rasmph(os.path.join(data_dir, id1 + '-' + id2
+                            + '.offmap.off.new.interp'), poff.npix)
 
     # - Write Bash Script to run to compute the interferogram
     bat_inter_path = os.path.join(data_dir, 'bat_inter.' + id1 + '-' + id2)
