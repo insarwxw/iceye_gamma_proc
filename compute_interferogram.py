@@ -58,10 +58,6 @@ def main():
 
     args = parser.parse_args()
 
-    if args.pair is None:
-        print('# - Provide selected SLC names as: --pair=Ref_Code_Sec_Code')
-        sys.exit()
-
     # - Reference and Secondary SLCs
     ref_slc = args.reference
     sec_slc = args.secondary
