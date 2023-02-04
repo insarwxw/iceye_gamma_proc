@@ -45,7 +45,7 @@ def main():
     )
     # - Absolute Path to directory containing input data.
     parser.add_argument('directory',  help='Project data directory.')
-
+    # - SLC name
     parser.add_argument('--slc', '-C', type=str,
                         default=None, help='Process a single SLC.')
 
