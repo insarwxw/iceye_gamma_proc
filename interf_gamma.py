@@ -25,7 +25,7 @@ options:
                         Output directory.
   --filter, -F          Use ADF filter to smooth interferogram phase.
   --keep, -K            Keep intermediate processing outputs.
-
+  --pdoff, -p           Compute preliminary dense offsets field.
 """
 # - Python Dependencies
 from __future__ import print_function
