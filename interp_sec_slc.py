@@ -132,6 +132,13 @@ def main() -> None:
                   os.path.join(data_dir, f'sparse_offsets.ccp'),
                   os.path.join(data_dir, f'{ref}-{sec}.par'),
                   '-', '-', '-', 3)
+    # - Run Gamma offset_sub: Subtraction of polynomial
+    # - from range and azimuth offset estimates
+    pg.offset_sub(
+        os.path.join(data_dir, f'sparse_offsets'),
+        os.path.join(data_dir, f'{ref}-{sec}.par'),
+        os.path.join(data_dir, f'sparse_offsets.res'),
+    )
 
     # - SLC_interp - registers SLC-2 to the reference geometry,
     # -              that is the geometry of SLC-1.
@@ -150,16 +157,18 @@ def main() -> None:
     reg_dir = make_dir(data_dir, 'slc_reg')
     shutil.move(os.path.join(data_dir, f'sparse_offsets'),
                 os.path.join(reg_dir, f'sparse_offsets'))
+    shutil.move(os.path.join(data_dir, f'sparse_offsets.res'),
+                os.path.join(reg_dir, f'sparse_offsets.res'))
     shutil.move(os.path.join(data_dir, f'sparse_offsets.ccp'),
                 os.path.join(reg_dir, f'sparse_offsets.ccp'))
     shutil.move(os.path.join(data_dir, f'sparse_offsets.txt'),
                 os.path.join(reg_dir, f'sparse_offsets.txt'))
     # - Plot sparse offsets
-    off_param = pg.ParFile(os.path.join(data_dir, f'{ref}-{sec}.par'))
+    off_param = pg.ParFile(os.path.join(data_dir, f'{ref}-{sec}.par')).par_dict
     off_ncol = int(off_param['offset_estimation_range_samples'][0])
-    pg9.rasmph(os.path.join(reg_dir, f'sparse_offsets'),
+    pg9.rasmph(os.path.join(reg_dir, f'sparse_offsets.res'),
                off_ncol, '-', '-', '-', '-', '-', '-', '-',
-               os.path.join(reg_dir, f'sparse_offsets.bmp'))
+               os.path.join(reg_dir, f'sparse_offsets.res.bmp'))
 
 
 # - run main program
