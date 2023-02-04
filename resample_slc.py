@@ -51,9 +51,9 @@ def main() -> None:
     args = parser.parse_args()
 
     # - Path to Test directory
+    prf = args.prf                  # - Output SLC's PRF
     data_dir = args.directory       # - Path to data directory
     out_dir = args.out_directory    # - Path to output directory
-    prf = args.prf                  # - Output SLC's PRF
 
     if args.slc is not None:
         slc_list = [args.slc]

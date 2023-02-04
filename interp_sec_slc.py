@@ -28,8 +28,11 @@ from __future__ import print_function
 import os
 import argparse
 import datetime
+import shutil
 # - GAMMA's Python integration with the py_gamma module
 import py_gamma as pg
+import py_gamma2019 as pg9
+from utils.make_dir import make_dir
 
 
 def create_isp_par(data_dir: str, ref: str, sec: str,
@@ -142,6 +145,21 @@ def main() -> None:
                   )
     # - Create New ISP Parameter file
     create_isp_par(data_dir, ref, f'{sec}.reg')
+
+    # - Save intermediate registration results inside a subdirectory
+    reg_dir = make_dir(data_dir, 'slc_reg')
+    shutil.move(os.path.join(data_dir, f'sparse_offsets'),
+                os.path.join(reg_dir, f'sparse_offsets'))
+    shutil.move(os.path.join(data_dir, f'sparse_offsets.ccp'),
+                os.path.join(reg_dir, f'sparse_offsets.ccp'))
+    shutil.move(os.path.join(data_dir, f'sparse_offsets.txt'),
+                os.path.join(reg_dir, f'sparse_offsets.txt'))
+    # - Plot sparse offsets
+    off_param = pg.ParFile(os.path.join(data_dir, f'{ref}-{sec}.par'))
+    off_ncol = int(off_param['offset_estimation_range_samples'][0])
+    pg9.rasmph(os.path.join(reg_dir, f'sparse_offsets'),
+               off_ncol, '-', '-', '-', '-', '-', '-', '-',
+               os.path.join(reg_dir, f'sparse_offsets.bmp'))
 
 
 # - run main program
