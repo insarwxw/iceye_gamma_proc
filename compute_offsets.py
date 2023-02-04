@@ -25,7 +25,6 @@ options:
   --resample_slc_prf    Resample Secondary - Update Secondary PRF.
 
 
-
 PYTHON DEPENDENCIES:
     argparse: Parser for command-line options, arguments and sub-commands
            https://docs.python.org/3/library/argparse.html
@@ -56,16 +55,16 @@ def main() -> None:
     parser = argparse.ArgumentParser(
         description="""Calculate Preliminary Offsets Parameter."""
     )
-    # - Absolute Path to directory containing input data.
+    # - Primary and secondary SLCs
     parser.add_argument('reference', type=str,
                         help='Reference SLCs.')
 
     parser.add_argument('secondary', type=str,
                         help='Secondary SLCs.')
-
+    # - Absolute Path to directory containing input data.
     parser.add_argument('--directory', '-D',  help='Data directory.',
                         default=os.getcwd())
-
+    # - Absolute Path to output directory
     parser.add_argument('--out_directory', '-O', help='Output directory.',
                         default=os.getcwd())
 

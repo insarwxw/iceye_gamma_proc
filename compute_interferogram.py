@@ -9,12 +9,14 @@ usage: compute_interferogram.py [-h] [--directory DIRECTORY]
 
 Compute Interferogram for the selected pair.
 
+positional arguments:
+  reference             Reference SLCs.
+  secondary             Secondary SLCs.
+
 options:
   -h, --help            show this help message and exit
   --directory DIRECTORY, -D DIRECTORY
                         Project data directory.
-  --pair PAIR, -P PAIR  SLC Pair Codes separated by "_"
-                        reference-secondary
   --init_offset, -I     Determine initial offset between SLC images
                         using correlation of image intensity
 
@@ -38,19 +40,17 @@ def main():
         description="""Compute Interferogram for the selected pair.
             """
     )
-    # - Working Directory directory.
-    default_dir = os.environ['PYTHONDATA']
-    parser.add_argument('--directory', '-D',
-                        type=lambda p: os.path.abspath(
-                            os.path.expanduser(p)),
-                        default=default_dir,
-                        help='Project data directory.')
+    # - Primary and secondary SLCs
+    parser.add_argument('reference', type=str,
+                        help='Reference SLCs.')
 
-    parser.add_argument('--pair', '-P',
-                        type=str,
-                        default=None,
-                        help='SLC Pair Codes separated by "_" '
-                             'reference-secondary')
+    parser.add_argument('secondary', type=str,
+                        help='Secondary SLCs.')
+
+    # - Working Directory directory.
+    parser.add_argument('--directory', '-D',
+                        type=str, default=os.getcwd(),
+                        help='Project data directory.')
 
     parser.add_argument('--init_offset', '-I', action='store_true',
                         help='Determine initial offset between SLC'
@@ -63,15 +63,11 @@ def main():
         sys.exit()
 
     # - Reference and Secondary SLCs
-    slc_list = args.pair.split('-')
-    ref_slc = slc_list[0]
-    sec_slc = slc_list[1]
+    ref_slc = args.reference
+    sec_slc = args.secondary
 
     # - Data directory
-    if args.init_offset:
-        data_dir = os.path.join(args.directory, ref_slc + '-' + sec_slc)
-    else:
-        data_dir = os.path.join(args.directory, ref_slc + '-' + sec_slc)
+    data_dir = args.directory
 
     # - Compute Interferogram Baseline Base on SLCs orbit state vectors
     print('# - Estimate baseline from orbit state vectors (base_orbit)')
@@ -91,7 +87,7 @@ def main():
             print(f_line, file=b_fid)
 
     print('# - Compute Interferogram (./bat_inter_ref_slc-sec_scl).')
-    # Change the current working directory
+    # - Change the current working directory
     os.chdir(data_dir)
     # - Calculate Interferogram
     os.system(os.path.join('.', f'bat_inter.{ref_slc}-{sec_slc}'))
