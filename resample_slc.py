@@ -63,8 +63,9 @@ def main() -> None:
                     if x.endswith('.slc')]
 
     for slc in slc_list:
+        slc_name = slc.replace('.slc', '')
         # - Read Reference SLC par file
-        slc_param = pg.ParFile(os.path.join(data_dir, f'{slc}.par'))
+        slc_param = pg.ParFile(os.path.join(data_dir, f'{slc_name}.par'))
 
         # - Get Secondary PRF value
         slc_az_prf = float(slc_param.get_value('prf')[0])
@@ -99,11 +100,11 @@ def main() -> None:
         slc_param.set_value('end_time', end_time)
 
         # - save new parameter file
-        slc_param.write_par(os.path.join(out_dir, f'{slc}.rsmp.par'))
+        slc_param.write_par(os.path.join(out_dir, f'{slc_name}.rsmp.par'))
         # - add stater vectors to the new parameter file
-        with open(os.path.join(data_dir, f'{slc}.par'), 'r') as s_fid:
+        with open(os.path.join(data_dir, f'{slc_name}.par'), 'r') as s_fid:
             st_vl = s_fid.readlines()
-        with open(os.path.join(out_dir, f'{slc}.rsmp.par'), 'a') as r_fid:
+        with open(os.path.join(out_dir, f'{slc_name}.rsmp.par'), 'a') as r_fid:
             for line in st_vl:
                 if line.startswith('state_vector_position_') or \
                         line.startswith('state_vector_velocity_'):
@@ -111,18 +112,18 @@ def main() -> None:
 
         # - resample secondary SLC
         pg.resamp_image_par(
-            os.path.join(data_dir, f'{slc}.slc'),
-            os.path.join(data_dir, f'{slc}.par'),
-            os.path.join(out_dir, f'{slc}.rsmp.par'),
-            os.path.join(out_dir, f'{slc}.rsmp.slc'),
+            os.path.join(data_dir, f'{slc_name}.slc'),
+            os.path.join(data_dir, f'{slc_name}.par'),
+            os.path.join(out_dir, f'{slc_name}.rsmp.par'),
+            os.path.join(out_dir, f'{slc_name}.rsmp.slc'),
             6,  # - use default interpolation method Bspline [4] / Lanczos [6]
             1,  # - input/output data type - FCOMPLEX
             7,  # - interpolation function order
         )
 
         # - Change access permissions to output data
-        os.chmod(os.path.join(out_dir, f'{slc}.rsmp.par'), 0o777)
-        os.chmod(os.path.join(out_dir, f'{slc}.rsmp.slc'), 0o777)
+        os.chmod(os.path.join(out_dir, f'{slc_name}.rsmp.par'), 0o777)
+        os.chmod(os.path.join(out_dir, f'{slc_name}.rsmp.slc'), 0o777)
 
 
 # - run main program
