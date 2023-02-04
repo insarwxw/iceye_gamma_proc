@@ -37,6 +37,7 @@ import argparse
 import datetime
 # - GAMMA's Python integration with the py_gamma module
 import py_gamma as pg
+import py_gamma2019 as pg9
 
 
 def main():
@@ -81,7 +82,7 @@ def main():
         n_rsmpl = int(par_dict['range_samples'][0])
 
         # - Calculate a raster image from data with power-law scaling
-        pg._(mli_name, n_rsmpl)
+        pg9.raspwr(mli_name, n_rsmpl)
 
     else:
         # - List Directory Content
@@ -107,7 +108,7 @@ def main():
             n_rsmpl = int(par_dict['range_samples'][0])
 
             # - Calculate a raster image from data with power-law scaling
-            pg.raspwr(mli_name, n_rsmpl)
+            pg9.raspwr(mli_name, n_rsmpl)
 
 
 # - run main program
