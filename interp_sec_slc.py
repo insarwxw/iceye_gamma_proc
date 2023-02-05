@@ -102,6 +102,8 @@ def main() -> None:
     # - Estimate Range and Azimuth Preliminary
     # - Registration offset fields Preliminary Offset
     if args.pdoff:
+        c_skip = 32
+        c_search_w = 64
         pg.offset_pwr_tracking(
             os.path.join(data_dir, f'{ref}.slc'),
             os.path.join(data_dir, f'{sec}.slc'),
@@ -110,10 +112,42 @@ def main() -> None:
             os.path.join(data_dir, f'{ref}-{sec}.par'),
             os.path.join(out_dir, f'sparse_offsets'),
             os.path.join(out_dir, f'sparse_offsets.ccp'),
-            64, 64,
+            c_search_w, c_search_w,
             os.path.join(out_dir, f'sparse_offsets.txt'),
-            '-', '-', 32, 32, '-', '-', '-', '-', '-', '-',
+            '-', '-', c_skip, c_skip, '-', '-', '-', '-', '-', '-',
         )
+
+        # - Read the offset parameter file
+        off_param = pg.ParFile(os.path.join(data_dir, f'{ref}-{sec}.par'))
+        rn_max = int(off_param.par_dict['offset_estimation_ending_range'][0])
+
+        # - Verify that offsets parameter file has been modified
+        # - by offset_pwr_tracking
+        if rn_max == 0:
+            # - Read Secondary Parameter file
+            sec_param = pg.ParFile(os.path.join(data_dir, f'{ref}.par'))
+            rn_smp_sec = int(sec_param.par_dict['range_samples'][0])
+            az_smp_sec = int(sec_param.par_dict['azimuth_lines'][0])
+            rn_smp = int(rn_smp_sec / c_skip)
+            az_smp = int(az_smp_sec / c_skip)
+
+            if rn_smp * c_skip > rn_smp_sec:
+                rn_smp -= 1
+            if az_smp * c_skip > az_smp_sec:
+                az_smp -= 1
+            rn_max = rn_smp * c_skip - 1
+            az_max = az_smp * c_skip - 1
+
+            # - Update Offsets Parameter file
+            off_param.set_value('offset_estimation_ending_range', rn_max)
+            off_param.set_value('offset_estimation_ending_azimuth', az_max)
+            off_param.set_value('offset_estimation_range_samples', rn_smp)
+            off_param.set_value('offset_estimation_azimuth_samples', az_smp)
+            off_param.set_value('offset_estimation_range_spacing', c_skip)
+            off_param.set_value('offset_estimation_azimuth_spacing', c_skip)
+            off_param.set_value('offset_estimation_window_width', c_search_w)
+            off_param.set_value('offset_estimation_window_height', c_search_w)
+            off_param.write_par(os.path.join(out_dir, f'{ref}-{sec}.par'))
     else:
         pg.offset_pwr(os.path.join(data_dir, f'{ref}.slc'),
                       os.path.join(data_dir, f'{sec}.slc'),
