@@ -48,6 +48,7 @@ import argparse
 import datetime
 # - GAMMA's Python integration with the py_gamma module
 import py_gamma as pg
+import py_gamma2019 as pg9
 from utils.make_dir import make_dir
 from utils.read_keyword import read_keyword
 
@@ -168,9 +169,9 @@ def main():
                     )
 
     # - Show Double Difference on Top of the Reference SLC power image
-    pg.rasmph_pwr('coco' + igram_ref + '-' + igram_sec
-                  + '.reg.flat.topo_off.geo',
-                  ref_pwr, dem_width)
+    pg9.rasmph_pwr('coco' + igram_ref + '-' + igram_sec
+                   + '.reg.flat.topo_off.geo',
+                   ref_pwr, dem_width)
 
     # - Smooth the obtained interferogram with pg.adf
     # - Adaptive interferogram filter using the power spectral density.
@@ -181,8 +182,8 @@ def main():
            'coco' + igram_ref + '-' + igram_sec
            + '.reg.flat.topo_off.geo.filt.coh',
            dem_width)
-    pg.rasmph_pwr('coco' + igram_ref + '-' + igram_sec
-                  + '.reg.flat.topo_off.geo.filt', ref_pwr, dem_width)
+    pg9.rasmph_pwr('coco' + igram_ref + '-' + igram_sec
+                   + '.reg.flat.topo_off.geo.filt', ref_pwr, dem_width)
 
     # - Calculate real part, imaginary part, intensity, magnitude,
     # - or phase of FCOMPLEX data
@@ -190,16 +191,16 @@ def main():
     pg.cpx_to_real('coco' + igram_ref + '-' + igram_sec
                    + '.reg.flat.topo_off.geo.filt',
                    'phs.geo', dem_width, 4)
-    pg.raspwr('phs.geo', dem_width)
+    pg9.raspwr('phs.geo', dem_width)
     # - Save Geocoded Interferogram phase as a GeoTiff
-    pg.data2geotiff(ref_par, 'phs.geo', 2,
-                    'coco' + igram_ref + '-' + igram_sec
-                    + '.reg.flat.topo_off.geo.filt.tiff', -9999)
+    pg9.data2geotiff(ref_par, 'phs.geo', 2,
+                     'coco' + igram_ref + '-' + igram_sec
+                     + '.reg.flat.topo_off.geo.filt.tiff', -9999)
     # - Save Coherence Interferogram Map as a GeoTiff
-    pg.data2geotiff(ref_par, 'coco' + igram_ref + '-' + igram_sec
-                    + '.reg.flat.topo_off.geo.filt.coh', 2,
-                    'coco' + igram_ref + '-' + igram_sec
-                    + '.reg.flat.topo_off.geo.filt.coh.tiff', -9999)
+    pg9.data2geotiff(ref_par, 'coco' + igram_ref + '-' + igram_sec
+                     + '.reg.flat.topo_off.geo.filt.coh', 2,
+                     'coco' + igram_ref + '-' + igram_sec
+                     + '.reg.flat.topo_off.geo.filt.coh.tiff', -9999)
 
 
 # - run main program
