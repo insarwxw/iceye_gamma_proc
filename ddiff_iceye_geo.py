@@ -188,9 +188,9 @@ def main():
     # - Calculate real part, imaginary part, intensity, magnitude,
     # - or phase of FCOMPLEX data
     # - Extract Interferogram Phase.
-    pg.cpx_to_real('coco' + igram_ref + '-' + igram_sec
-                   + '.reg.flat.topo_off.geo.filt',
-                   'phs.geo', dem_width, 4)
+    pg9.cpx_to_real('coco' + igram_ref + '-' + igram_sec
+                    + '.reg.flat.topo_off.geo.filt',
+                    'phs.geo', dem_width, 4)
     pg9.raspwr('phs.geo', dem_width)
     # - Save Geocoded Interferogram phase as a GeoTiff
     pg9.data2geotiff(ref_par, 'phs.geo', 2,
