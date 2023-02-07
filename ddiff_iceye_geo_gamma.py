@@ -2,26 +2,17 @@
 u"""
 Enrico Ciraci' - 01/2023
 
-Compute Double-Difference Interferogram from ICEYE data.
--> Use Geocoded Interferograms.
-
-usage: ddiff_iceye_geo.py [-h] [--directory DIRECTORY] [--init_offset]
-                          [--deramp] reference secondary
-
 Compute Double-Difference Interferogram between the selected pair of
-Geocoded Interferograms.
+Geocoded Interferograms - GAMMA Pipeline.
+
+usage: ddiff_iceye_geo_gamma.py [-h] input_yml
 
 positional arguments:
-  reference             Reference Interferogram
-  secondary             Secondary Interferogram
+  input_yml   Path to input yaml parameter file.
 
-optional arguments:
-  -h, --help            show this help message and exit
-  --directory DIRECTORY, -D DIRECTORY
-                        Project data directory.
-  --init_offset, -I     Determine initial offset between SLCimages using
-                        correlation of image intensity
-  --deramp              If exists, use deramped version of the interferogram.
+options:
+  -h, --help  show this help message and exit
+
 
 PYTHON DEPENDENCIES:
     argparse: Parser for command-line options, arguments and sub-commands
@@ -62,6 +53,13 @@ def main() -> None:
         """
     )
     # - Positional Arguments - Reference and Secondary SLCs.
+    parser.add_argument('reference', type=str, default=None,
+                        help='Reference Interferogram')
+
+    parser.add_argument('secondary', type=str, default=None,
+                        help='Secondary Interferogram')
+
+    # - Positional Arguments - Reference and Secondary SLCs.
     parser.add_argument('input_yml', type=str, default=None,
                         help='Path to input yaml parameter file.')
 
@@ -76,8 +74,8 @@ def main() -> None:
     data_dir = processing_parameters['directory']
     in_dir = processing_parameters['in_dir']
     out_dir = processing_parameters['out_dir']
-    igram_ref = processing_parameters['reference']
-    igram_sec = processing_parameters['secondary']
+    igram_ref = args.reference
+    igram_sec = args.secondary
     data_dir_ref = os.path.join(data_dir, in_dir, igram_ref)
     data_dir_sec = os.path.join(data_dir, in_dir, igram_sec)
 
