@@ -21,7 +21,10 @@ options:
   --directory DIRECTORY, -D DIRECTORY
                         Data directory.
   --fill, -F            Fill gaps in offsets.
+  --fill, -F            Fill gaps in offsets.
   --smooth, -S          Smooth offsets.
+  --nrlks NRLKS         Number of looks Range.
+  --nazlks NAZLKS       Number of looks Azimuth.
 
 PYTHON DEPENDENCIES:
     argparse: Parser for command-line options, arguments and sub-commands
@@ -82,8 +85,7 @@ def main() -> None:
     data_dir = args.directory
 
     # - Process offsets - Stack offset files
-    r_off_sar(data_dir, ref_slc, sec_slc,
-              nazlks=args.nazlks, nrlks=args.nrlks)
+    r_off_sar(data_dir, ref_slc, sec_slc)
 
     # - Process offsets for Interferogram
     c_off4intf(data_dir, ref_slc, sec_slc,

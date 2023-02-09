@@ -132,12 +132,12 @@ def r_off_sar(data_dir: str, id1: str, id2: str,
     # - Set the number of looks
     # - Range looks
     if nrlks is None:
-        poff.xnlook = int(x_posting / 2)
+        poff.xnlook = x_posting
     else:
         poff.xnlook = nrlks
     # - Azimuth looks
     if nazlks is None:
-        poff.ynlook = int(y_posting / 2)
+        poff.ynlook = y_posting
     else:
         poff.ynlook = nazlks
 
