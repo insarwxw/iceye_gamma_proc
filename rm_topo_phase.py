@@ -66,11 +66,13 @@ def main() -> None:
     parser.add_argument('--directory', '-D',
                         help='Data directory.',
                         default=os.getcwd())
-
+    # - Adaptive interferogram filter using the power spectral density
     parser.add_argument('--filter', '-F', action='store_true',
                         help='Adaptive interferogram filter using the power '
                              'spectral density - (GAMMA - adf)')
-
+    # - DEM oversampling factor
+    parser.add_argument('--dems_os', '-O', type=int, default=1,
+                        help='DEM oversampling factor')
     args = parser.parse_args()
 
     # - Reference and Secondary SLCs
@@ -129,7 +131,7 @@ def main() -> None:
     #                     3: nn-thinned (not available in gc_map2)
     #   r_ovr           range over-sampling factor for nn-thinned
     #                          layover/shadow mode (enter - for default: 2.0)
-    dem_info = path_to_dem(args.dem)
+    dem_info = path_to_dem(args.dem, oversample=args.dems_os)
     dem_par = os.path.join(dem_info['path'], dem_info['par'])
     dem = os.path.join(dem_info['path'], dem_info['dem'])
     pg.gc_map(ref_slc+'.par',   # - SLC image parameter file
