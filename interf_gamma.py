@@ -427,7 +427,7 @@ def main() -> None:
                 os.path.join(data_dir, f'{sec}.reg2.par'),
                 os.path.join(data_dir, f'{ref}-{sec}.reg2.par'),
                 os.path.join(data_dir, f'coco{ref}-{sec}.reg2.intf'),
-                32, 32      # number of range/azimuth looks
+                15, 15      # number of range/azimuth looks
                 )
     # - Estimate baseline from orbit state vectors
     pg.base_orbit(os.path.join(data_dir, f'{ref}.par'),
@@ -447,7 +447,7 @@ def main() -> None:
                   os.path.join(data_dir, f'{ref}.par'),
                   os.path.join(data_dir, f'{ref}.mli'),
                   os.path.join(data_dir, f'{ref}.mli.par'),
-                  32, 32
+                  15, 15
                   )
 
     # - Extract interferogram dimensions from its parameter file
