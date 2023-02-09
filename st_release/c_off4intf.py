@@ -28,7 +28,7 @@ import py_gamma2019 as pg9
 def c_off4intf(data_dir: str, id1: str, id2: str,
                range_spacing: int = None,
                azimuth_spacing: int = None,
-               filter_strategy: int  = 1,
+               filter_strategy: int = 1,
                smooth: bool =False,
                fill: bool = False,
                nrlks: int = None,
@@ -47,7 +47,7 @@ def c_off4intf(data_dir: str, id1: str, id2: str,
     :param smooth: smooth offsets [def. False]
     :param fill: fill gaps in offsets [def. False]
     :param nrlks: number of looks in range [def. None]
-    :param nazlk: number of looks in azimuth [def. None]
+    :param nazlks: number of looks in azimuth [def. None]
     :param interf_bin: GAMMA interf_offset binary
     :return: None
     """

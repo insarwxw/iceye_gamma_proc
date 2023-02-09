@@ -82,7 +82,8 @@ def main() -> None:
     data_dir = args.directory
 
     # - Process offsets - Stack offset files
-    r_off_sar(data_dir, ref_slc, sec_slc)
+    r_off_sar(data_dir, ref_slc, sec_slc,
+              nazlks=args.nazlks, nrlks=args.nrlks)
 
     # - Process offsets for Interferogram
     c_off4intf(data_dir, ref_slc, sec_slc,
