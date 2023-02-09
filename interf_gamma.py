@@ -308,7 +308,7 @@ def main() -> None:
 
     parser.add_argument('dem', type=str,
                         choices=['gis', 'gimp', 'greenland',
-                                 'ais', 'antarctica', 'bedmap2'],
+                                 'ais', 'antarctica', 'bedmap2', 'rema'],
                         help='Digital Elevation Model used to '
                              'Remove Topographic Contribution '
                              'from Flattened Interferogram.',
