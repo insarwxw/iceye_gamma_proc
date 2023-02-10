@@ -124,7 +124,7 @@ def main() -> None:
     # - Read ampcor bat file
     with open(os.path.join(out_dir, f'bat_{ref_slc}-{sec_slc}')) as r_fid:
         sub_proc = r_fid.readlines()
-    sub_proc_list = [sub_proc[i].strip()[:2] for i in range(len(sub_proc))]
+    sub_proc_list = [s.strip()[:2] for s in sub_proc]
 
     # - Run AMPCOR
     with Pool(n_proc) as p:
