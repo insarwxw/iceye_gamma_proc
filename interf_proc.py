@@ -45,7 +45,7 @@ def create_isp_par(data_dir: str, ref: str, sec: str,
     )
 
 
-def run_sub_process(cmd: str) -> None:
+def run_sub_process(cmd: list[str]) -> None:
     """
     Run a command in a subprocess
     :param cmd: command to run
