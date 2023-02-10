@@ -107,8 +107,6 @@ def main() -> None:
                         help='Number of looks Azimuth.')
     args = parser.parse_args()
 
-    args = parser.parse_args()
-
     # - Read input parameters
     ref_slc = args.ref_slc      # - Reference SLC
     sec_slc = args.sec_slc      # - Secondary SLC
@@ -117,6 +115,9 @@ def main() -> None:
     n_proc = args.n_proc    # - Number of parallel processes
     ampcor_bin = args.ampcor    # - AMPCOR binary selected
     pdoff = args.pdoff         # - Compute preliminary dense offsets field
+
+    # - Compute ISP Parameters
+    create_isp_par(data_dir, ref_slc, sec_slc)
 
     # - Register SLC-2 to SLC-1 using 3rd order polynomial
     register_slc(ref_slc, sec_slc,  # - Reference and Secondary SLC
