@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # - Python Dependencies
 from __future__ import print_function
 import os
