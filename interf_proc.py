@@ -5,6 +5,7 @@ import os
 import argparse
 import datetime
 from tqdm import tqdm
+import subprocess
 from multiprocessing import Pool
 # - GAMMA's Python integration with the py_gamma module
 import py_gamma as pg
@@ -51,7 +52,10 @@ def run_sub_process(cmd: str) -> None:
     :return: None
     """
     # - Run the command
-    os.system(cmd)
+    with open(os.devnull, 'wb') as devnull:
+        subprocess.check_call([cmd],
+                              stdout=devnull,
+                              stderr=subprocess.STDOUT)
 
 
 def main() -> None:
@@ -116,7 +120,7 @@ def main() -> None:
                    n_proc=n_proc,       # - Number of parallel processes
                    ampcor=ampcor_bin)   # - AMPCOR binary selected
 
-    print('# - Rin AMPCOR.')
+    print('# - Run AMPCOR.')
     # - Read ampcor bat file
     with open(os.path.join(out_dir, f'bat_{ref_slc}-{sec_slc}')) as r_fid:
         sub_proc = r_fid.readlines()
