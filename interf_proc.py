@@ -20,14 +20,14 @@ from utils.make_dir import make_dir
 from utils.path_to_dem import path_to_dem
 
 
-def create_isp_par(data_dir: str, ref: str, sec: str,
+def create_isp_par(data_dir: str, ref_slc: str, sec_slc: str,
                    algorithm: int = 1, rlks: int = 1,
                    azlks: int = 1, iflg: int = 0):
     """
     Generate a new parameter file ISP offset and interferogram parameter files
     :param data_dir: absolute path to data directory
-    :param ref: reference SLC
-    :param sec: secondary SLC
+    :param ref_slc: reference SLC
+    :param sec_slc: secondary SLC
     :param algorithm: offset estimation algorithm
     :param rlks: number of interferogram range looks
     :param azlks: number of interferogram azimuth looks
