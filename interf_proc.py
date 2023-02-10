@@ -13,6 +13,10 @@ import py_gamma2019 as pg9
 # - Package Dependencies
 from c_ampcor_iceye import c_ampcor_iceye
 from interp_sec_slc import register_slc
+# - ST_Release dependencies
+from st_release.r_off_sar import r_off_sar
+from st_release.c_off4intf import c_off4intf
+from utils.make_dir import make_dir
 
 
 def create_isp_par(data_dir: str, ref: str, sec: str,
@@ -95,6 +99,14 @@ def main() -> None:
                         help='Compute preliminary dense offsets field.',
                         action='store_true')
 
+    # - Number of Looks in Range
+    parser.add_argument('--nrlks', type=int, default=None,
+                        help='Number of looks Range.')
+    # - Number of Looks in Azimuth
+    parser.add_argument('--nazlks', type=int, default=None,
+                        help='Number of looks Azimuth.')
+    args = parser.parse_args()
+
     args = parser.parse_args()
 
     # - Read input parameters
@@ -107,10 +119,10 @@ def main() -> None:
     pdoff = args.pdoff         # - Compute preliminary dense offsets field
 
     # - Register SLC-2 to SLC-1 using 3rd order polynomial
-    # register_slc(ref_slc, sec_slc,  # - Reference and Secondary SLC
-    #              pdoff=pdoff,       # - Compute preliminary dense offsets field
-    #              data_dir=data_dir,     # - Path to data directory
-    #              out_dir=out_dir)       # - Path to output directory
+    register_slc(ref_slc, sec_slc,  # - Reference and Secondary SLC
+                 pdoff=pdoff,       # - Compute preliminary dense offsets field
+                 data_dir=data_dir,     # - Path to data directory
+                 out_dir=out_dir)       # - Path to output directory
 
     # - Create the bat file to run AMPCOR
     sec_slc = f'{sec_slc}.reg'  # - Secondary SLC registered to reference SLC
@@ -131,6 +143,18 @@ def main() -> None:
         p.map(run_sub_process, sub_proc_list)
 
     print('# - AMPCOR Run Completed.')
+
+    # - Process offsets - Stack offset files
+    r_off_sar(data_dir, ref_slc, sec_slc)
+
+    # - Process offsets for Interferogram
+    c_off4intf(data_dir, ref_slc, sec_slc,
+               range_spacing=30, azimuth_spacing=30,
+               filter_strategy=2, smooth=True,
+               fill=args.fill, nrlks=args.nrlks, nazlks=args.nazlks)
+
+    # - create Save directory
+    make_dir(data_dir, 'Save')
 
 
 # - run main program

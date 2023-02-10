@@ -214,11 +214,11 @@ def c_ampcor_iceye(ref_slc: str, sec_slc: str,
                 print('f f', file=fid_2)
 
                 # - print on std-output
-                print(f'# - {ref_slc}-{sec_slc}.offmap_{i + 1}.in '
-                      f'- y-boundaries ->' + str(y_curr).rjust(10)
-                      + str(y_curr + line_spacing * (nn - 1)).rjust(10))
-                print(f'# - Chunk {i + 1} offsets :'
-                      f' yoff={yoff_c}, x_off={x_off_c}\n')
+                # print(f'# - {ref_slc}-{sec_slc}.offmap_{i + 1}.in '
+                #       f'- y-boundaries ->' + str(y_curr).rjust(10)
+                #       + str(y_curr + line_spacing * (nn - 1)).rjust(10))
+                # print(f'# - Chunk {i + 1} offsets :'
+                #       f' yoff={yoff_c}, x_off={x_off_c}\n')
 
                 # - update y_curr value
                 y_curr += int(line_spacing * nn)
