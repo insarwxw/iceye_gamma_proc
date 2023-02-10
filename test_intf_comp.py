@@ -59,10 +59,23 @@ def main() -> None:
 
     parser.add_argument('secondary', type=str,
                         help='Secondary SLCs.')
+
+    parser.add_argument('dem', type=str,
+                        choices=['gis', 'gimp', 'greenland',
+                                 'ais', 'antarctica', 'bedmap2', 'rema'],
+                        help='Digital Elevation Model used to '
+                             'Remove Topographic Contribution '
+                             'from Flattened Interferogram.',
+                        )
+
     # - Working Directory directory.
     parser.add_argument('--directory', '-D',
                         type=str, default=os.getcwd(),
                         help='Project data directory.')
+
+    parser.add_argument('--filter', '-F',
+                        help='Use ADF filter to smooth interferogram phase.',
+                        action='store_true')
 
     args = parser.parse_args()
 
@@ -272,33 +285,6 @@ def main() -> None:
     # - output directory.
     for out_file in os.listdir('.'):
         os.chmod(out_file, 0o0755)
-
-    if not args.keep:
-        # - Rename interferometric outputs
-        coco_list = [os.path.join(data_dir, x) for x in os.listdir(data_dir)
-                     if x.startswith('coco') or x.startswith('base')]
-        for co in coco_list:
-            if os.path.isfile(co):
-                os.rename(co, co.replace('_r.reg2.', '.'))
-
-        # - Save Offsets Maps inside a subdirectory
-        off_dir = make_dir('.', 'offsets')
-        off_list = [os.path.join(data_dir, x) for x in os.listdir(data_dir)
-                    if 'offsets' in x or 'offmap' in x]
-        for off in off_list:
-            if os.path.isfile(off):
-                off_name = off.split('/')[-1]
-                try:
-                    shutil.move(off, os.path.join(off_dir, off_name))
-                except shutil.SameFileError:
-                    os.remove(off)
-
-        # - Remove intermediate processing outputs
-        out_d_list = [os.path.join(data_dir, x) for x in os.listdir(data_dir)
-                      if not x.startswith('.')]
-        for out in out_d_list:
-            if '_r.reg' in out and os.path.isfile(out):
-                os.remove(out)
 
 
 # - run main program
