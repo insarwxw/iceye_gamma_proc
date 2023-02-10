@@ -181,8 +181,8 @@ def main() -> None:
         os.path.join(data_dir, f'{ref_slc}.par'),      # - Reference SLC par file
         os.path.join(data_dir, f'{sec_slc}.reg.par'),  # - Secondary SLC par file
         os.path.join(data_dir, offset_par),            # - Offsets par file
-        os.path.join(data_dir, f'{sec_slc}.reg2.slc'), # - Output SLC
-        os.path.join(data_dir, f'{sec_slc}.reg2.par'), # - Output SLC par file
+        os.path.join(data_dir, f'{sec_slc}.reg2.slc'),  # - Output SLC
+        os.path.join(data_dir, f'{sec_slc}.reg2.par'),  # - Output SLC par file
         os.path.join(data_dir, offset_par),            # - Offsets par file
         os.path.join(data_dir, offset_interp),         # - Offsets file
         '-', '-', 0, 7
