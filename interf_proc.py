@@ -53,7 +53,7 @@ def run_sub_process(cmd: str) -> None:
     """
     # - Run the command
     with open(os.devnull, 'wb') as devnull:
-        subprocess.check_call([cmd],
+        subprocess.check_call(cmd,
                               stdout=devnull,
                               stderr=subprocess.STDOUT)
 
