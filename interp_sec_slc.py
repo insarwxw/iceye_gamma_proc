@@ -65,51 +65,20 @@ def create_isp_par(data_dir: str, ref: str, sec: str,
     )
 
 
-def main() -> None:
-    parser = argparse.ArgumentParser(
-        description="""Interpolate Secondary SLC to the Reference SLC using
-        third order polynomial computer Range and Azimuth Preliminary Offsets
-        field.
-        """
-    )
-    parser.add_argument('reference', type=str, help='Reference SLC.')
-
-    parser.add_argument('secondary', type=str, help='Secondary SLC.')
-
-    parser.add_argument('--directory', '-D', help='Data directory.',
-                        default=os.getcwd())
-
-    parser.add_argument('--out_directory', '-O', help='Output directory.',
-                        default=os.getcwd())
-
-    parser.add_argument('--pdoff', '-p',
-                        help='Compute preliminary dense offsets field.',
-                        action='store_true')
-
-    args = parser.parse_args()
-
-    # - Path to Test directory
-    data_dir = args.directory  # - Path to data directory
-    out_dir = args.out_directory  # - Path to output directory
-
-    # - Processing Parameters
-    ref = args.reference  # - Reference SLC
-    sec = args.secondary  # - Secondary SLC
-
-    # - Create New ISP Parameter file
-    create_isp_par(data_dir, ref, sec)
-
+def register_slc(ref_slc: str, sec_slc: str, pdoff: bool = False,
+                 data_dir: str = os.getcwd(),
+                 out_dir: str = os.getcwd()) -> None:
     # - Estimate Range and Azimuth Preliminary
     # - Registration offset fields Preliminary Offset
-    if args.pdoff:
+    if pdoff:
         c_skip = 32
         c_search_w = 64
         pg.offset_pwr_tracking(
-            os.path.join(data_dir, f'{ref}.slc'),
-            os.path.join(data_dir, f'{sec}.slc'),
-            os.path.join(data_dir, f'{ref}.par'),
-            os.path.join(data_dir, f'{sec}.par'),
-            os.path.join(data_dir, f'{ref}-{sec}.par'),
+            os.path.join(data_dir, f'{ref_slc}.slc'),
+            os.path.join(data_dir, f'{sec_slc}.slc'),
+            os.path.join(data_dir, f'{ref_slc}.par'),
+            os.path.join(data_dir, f'{sec_slc}.par'),
+            os.path.join(data_dir, f'{ref_slc}-{sec_slc}.par'),
             os.path.join(out_dir, f'sparse_offsets'),
             os.path.join(out_dir, f'sparse_offsets.ccp'),
             c_search_w, c_search_w,
@@ -118,14 +87,15 @@ def main() -> None:
         )
 
         # - Read the offset parameter file
-        off_param = pg.ParFile(os.path.join(data_dir, f'{ref}-{sec}.par'))
+        off_param \
+            = pg.ParFile(os.path.join(data_dir, f'{ref_slc}-{sec_slc}.par'))
         rn_max = int(off_param.par_dict['offset_estimation_ending_range'][0])
 
         # - Verify that offsets parameter file has been modified
         # - by offset_pwr_tracking
         if rn_max == 0:
             # - Read Secondary Parameter file
-            sec_param = pg.ParFile(os.path.join(data_dir, f'{ref}.par'))
+            sec_param = pg.ParFile(os.path.join(data_dir, f'{ref_slc}.par'))
             rn_smp_sec = int(sec_param.par_dict['range_samples'][0])
             az_smp_sec = int(sec_param.par_dict['azimuth_lines'][0])
             rn_smp = int(rn_smp_sec / c_skip)
@@ -147,13 +117,14 @@ def main() -> None:
             off_param.set_value('offset_estimation_azimuth_spacing', c_skip)
             off_param.set_value('offset_estimation_window_width', c_search_w)
             off_param.set_value('offset_estimation_window_height', c_search_w)
-            off_param.write_par(os.path.join(out_dir, f'{ref}-{sec}.par'))
+            off_param.write_par(os.path.join(out_dir,
+                                             f'{ref_slc}-{sec_slc}.par'))
     else:
-        pg.offset_pwr(os.path.join(data_dir, f'{ref}.slc'),
-                      os.path.join(data_dir, f'{sec}.slc'),
-                      os.path.join(data_dir, f'{ref}.par'),
-                      os.path.join(data_dir, f'{sec}.par'),
-                      os.path.join(data_dir, f'{ref}-{sec}.par'),
+        pg.offset_pwr(os.path.join(data_dir, f'{ref_slc}.slc'),
+                      os.path.join(data_dir, f'{sec_slc}.slc'),
+                      os.path.join(data_dir, f'{ref_slc}.par'),
+                      os.path.join(data_dir, f'{sec_slc}.par'),
+                      os.path.join(data_dir, f'{ref_slc}-{sec_slc}.par'),
                       os.path.join(data_dir, f'sparse_offsets'),
                       os.path.join(data_dir, f'sparse_offsets.ccp'),
                       64, 64, os.path.join(data_dir, f'sparse_offsets.txt'),
@@ -164,28 +135,29 @@ def main() -> None:
     # - Update ISP parameter file - offsets polynomial
     pg.offset_fit(os.path.join(data_dir, f'sparse_offsets'),
                   os.path.join(data_dir, f'sparse_offsets.ccp'),
-                  os.path.join(data_dir, f'{ref}-{sec}.par'),
+                  os.path.join(data_dir, f'{ref_slc}-{sec_slc}.par'),
                   '-', '-', '-', 3)
     # - Run Gamma offset_sub: Subtraction of polynomial
     # - from range and azimuth offset estimates
     pg.offset_sub(
         os.path.join(data_dir, f'sparse_offsets'),
-        os.path.join(data_dir, f'{ref}-{sec}.par'),
+        os.path.join(data_dir, f'{ref_slc}-{sec_slc}.par'),
         os.path.join(data_dir, f'sparse_offsets.res'),
     )
 
     # - SLC_interp - registers SLC-2 to the reference geometry,
     # -              that is the geometry of SLC-1.
-    pg.SLC_interp(os.path.join(data_dir, f'{sec}.slc'),
-                  os.path.join(data_dir, f'{ref}.par'),
-                  os.path.join(data_dir, f'{sec}.par'),
-                  os.path.join(data_dir, f'{ref}-{sec}.par'),
-                  os.path.join(data_dir, f'{sec}.reg.slc'),
-                  os.path.join(data_dir, f'{sec}.reg.par'),
+    pg.SLC_interp(os.path.join(data_dir, f'{sec_slc}.slc'),
+                  os.path.join(data_dir, f'{ref_slc}.par'),
+                  os.path.join(data_dir, f'{sec_slc}.par'),
+                  os.path.join(data_dir, f'{ref_slc}-{sec_slc}.par'),
+                  os.path.join(data_dir, f'{sec_slc}.reg.slc'),
+                  os.path.join(data_dir, f'{sec_slc}.reg.par'),
                   '-', '-', 0, 7
                   )
     # - Create New ISP Parameter file
-    create_isp_par(data_dir, ref, f'{sec}.reg')
+    # -  -> reference SLC / registered SLC (sec_slc.reg)
+    create_isp_par(data_dir, ref_slc, f'{sec_slc}.reg')
 
     # - Save intermediate registration results inside a subdirectory
     reg_dir = make_dir(data_dir, 'slc_reg')
@@ -198,11 +170,54 @@ def main() -> None:
     shutil.move(os.path.join(data_dir, f'sparse_offsets.txt'),
                 os.path.join(reg_dir, f'sparse_offsets.txt'))
     # - Plot sparse offsets
-    off_param = pg.ParFile(os.path.join(data_dir, f'{ref}-{sec}.par')).par_dict
+    off_param \
+        = pg.ParFile(os.path.join(data_dir, f'{ref_slc}-{sec_slc}.par')).par_dict
     off_ncol = int(off_param['offset_estimation_range_samples'][0])
     pg9.rasmph(os.path.join(reg_dir, f'sparse_offsets.res'),
                off_ncol, '-', '-', '-', '-', '-', '-', '-',
                os.path.join(reg_dir, f'sparse_offsets.res.bmp'))
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(
+        description="""Interpolate Secondary SLC to the Reference SLC using
+        third order polynomial computer Range and Azimuth Preliminary Offsets
+        field.
+        """
+    )
+    parser.add_argument('ref_slc', type=str, help='Reference SLC.')
+
+    parser.add_argument('sec_slc', type=str, help='Secondary SLC.')
+
+    parser.add_argument('--directory', '-D', help='Data directory.',
+                        default=os.getcwd())
+
+    parser.add_argument('--out_directory', '-O', help='Output directory.',
+                        default=os.getcwd())
+
+    parser.add_argument('--pdoff', '-p',
+                        help='Compute preliminary dense offsets field.',
+                        action='store_true')
+
+    args = parser.parse_args()
+
+    # - Path to Test directory
+    data_dir = args.directory  # - Path to data directory
+    out_dir = args.out_directory  # - Path to output directory
+
+    ref_slc = args.ref_slc  # - Reference SLC
+    sec_slc = args.sec_slc  # - Secondary SLC
+
+    pdoff = args.pdoff  # - Compute preliminary dense offsets field
+
+    # - Create New ISP Parameter file
+    create_isp_par(data_dir, ref_slc, sec_slc)
+
+    # - Register SLC-2 to SLC-1
+    register_slc(ref_slc, sec_slc,  # - Reference and Secondary SLC
+                 pdoff=pdoff,       # - Compute preliminary dense offsets field
+                 data_dir=data_dir,     # - Path to data directory
+                 out_dir=out_dir)       # - Path to output directory
 
 
 # - run main program
