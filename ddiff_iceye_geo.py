@@ -118,25 +118,25 @@ def main():
 
     # - Geocoded Interferograms
     ref_interf = os.path.join(data_dir_ref,
-                              'coco' + igram_ref + '.reg.flat.topo_off.geo')
+                              'coco' + igram_ref + '.reg2.flat.topo_off.geo')
     if args.deramp:
         if os.path.isfile(ref_interf+'_deramped'):
             ref_interf = os.path.join(data_dir_ref,
                                       'coco' + igram_ref
-                                      + '.reg.flat.topo_off.geo_deramped')
+                                      + '.reg2.flat.topo_off.geo_deramped')
 
     ref_pwr = os.path.join(data_dir_ref, igram_ref.split('-')[0] + '.pwr1.geo')
     # -
     sec_interf = os.path.join(data_dir_sec,
-                              'coco' + igram_sec + '.reg.flat.topo_off.geo')
+                              'coco' + igram_sec + '.reg2.flat.topo_off.geo')
     if args.deramp:
         if os.path.isfile(sec_interf + '_deramped'):
             sec_interf = os.path.join(data_dir_sec, 'coco' + igram_sec
-                                      + '.reg.flat.topo_off.geo_deramped')
+                                      + '.reg2.flat.topo_off.geo_deramped')
 
     # - Path to Interferograms Baseline Files
-    ref_base = os.path.join(data_dir_ref, 'base' + igram_ref + '.reg.dat')
-    sec_base = os.path.join(data_dir_sec, 'base' + igram_sec + '.reg.dat')
+    ref_base = os.path.join(data_dir_ref, 'base' + igram_ref + '.reg2.dat')
+    sec_base = os.path.join(data_dir_sec, 'base' + igram_sec + '.reg2.dat')
 
     # - Create Output Directory
     if args.init_offset:
@@ -151,56 +151,56 @@ def main():
     # - Resampling Secondary Interferogram on the Reference grid.
     pg.map_trans(sec_par, sec_interf, ref_par,
                  os.path.join('.', 'coco' + igram_sec
-                              + '.reg.flat.topo_off.geo.res'),
+                              + '.reg2.flat.topo_off.geo.res'),
                  '-', '-', '-', 1)
 
     # - Path to co-registered complex interferogram
     reg_intf = os.path.join('.', 'coco' + igram_sec
-                            + '.reg.flat.topo_off.geo.res')
+                            + '.reg2.flat.topo_off.geo.res')
 
     # - Combine Complex Interferograms
     pg.comb_interfs(ref_interf, reg_intf, ref_base, sec_base, 1, -1,
                     dem_width,
                     'coco' + igram_ref + '-' + igram_sec
-                    + '.reg.flat.topo_off.geo',
+                    + '.reg2.flat.topo_off.geo',
                     'base' + igram_ref + '-' + igram_sec
-                    + '.reg.flat.topo_off.geo',
+                    + '.reg2.flat.topo_off.geo',
 
                     )
 
     # - Show Double Difference on Top of the Reference SLC power image
     pg9.rasmph_pwr('coco' + igram_ref + '-' + igram_sec
-                   + '.reg.flat.topo_off.geo',
+                   + '.reg2.flat.topo_off.geo',
                    ref_pwr, dem_width)
 
     # - Smooth the obtained interferogram with pg.adf
     # - Adaptive interferogram filter using the power spectral density.
     pg.adf('coco' + igram_ref + '-' + igram_sec
-           + '.reg.flat.topo_off.geo',
+           + '.reg2.flat.topo_off.geo',
            'coco' + igram_ref + '-' + igram_sec
-           + '.reg.flat.topo_off.geo.filt',
+           + '.reg2.flat.topo_off.geo.filt',
            'coco' + igram_ref + '-' + igram_sec
-           + '.reg.flat.topo_off.geo.filt.coh',
+           + '.reg2.flat.topo_off.geo.filt.coh',
            dem_width)
     pg9.rasmph_pwr('coco' + igram_ref + '-' + igram_sec
-                   + '.reg.flat.topo_off.geo.filt', ref_pwr, dem_width)
+                   + '.reg2.flat.topo_off.geo.filt', ref_pwr, dem_width)
 
     # - Calculate real part, imaginary part, intensity, magnitude,
     # - or phase of FCOMPLEX data
     # - Extract Interferogram Phase.
     pg9.cpx_to_real('coco' + igram_ref + '-' + igram_sec
-                    + '.reg.flat.topo_off.geo.filt',
+                    + '.reg2.flat.topo_off.geo.filt',
                     'phs.geo', dem_width, 4)
     pg9.raspwr('phs.geo', dem_width)
     # - Save Geocoded Interferogram phase as a GeoTiff
     pg9.data2geotiff(ref_par, 'phs.geo', 2,
                      'coco' + igram_ref + '-' + igram_sec
-                     + '.reg.flat.topo_off.geo.filt.tiff', -9999)
+                     + '.reg2.flat.topo_off.geo.filt.tiff', -9999)
     # - Save Coherence Interferogram Map as a GeoTiff
     pg9.data2geotiff(ref_par, 'coco' + igram_ref + '-' + igram_sec
-                     + '.reg.flat.topo_off.geo.filt.coh', 2,
+                     + '.reg2.flat.topo_off.geo.filt.coh', 2,
                      'coco' + igram_ref + '-' + igram_sec
-                     + '.reg.flat.topo_off.geo.filt.coh.tiff', -9999)
+                     + '.reg2.flat.topo_off.geo.filt.coh.tiff', -9999)
 
 
 # - run main program
