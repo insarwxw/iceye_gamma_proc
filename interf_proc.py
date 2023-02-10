@@ -166,20 +166,20 @@ def main() -> None:
 
     # - Make Save directory
     save_dir = make_dir(data_dir, 'Save')
-    # - Move offsets calculated by AMPCOR into OFFSETS
-    off_file_list = [os.path.join('.', x) for x in os.listdir('.')
-                     if '.offmap_' in x]
-    for f_mv in off_file_list:
-        shutil.move(f_mv, save_dir)
+    # # - Move offsets calculated by AMPCOR into OFFSETS
+    # off_file_list = [os.path.join('.', x) for x in os.listdir('.')
+    #                  if '.offmap_' in x]
+    # for f_mv in off_file_list:
+    #     shutil.move(f_mv, save_dir)
 
     # - Resample the registered secondary SLC to the reference SLC
     # - using the using a 2-D offset map computed above.
     offset_par = f'{ref_slc}-{sec_slc}.offmap.par.interp'
     offset_interp = f'{ref_slc}-{sec_slc}.offmap.off.new.interp'
     pg.SLC_interp_map(
-        os.path.join(data_dir, f'{sec_slc}.reg.slc'),  # - Secondary SLC
+        os.path.join(data_dir, f'{sec_slc}.slc'),  # - Secondary SLC
         os.path.join(data_dir, f'{ref_slc}.par'),      # - Reference SLC par file
-        os.path.join(data_dir, f'{sec_slc}.reg.par'),  # - Secondary SLC par file
+        os.path.join(data_dir, f'{sec_slc}.par'),  # - Secondary SLC par file
         os.path.join(data_dir, offset_par),            # - Offsets par file
         os.path.join(data_dir, f'{sec_slc}.reg2.slc'),  # - Output SLC
         os.path.join(data_dir, f'{sec_slc}.reg2.par'),  # - Output SLC par file
