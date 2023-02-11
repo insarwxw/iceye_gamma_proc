@@ -137,31 +137,31 @@ def main() -> None:
     # - Compute ISP Parameters
     create_isp_par(data_dir, ref_slc, sec_slc)
 
-    # # - Register SLC-2 to SLC-1 using 3rd order polynomial
-    # register_slc(ref_slc, sec_slc,  # - Reference and Secondary SLC
-    #              pdoff=pdoff,       # - Compute preliminary dense offsets field
-    #              data_dir=data_dir,     # - Path to data directory
-    #              out_dir=out_dir)       # - Path to output directory
+    # - Register SLC-2 to SLC-1 using 3rd order polynomial
+    register_slc(ref_slc, sec_slc,  # - Reference and Secondary SLC
+                 pdoff=pdoff,       # - Compute preliminary dense offsets field
+                 data_dir=data_dir,     # - Path to data directory
+                 out_dir=out_dir)       # - Path to output directory
 
     # - Create the bat file to run AMPCOR
     sec_slc = f'{sec_slc}.reg'  # - Secondary SLC registered to reference SLC
-    # c_ampcor_iceye(ref_slc, sec_slc,    # - Reference and Secondary SLC
-    #                data_dir=data_dir,   # - Path to data directory
-    #                out_dir=out_dir,     # - Path to output directory
-    #                n_proc=n_proc,       # - Number of parallel processes
-    #                ampcor=ampcor_bin)   # - AMPCOR binary selected
+    c_ampcor_iceye(ref_slc, sec_slc,    # - Reference and Secondary SLC
+                   data_dir=data_dir,   # - Path to data directory
+                   out_dir=out_dir,     # - Path to output directory
+                   n_proc=n_proc,       # - Number of parallel processes
+                   ampcor=ampcor_bin)   # - AMPCOR binary selected
 
-    # print('# - Run AMPCOR.')
-    # # - Read ampcor bat file
-    # with open(os.path.join(out_dir, f'bat_{ref_slc}-{sec_slc}')) as r_fid:
-    #     sub_proc = r_fid.readlines()
-    # sub_proc_list = [s.split(' ')[0:2] for s in sub_proc]
-    #
-    # # - Run AMPCOR
-    # with Pool(n_proc) as p:
-    #     p.map(run_sub_process, sub_proc_list)
-    #
-    # print('# - AMPCOR Run Completed.')
+    print('# - Run AMPCOR.')
+    # - Read ampcor bat file
+    with open(os.path.join(out_dir, f'bat_{ref_slc}-{sec_slc}')) as r_fid:
+        sub_proc = r_fid.readlines()
+    sub_proc_list = [s.split(' ')[0:2] for s in sub_proc]
+
+    # - Run AMPCOR
+    with Pool(n_proc) as p:
+        p.map(run_sub_process, sub_proc_list)
+
+    print('# - AMPCOR Run Completed.')
 
     # - Process offsets - Stack offset files
     r_off_sar(data_dir, ref_slc, sec_slc)
