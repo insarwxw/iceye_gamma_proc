@@ -49,6 +49,49 @@ def create_isp_par(data_dir: str, ref_slc: str, sec_slc: str,
         os.path.join(data_dir, f'{ref_slc}-{sec_slc}.par')
     )
 
+def write_intf_bat(data_dir: str, id1: str, id2: str,
+                   range_spacing: int = 30,
+                   azimuth_spacing: int = 30,
+                   nrlks: int = None,
+                   nazlks: int = None,
+                   interf_bin: str = '$ST_PATH/COMMON/GAMMA_OLD'
+                                     '/bin/interf_offset64b') -> None:
+    """
+    Write a bash script to run the interferogram generation
+    :param data_dir: data directory
+    :param id1: reference SLC identifier
+    :param id2: secondary SLC identifier
+    :param range_spacing: range spacing
+    :param azimuth_spacing: azimuth spacing
+    :param nrlks: range number of lookg
+    :param nazlks: azimuth number of looks
+    :param interf_bin: interferogram calculation binary
+    :return: None
+    """
+    bat_inter_path = os.path.join(data_dir, 'bat_inter.' + id1 + '-' + id2)
+    with open(bat_inter_path, 'w') as i_fid:
+        ref_slc = id1 + '.slc'
+        sec_slc = id2 + '.slc'
+        ref_par = id1 + '.par'
+        sec_par = id2 + '.par'
+        offset_par = id1 + '-' + id2 + '.offmap.par.interp'
+        offset_interp = id1 + '-' + id2 + '.offmap.off.new.interp'
+        ref_pwr1 = id1 + '.pwr1'
+        sec_par1 = id2 + '.pwr2'
+        intef_path = 'coco' + id1 + '-' + id2 + '.dat'
+        if nrlks is None:
+            nrlks = int(range_spacing / 2)
+        if nazlks is None:
+            nazlks = int(azimuth_spacing / 2)
+        rstep = int(range_spacing)
+        zstep = int(azimuth_spacing)
+        i_fid.write(f'{interf_bin} {ref_slc} {sec_slc} {ref_par} {sec_par} '
+                    f'{offset_par} {offset_interp} {ref_pwr1} {sec_par1} '
+                    f'{intef_path} {nrlks} {nazlks} {rstep} {zstep}')
+
+    # - Change access permissions to the bash script
+    os.chmod(bat_inter_path, 0o777)
+
 
 def run_sub_process(cmd: list[str]) -> None:
     """
@@ -110,11 +153,12 @@ def main() -> None:
                         action='store_true')
 
     # - Number of Looks in Range
-    parser.add_argument('--nrlks', type=int, default=None,
+    parser.add_argument('--nrlks', type=int, default=15,
                         help='Number of looks Range.')
     # - Number of Looks in Azimuth
-    parser.add_argument('--nazlks', type=int, default=None,
+    parser.add_argument('--nazlks', type=int, default=15,
                         help='Number of looks Azimuth.')
+
     # - Apply ADF filter to the interferogram
     parser.add_argument('--filter', '-F',
                         help='Use ADF filter to smooth interferogram phase.',
@@ -200,6 +244,11 @@ def main() -> None:
     # - Create New ISP Parameter file
     create_isp_par(data_dir, ref_slc, f'{sec_slc}.reg2')
 
+    # - Create New Interferogram Parameter file
+    write_intf_bat(data_dir, ref_slc, f'{sec_slc}.reg2',
+                   range_spacing=30, azimuth_spacing=30,
+                   nrlks=args.nrlks, nazlks=args.nazlks)
+
     # - Compute Interferogram
     pg.SLC_intf(os.path.join(data_dir, f'{ref_slc}.slc'),
                 os.path.join(data_dir, f'{sec_slc}.reg2.slc'),
@@ -207,8 +256,9 @@ def main() -> None:
                 os.path.join(data_dir, f'{sec_slc}.reg2.par'),
                 os.path.join(data_dir, f'{ref_slc}-{sec_slc}.reg2.par'),
                 os.path.join(data_dir, f'coco{ref_slc}-{sec_slc}.reg2.intf'),
-                15, 15      # number of range/azimuth looks
+                args.nrlks, args.nazlks      # number of range/azimuth looks
                 )
+
     # - Estimate baseline from orbit state vectors
     pg.base_orbit(os.path.join(data_dir, f'{ref_slc}.par'),
                   os.path.join(data_dir, f'{sec_slc}.reg2.par'),
