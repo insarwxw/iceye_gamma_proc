@@ -33,6 +33,7 @@ def c_off4intf(data_dir: str, id1: str, id2: str,
                fill: bool = False,
                nrlks: int = None,
                nazlks: int = None,
+               write_bat: bool = False,
                interf_bin: str = '$ST_PATH/COMMON/GAMMA_OLD'
                                  '/bin/interf_offset64b'
                ) -> None:
@@ -48,6 +49,7 @@ def c_off4intf(data_dir: str, id1: str, id2: str,
     :param fill: fill gaps in offsets [def. False]
     :param nrlks: number of looks in range [def. None]
     :param nazlks: number of looks in azimuth [def. None]
+    :param write_bat: Write Interferogram bat file [def. False]
     :param interf_bin: GAMMA interf_offset binary
     :return: None
     """
@@ -187,26 +189,27 @@ def c_off4intf(data_dir: str, id1: str, id2: str,
                             + '.offmap.off.new.interp'), poff.npix)
 
     # - Write Bash Script to run to compute the interferogram
-    bat_inter_path = os.path.join(data_dir, 'bat_inter.' + id1 + '-' + id2)
-    with open(bat_inter_path, 'w') as i_fid:
-        ref_slc = id1 + '.slc'
-        sec_slc = id2 + '.slc'
-        ref_par = id1 + '.par'
-        sec_par = id2 + '.par'
-        offset_par = id1 + '-' + id2 + '.offmap.par.interp'
-        offset_interp = id1 + '-' + id2 + '.offmap.off.new.interp'
-        ref_pwr1 = id1 + '.pwr1'
-        sec_par1 = id2 + '.pwr2'
-        intef_path = 'coco' + id1 + '-' + id2 + '.dat'
-        if nrlks is None:
-            nrlks = int(range_spacing / 2)
-        if nazlks is None:
-            nazlks = int(azimuth_spacing / 2)
-        rstep = int(range_spacing)
-        zstep = int(azimuth_spacing)
-        i_fid.write(f'{interf_bin} {ref_slc} {sec_slc} {ref_par} {sec_par} '
-                    f'{offset_par} {offset_interp} {ref_pwr1} {sec_par1} '
-                    f'{intef_path} {nrlks} {nazlks} {rstep} {zstep}')
+    if write_bat:
+        bat_inter_path = os.path.join(data_dir, 'bat_inter.' + id1 + '-' + id2)
+        with open(bat_inter_path, 'w') as i_fid:
+            ref_slc = id1 + '.slc'
+            sec_slc = id2 + '.slc'
+            ref_par = id1 + '.par'
+            sec_par = id2 + '.par'
+            offset_par = id1 + '-' + id2 + '.offmap.par.interp'
+            offset_interp = id1 + '-' + id2 + '.offmap.off.new.interp'
+            ref_pwr1 = id1 + '.pwr1'
+            sec_par1 = id2 + '.pwr2'
+            intef_path = 'coco' + id1 + '-' + id2 + '.dat'
+            if nrlks is None:
+                nrlks = int(range_spacing / 2)
+            if nazlks is None:
+                nazlks = int(azimuth_spacing / 2)
+            rstep = int(range_spacing)
+            zstep = int(azimuth_spacing)
+            i_fid.write(f'{interf_bin} {ref_slc} {sec_slc} {ref_par} {sec_par} '
+                        f'{offset_par} {offset_interp} {ref_pwr1} {sec_par1} '
+                        f'{intef_path} {nrlks} {nazlks} {rstep} {zstep}')
 
-    # - Change access permissions to the bash script
-    os.chmod(bat_inter_path, 0o777)
+        # - Change access permissions to the bash script
+        os.chmod(bat_inter_path, 0o777)
