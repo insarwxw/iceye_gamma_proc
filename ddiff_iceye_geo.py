@@ -184,7 +184,7 @@ def main():
     pg.adf('coco' + igram_ref + '-' + igram_sec
            + '.reg.reg2.intf.flat.topo_off.geo',
            'coco' + igram_ref + '-' + igram_sec
-           + '.regreg2.intf.flat.topo_off.geo.filt',
+           + '.reg.reg2.intf.flat.topo_off.geo.filt',
            'coco' + igram_ref + '-' + igram_sec
            + '.reg.reg2.intf.flat.topo_off.geo.filt.coh',
            dem_width)
