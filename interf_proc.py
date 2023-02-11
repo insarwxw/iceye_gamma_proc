@@ -66,7 +66,8 @@ def run_sub_process(cmd: list[str]) -> None:
 def main() -> None:
     # - Read the system arguments listed after the program
     parser = argparse.ArgumentParser(
-        description="""Run Interferometric Processing (ISP) on a pair of SLCs."""
+        description=
+        """Run Interferometric Processing (ISP) on a pair of SLCs."""
     )
     # - Reference SLCs
     parser.add_argument('ref_slc', type=str,
@@ -114,6 +115,12 @@ def main() -> None:
     # - Number of Looks in Azimuth
     parser.add_argument('--nazlks', type=int, default=None,
                         help='Number of looks Azimuth.')
+    # - Apply ADF filter to the interferogram
+    parser.add_argument('--filter', '-F',
+                        help='Use ADF filter to smooth interferogram phase.',
+                        action='store_true')
+
+    # - Parse the command line arguments
     args = parser.parse_args()
 
     # - Read input parameters
@@ -124,25 +131,25 @@ def main() -> None:
     n_proc = args.n_proc        # - Number of parallel processes
     ampcor_bin = args.ampcor    # - AMPCOR binary selected
     pdoff = args.pdoff          # - Compute preliminary dense offsets field
-    dem = args.dem              # - DEM file for Geocoding and Topo Phase Removal
+    dem = args.dem            # - DEM file for Geocoding and Topo Phase Removal
 
-    # # - Compute ISP Parameters
-    # create_isp_par(data_dir, ref_slc, sec_slc)
-    #
+    # - Compute ISP Parameters
+    create_isp_par(data_dir, ref_slc, sec_slc)
+
     # # - Register SLC-2 to SLC-1 using 3rd order polynomial
     # register_slc(ref_slc, sec_slc,  # - Reference and Secondary SLC
     #              pdoff=pdoff,       # - Compute preliminary dense offsets field
     #              data_dir=data_dir,     # - Path to data directory
     #              out_dir=out_dir)       # - Path to output directory
-    #
-    # # - Create the bat file to run AMPCOR
+
+    # - Create the bat file to run AMPCOR
     sec_slc = f'{sec_slc}.reg'  # - Secondary SLC registered to reference SLC
     # c_ampcor_iceye(ref_slc, sec_slc,    # - Reference and Secondary SLC
     #                data_dir=data_dir,   # - Path to data directory
     #                out_dir=out_dir,     # - Path to output directory
     #                n_proc=n_proc,       # - Number of parallel processes
     #                ampcor=ampcor_bin)   # - AMPCOR binary selected
-    #
+
     # print('# - Run AMPCOR.')
     # # - Read ampcor bat file
     # with open(os.path.join(out_dir, f'bat_{ref_slc}-{sec_slc}')) as r_fid:
@@ -166,11 +173,11 @@ def main() -> None:
 
     # - Make Save directory
     save_dir = make_dir(data_dir, 'Save')
-    # # - Move offsets calculated by AMPCOR into OFFSETS
-    # off_file_list = [os.path.join('.', x) for x in os.listdir('.')
-    #                  if '.offmap_' in x]
-    # for f_mv in off_file_list:
-    #     shutil.move(f_mv, save_dir)
+    # - Move offsets calculated by AMPCOR into OFFSETS
+    off_file_list = [os.path.join('.', x) for x in os.listdir('.')
+                     if '.offmap_' in x]
+    for f_mv in off_file_list:
+        shutil.move(f_mv, save_dir)
 
     # - Resample the registered secondary SLC to the reference SLC
     # - using the using a 2-D offset map computed above.
@@ -178,7 +185,7 @@ def main() -> None:
     offset_interp = f'{ref_slc}-{sec_slc}.offmap.off.new.interp'
     pg.SLC_interp_map(
         os.path.join(data_dir, f'{sec_slc}.slc'),  # - Secondary SLC
-        os.path.join(data_dir, f'{ref_slc}.par'),      # - Reference SLC par file
+        os.path.join(data_dir, f'{ref_slc}.par'),  # - Reference SLC par file
         os.path.join(data_dir, f'{sec_slc}.par'),  # - Secondary SLC par file
         os.path.join(data_dir, offset_par),            # - Offsets par file
         os.path.join(data_dir, f'{sec_slc}.reg2.slc'),  # - Output SLC
@@ -297,12 +304,13 @@ def main() -> None:
 
     # - Remove Interferometric Phase component due to surface Topography.
     # - Simulate unwrapped interferometric phase using DEM height.
-    pg.phase_sim(os.path.join(data_dir, f'{ref_slc}.par'),
-                 os.path.join(data_dir, f'{ref_slc}-{sec_slc}.reg2.par'),
-                 os.path.join(data_dir, f'base{ref_slc}-{sec_slc}.reg2.dat'),
-                 'hgt_icemap',
-                 'sim_phase', 1, 0, '-'
-                 )
+    pg.phase_sim(
+        os.path.join(data_dir, f'{ref_slc}.par'),
+        os.path.join(data_dir, f'{ref_slc}-{sec_slc}.reg2.par'),
+        os.path.join(data_dir, f'base{ref_slc}-{sec_slc}.reg2.dat'),
+        'hgt_icemap',
+        'sim_phase', 1, 0, '-'
+    )
     # - Create DIFF/GEO parameter file for geocoding and
     # - differential interferometry
     pg.create_diff_par(os.path.join(data_dir, f'{ref_slc}-{sec_slc}.reg2.par'),
@@ -310,15 +318,18 @@ def main() -> None:
                        'DIFF_par', '-', 0)
 
     # - Subtract topographic phase from interferogram
-    pg.sub_phase(os.path.join(data_dir, f'coco{ref_slc}-{sec_slc}.reg2.intf.flat'),
-                 'sim_phase', 'DIFF_par',
-                 os.path.join(data_dir,
-                              f'coco{ref_slc}-{sec_slc}.reg2.intf.flat.topo_off'), 1
-                 )
+    pg.sub_phase(
+        os.path.join(data_dir, f'coco{ref_slc}-{sec_slc}.reg2.intf.flat'),
+        'sim_phase', 'DIFF_par',
+        os.path.join(data_dir, f'coco{ref_slc}-{sec_slc}.reg2.'
+                               f'intf.flat.topo_off'), 1
+    )
     # - Show interferogram w/o topographic phase
-    pg9.rasmph_pwr(os.path.join(data_dir,
-                                f'coco{ref_slc}-{sec_slc}.reg2.intf.flat.topo_off'),
-                   os.path.join(data_dir, f'{ref_slc}.mli'), interf_width)
+    pg9.rasmph_pwr(
+        os.path.join(data_dir,
+                     f'coco{ref_slc}-{sec_slc}.reg2.intf.flat.topo_off'),
+        os.path.join(data_dir, f'{ref_slc}.mli'), interf_width
+    )
 
     # - Geocode Output interferogram
     # - Reference Interferogram look-up table
@@ -326,50 +337,58 @@ def main() -> None:
 
     # - geocode interferogram
     pg.geocode_back(
-        os.path.join(data_dir, f'coco{ref_slc}-{sec_slc}.reg2.intf.flat.topo_off'),
+        os.path.join(data_dir, f'coco{ref_slc}-{sec_slc}'
+                               f'.reg2.intf.flat.topo_off'),
         interf_width,  ref_gcmap,
-        os.path.join(data_dir, f'coco{ref_slc}-{sec_slc}.reg2.intf.flat.topo_off.geo'),
+        os.path.join(data_dir, f'coco{ref_slc}-{sec_slc}'
+                               f'.reg2.intf.flat.topo_off.geo'),
         dem_width, dem_nlines, '-', 1
     )
 
     # - Show Geocoded interferogram
     pg9.rasmph_pwr(
-        os.path.join(data_dir, f'coco{ref_slc}-{sec_slc}.reg2.intf.flat.topo_off.geo'),
+        os.path.join(data_dir, f'coco{ref_slc}-{sec_slc}'
+                               f'.reg2.intf.flat.topo_off.geo'),
         os.path.join(data_dir, f'{ref_slc}.mli.geo'),  dem_width
     )
 
     if args.filter:
         # - Smooth the obtained interferogram with pg.adf
         # - Adaptive interferogram filter using the power spectral density.
-        pg.adf(os.path.join(data_dir,
-                            f'coco{ref_slc}-{sec_slc}.reg2.intf.flat.topo_off'),
-               os.path.join(data_dir,
-                            f'coco{ref_slc}-{sec_slc}.reg2.intf.flat.topo_off.filt'),
-               os.path.join(data_dir,
-                            f'coco{ref_slc}-{sec_slc}.reg2.intf.flat.'
-                            f'topo_off.filt.coh'),
-               dem_width)
+        pg.adf(
+            os.path.join(data_dir,
+                         f'coco{ref_slc}-{sec_slc}.reg2.intf.flat.topo_off'),
+            os.path.join(data_dir,
+                         f'coco{ref_slc}-{sec_slc}.reg2.intf.'
+                         f'flat.topo_off.filt'),
+            os.path.join(data_dir,
+                         f'coco{ref_slc}-{sec_slc}.reg2.intf.flat.'
+                         f'topo_off.filt.coh'),
+            dem_width
+        )
         # - Show filtered interferogram
         pg9.rasmph_pwr(
             os.path.join(data_dir,
-                         f'coco{ref_slc}-{sec_slc}.reg2.intf.flat.topo_off.filt'),
+                         f'coco{ref_slc}-{sec_slc}.reg2.intf.'
+                         f'flat.topo_off.filt'),
             os.path.join(data_dir, f'{ref_slc}.mli'), interf_width
         )
 
         # - Smooth Geocoded Interferogram
-        pg.adf(os.path.join(data_dir,
-                            f'coco{ref_slc}-{sec_slc}.reg2.intf.flat.topo_off.geo'),
-               os.path.join(data_dir,
-                            f'coco{ref_slc}-{sec_slc}.reg2.intf.flat.'
-                            f'topo_off.geo.filt'),
-               os.path.join(data_dir,
-                            f'coco{ref_slc}-{sec_slc}.reg2.intf.flat.topo_off.geo.'
-                            f'filt.coh'),
-               dem_width)
+        pg.adf(
+            os.path.join(data_dir, f'coco{ref_slc}-{sec_slc}.reg2.intf.'
+                                   f'flat.topo_off.geo'),
+            os.path.join(data_dir, f'coco{ref_slc}-{sec_slc}.reg2.intf.'
+                                   f'flat.topo_off.geo.filt'),
+            os.path.join(data_dir, f'coco{ref_slc}-{sec_slc}.reg2.intf.'
+                                   f'flat.topo_off.geo.filt.coh'),
+            dem_width
+        )
+
         # - Show filtered interferogram
         pg9.rasmph_pwr(
-            os.path.join(data_dir,
-                         f'coco{ref_slc}-{sec_slc}.reg2.intf.flat.topo_off.geo.filt'),
+            os.path.join(data_dir, f'coco{ref_slc}-{sec_slc}.reg2.intf.'
+                                   f'flat.topo_off.geo.filt'),
             os.path.join(data_dir, f'{ref_slc}.mli.geo'), dem_width
         )
 
