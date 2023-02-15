@@ -208,6 +208,10 @@ def main():
                      + '.reg.reg2.intf.flat.topo_off.geo.filt.coh', 2,
                      'coco' + igram_ref + '-' + igram_sec
                      + '.reg.reg2.intf.flat.topo_off.geo.filt.coh.tiff', -9999)
+    # - Save Reference Amplitude as a GeoTiff
+    ref_pwr_name = ref_pwr.split('/')[-1]
+    pg9.data2geotiff(ref_par, ref_pwr+'.bmp', 2,
+                     f'{ref_pwr_name}.tiff', -9999)
 
 
 # - run main program
