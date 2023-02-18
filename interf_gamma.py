@@ -21,6 +21,7 @@ options:
   -h, --help            show this help message and exit
   --directory DIRECTORY, -D DIRECTORY
                         Data directory.
+  --dem_of DEM_OF       Dem Oversampling Factor.
   --out_directory OUT_DIRECTORY, -O OUT_DIRECTORY
                         Output directory.
   --filter, -F          Use ADF filter to smooth interferogram phase.
@@ -36,7 +37,7 @@ import shutil
 import numpy as np
 # - GAMMA's Python integration with the py_gamma module
 import py_gamma as pg
-import py_gamma2019 as pg9
+# import py_gamma2019 as pg9
 # - ST_Release dependencies
 from scipy.signal import medfilt
 from astropy.convolution import convolve, Box2DKernel
@@ -206,7 +207,7 @@ def compute_dense_offsets(data_dir: str, out_dir: str,
 
     # - Run GAMMA rasmph: Generate 8-bit raster graphics image of the phase
     # - and intensity of complex data - Show Interpolated Offsets Map
-    pg9.rasmph(os.path.join(out_dir, f'{pair_name}.offmap.res'),
+    pg.rasmph(os.path.join(out_dir, f'{pair_name}.offmap.res'),
                rn_smp, '-', '-', '-', '-', '-', '-', '-',
                os.path.join(out_dir, f'{pair_name}.offmap.res.bmp'))
 
@@ -294,7 +295,7 @@ def compute_dense_offsets(data_dir: str, out_dir: str,
         .tofile(os.path.join(out_dir, f'{pair_name}.offmap.res.filt'))
 
     # - Show Smoothed Offsets Map
-    pg9.rasmph(os.path.join(out_dir, f'{pair_name}.offmap.res.filt'), rn_smp)
+    pg.rasmph(os.path.join(out_dir, f'{pair_name}.offmap.res.filt'), rn_smp)
 
 
 def main() -> None:
@@ -313,21 +314,24 @@ def main() -> None:
                              'Remove Topographic Contribution '
                              'from Flattened Interferogram.',
                         )
-
+    # - Data Directory
     parser.add_argument('--directory', '-D', help='Data directory.',
                         default=os.getcwd())
-
+    # - Dem Oversampling Factor
+    parser.add_argument('--dem_of', help='Dem Oversampling Factor.',
+                        type=int, default=1)
+    # - Output Directory
     parser.add_argument('--out_directory', '-O', help='Output directory.',
                         default=os.getcwd())
-
+    # - Filter Offsets Map usinf ADF filter.
     parser.add_argument('--filter', '-F',
                         help='Use ADF filter to smooth interferogram phase.',
                         action='store_true')
-
+    # - Keep intermediate data products.
     parser.add_argument('--keep', '-K',
                         help='Keep intermediate processing outputs.',
                         action='store_true')
-
+    # - Compute preliminary dense offsets field.
     parser.add_argument('--pdoff', '-p',
                         help='Compute preliminary dense offsets field.',
                         action='store_true')
@@ -466,17 +470,17 @@ def main() -> None:
            )
 
     # - Generate 8-bit greyscale raster image of intensity multi-looked SLC
-    pg9.raspwr(os.path.join(data_dir, f'{ref}.mli'), interf_width)
+    pg.raspwr(os.path.join(data_dir, f'{ref}.mli'), interf_width)
 
     # - Show Output Interferogram
-    pg9.rasmph_pwr(
+    pg.rasmph_pwr(
         os.path.join(data_dir, f'coco{ref}-{sec}.reg2.intf.flat.filt'),
         os.path.join(data_dir, f'{ref}.mli.bmp'), interf_width
     )
 
     # - Estimate and Remove Topographic Phase from the flattened interferogram
     dem = args.dem
-    dem_info = path_to_dem(dem)
+    dem_info = path_to_dem(dem, oversample=args.dem_of)
     dem_info['path'] = dem_info['path']
     dem_par = os.path.join(dem_info['path'].replace(' ', '\ '), dem_info['par'])
     dem = os.path.join(dem_info['path'].replace(' ', '\ '), dem_info['dem'])
@@ -517,7 +521,7 @@ def main() -> None:
                     'gc_icemap',
                     os.path.join(data_dir, f'{ref}.mli.geo'),
                     dem_width, dem_nlines)
-    pg9.raspwr(os.path.join(data_dir, f'{ref}.mli.geo'), dem_width)
+    pg.raspwr(os.path.join(data_dir, f'{ref}.mli.geo'), dem_width)
 
     # - Remove Interferometric Phase component due to surface Topography.
     # - Simulate unwrapped interferometric phase using DEM height.
@@ -540,7 +544,7 @@ def main() -> None:
                               f'coco{ref}-{sec}.reg2.intf.flat.topo_off'), 1
                  )
     # - Show interferogram w/o topographic phase
-    pg9.rasmph_pwr(os.path.join(data_dir,
+    pg.rasmph_pwr(os.path.join(data_dir,
                                 f'coco{ref}-{sec}.reg2.intf.flat.topo_off'),
                    os.path.join(data_dir, f'{ref}.mli'), interf_width)
 
@@ -557,7 +561,7 @@ def main() -> None:
     )
 
     # - Show Geocoded interferogram
-    pg9.rasmph_pwr(
+    pg.rasmph_pwr(
         os.path.join(data_dir, f'coco{ref}-{sec}.reg2.intf.flat.topo_off.geo'),
         os.path.join(data_dir, f'{ref}.mli.geo'),  dem_width
     )
@@ -574,7 +578,7 @@ def main() -> None:
                             f'topo_off.filt.coh'),
                dem_width)
         # - Show filtered interferogram
-        pg9.rasmph_pwr(
+        pg.rasmph_pwr(
             os.path.join(data_dir,
                          f'coco{ref}-{sec}.reg2.intf.flat.topo_off.filt'),
             os.path.join(data_dir, f'{ref}.mli'), interf_width
@@ -591,7 +595,7 @@ def main() -> None:
                             f'filt.coh'),
                dem_width)
         # - Show filtered interferogram
-        pg9.rasmph_pwr(
+        pg.rasmph_pwr(
             os.path.join(data_dir,
                          f'coco{ref}-{sec}.reg2.intf.flat.topo_off.geo.filt'),
             os.path.join(data_dir, f'{ref}.mli.geo'), dem_width

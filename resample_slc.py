@@ -37,7 +37,7 @@ def main() -> None:
         Resolution and PRF"""
     )
 
-    parser.add_argument('prf', type=float,  help='output PRF.')
+    parser.add_argument('prf', type=float,  help='output PRF [Hz].')
 
     parser.add_argument('--slc', '-S', type=str,
                         default=None, help='Process a single SLC.')

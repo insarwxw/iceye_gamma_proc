@@ -1,4 +1,40 @@
 #!/usr/bin/env python
+u"""
+Enrico Ciraci' - 02/2023
+
+Run Standard UCI Interferometric Processing on a pair of SLCs.
+
+usage: interf_proc.py [-h] [--directory DIRECTORY]
+    [--out_directory OUT_DIRECTORY] [--n_proc N_PROC]
+    [--ampcor {ampcor_large,ampcor_large2,ampcor_superlarge2}]
+    [--pdoff] [--nrlks NRLKS] [--nazlks NAZLKS] [--filter]
+    ref_slc sec_slc {gis,gimp,greenland,ais,antarctica,bedmap2,rema}
+
+Run Interferometric Processing (ISP) on a pair of SLCs.
+
+positional arguments:
+  ref_slc               Reference SLCs.
+  sec_slc               Secondary SLCs.
+  {gis,gimp,greenland,ais,antarctica,bedmap2,rema}
+        Digital Elevation Model used to Remove Topographic Contribution
+        from Flattened Interferogram.
+
+options:
+  -h, --help            show this help message and exit
+  --directory DIRECTORY, -D DIRECTORY
+                        Data directory.
+  --out_directory OUT_DIRECTORY, -O OUT_DIRECTORY
+                        Output directory.
+  --n_proc N_PROC, -N N_PROC
+                        Number of Parallel Processes.
+  --ampcor {ampcor_large,ampcor_large2,ampcor_superlarge2}, -A
+        {ampcor_large,ampcor_large2,ampcor_superlarge2}
+                        AMPCOR Binary Selected.
+  --pdoff, -p           Compute preliminary dense offsets field.
+  --nrlks NRLKS         Number of looks Range.
+  --nazlks NAZLKS       Number of looks Azimuth.
+  --filter, -F          Use ADF filter to smooth interferogram phase.
+"""
 # - Python Dependencies
 from __future__ import print_function
 import os
@@ -90,6 +126,9 @@ def main() -> None:
     # - Output Directory
     parser.add_argument('--out_directory', '-O', help='Output directory.',
                         default=os.getcwd())
+    # - Dem Oversampling Factor
+    parser.add_argument('--dem_of', help='Dem Oversampling Factor.',
+                        type=int, default=1)
 
     # - Number of Parallel Processes
     parser.add_argument('--n_proc', '-N',
@@ -260,7 +299,7 @@ def main() -> None:
     )
 
     # - Estimate and Remove Topographic Phase from the flattened interferogram
-    dem_info = path_to_dem(dem)
+    dem_info = path_to_dem(dem, oversample=args.dem_of)
     dem_info['path'] = dem_info['path']
     dem_par = os.path.join(dem_info['path'].replace(' ', '\ '), dem_info['par'])
     dem = os.path.join(dem_info['path'].replace(' ', '\ '), dem_info['dem'])

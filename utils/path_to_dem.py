@@ -15,7 +15,7 @@ def path_to_dem(dem: str, oversample: int = 1) -> dict:
     :return: dictionary with absolute paths to DEM and its parameter files.
     """
     # - Get absolute path to DAT_PATH
-    dem_path = os.environ['DAT_PATH']  # - DAT_PATH
+    dem_path = os.environ['DAT_PATH']   # - DAT_PATH
     # - Get absolute path to DEM and its parameter files
     if dem.lower() in ['gis', 'gimp', 'greenland']:
         # - GIMP DEM
