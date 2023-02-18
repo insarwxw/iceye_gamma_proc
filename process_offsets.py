@@ -21,7 +21,10 @@ options:
   --directory DIRECTORY, -D DIRECTORY
                         Data directory.
   --fill, -F            Fill gaps in offsets.
+  --fill, -F            Fill gaps in offsets.
   --smooth, -S          Smooth offsets.
+  --nrlks NRLKS         Number of looks Range.
+  --nazlks NAZLKS       Number of looks Azimuth.
 
 PYTHON DEPENDENCIES:
     argparse: Parser for command-line options, arguments and sub-commands
@@ -66,7 +69,12 @@ def main() -> None:
     # - Smooth offsets
     parser.add_argument('--smooth', '-S', action='store_true',
                         help='Smooth offsets.')
-
+    # - Number of Looks in Range
+    parser.add_argument('--nrlks', type=int, default=None,
+                        help='Number of looks Range.')
+    # - Number of Looks in Azimuth
+    parser.add_argument('--nazlks', type=int, default=None,
+                        help='Number of looks Azimuth.')
     args = parser.parse_args()
 
     # - Reference and Secondary SLCs
@@ -83,7 +91,7 @@ def main() -> None:
     c_off4intf(data_dir, ref_slc, sec_slc,
                range_spacing=30, azimuth_spacing=30,
                filter_strategy=2, smooth=args.smooth,
-               fill=args.fill)
+               fill=args.fill, nrlks=args.nrlks, nazlks=args.nazlks)
 
     # - create Save directory
     make_dir(data_dir, 'Save')

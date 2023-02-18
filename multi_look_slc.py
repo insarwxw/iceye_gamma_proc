@@ -4,18 +4,18 @@ multi_look_slc.py
 Written by Enrico Ciraci' (03/2022)
 Calculate a multi-looked intensity (MLI) image from the selected ICEye SLCs.
 
-usage: multi_look_slc.py [-h] [--directory DIRECTORY] slc
+usage: multi_look_slc.py [-h] [--slc SLC] [--directory DIRECTORY]
 
 Calculate a multi-looked intensity (MLI) image from the selected ICEye SLCs.
 
-positional arguments:
-  slc                   Calculate a multi-look intensity (MLI) image
-                        from an SLC image.
 
 options:
   -h, --help            show this help message and exit
+  --slc SLC, -S SLC     Calculate a multi-look intensity (MLI)
+                    image from an SLC image.
   --directory DIRECTORY, -D DIRECTORY
                         Project data directory.
+
 
 
 PYTHON DEPENDENCIES:
@@ -37,6 +37,7 @@ import argparse
 import datetime
 # - GAMMA's Python integration with the py_gamma module
 import py_gamma as pg
+import py_gamma2019 as pg9
 
 
 def main():
@@ -44,13 +45,11 @@ def main():
         description="""Calculate a multi-looked intensity (MLI)
         image from the selected ICEYE SLCs."""
     )
-    # - Absolute Path to directory containing input data.
-    default_dir = os.getcwd()
-
-    parser.add_argument('slc', type=str, default=None,
+    # - SLC name
+    parser.add_argument('--slc', '-S', type=str,
                         help='Calculate a multi-look intensity (MLI) '
                              'image from an SLC image.')
-
+    # - Absolute Path to directory containing input data.
     parser.add_argument('--directory', '-D', type=str, default=os.getcwd(),
                         help='Project data directory.')
 
@@ -83,7 +82,7 @@ def main():
         n_rsmpl = int(par_dict['range_samples'][0])
 
         # - Calculate a raster image from data with power-law scaling
-        pg.raspwr(mli_name, n_rsmpl)
+        pg9.raspwr(mli_name, n_rsmpl)
 
     else:
         # - List Directory Content
@@ -109,7 +108,7 @@ def main():
             n_rsmpl = int(par_dict['range_samples'][0])
 
             # - Calculate a raster image from data with power-law scaling
-            pg.raspwr(mli_name, n_rsmpl)
+            pg9.raspwr(mli_name, n_rsmpl)
 
 
 # - run main program

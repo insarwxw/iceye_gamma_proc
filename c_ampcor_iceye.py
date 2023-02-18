@@ -9,19 +9,23 @@ NOTE: Before Running this script, a preliminary constant offset between the
       two SLCs must be calculated by employing the relative orbital parameters
       must have been calculated.
 
-COMMAND LINE OPTIONS:
-  positional arguments:
-  reference             Reference SLCs.
-  secondary             Secondary SLCs.
+usage: c_ampcor_iceye.py [-h] [--directory DIRECTORY] [--n_proc N_PROC]
+    [--ampcor {ampcor_large,ampcor_large2,ampcor_superlarge2}] ref_slc sec_slc
 
-options:
-  -h, --help            show this help message and exit
-  --directory DIRECTORY, -D DIRECTORY
-                        Data directory.
-  --np NP, -N NP        Number of Parallel Processes.
-  --ampcor {ampcor_large,ampcor_large2,ampcor_superlarge2},
-    -A {ampcor_large,ampcor_large2,ampcor_superlarge2}
-             AMPCOR Binary Selected.
+Create the bat file to run AMPCOR.
+
+COMMAND LINE OPTIONS:
+    positional arguments:
+      ref_slc               Reference SLCs.
+      sec_slc               Secondary SLCs.
+
+    options:
+      -h, --help            show this help message and exit
+      --directory DIRECTORY, -D DIRECTORY
+                            Data directory.
+      --n_proc N_PROC, -N N_PROC
+                            Number of Parallel Processes.
+      --ampcor {ampcor_large,ampcor_large2,ampcor_
 
 PYTHON DEPENDENCIES:
     argparse: Parser for command-line options, arguments and sub-commands
@@ -33,6 +37,7 @@ PYTHON DEPENDENCIES:
 UPDATE HISTORY:
     06/22/2022 - Directory parameter converted to positional argument.
         By default, the current directory is used as working directory.
+    02/10/2023 - c_ampcor_iceye - converted to callable function.
 """
 # - Python dependencies
 from __future__ import print_function
@@ -46,45 +51,24 @@ from utils.path_to_ampcor import path_to_ampcor
 import py_gamma as pg
 
 
-def main():
-    # - Read the system arguments listed after the program
-    parser = argparse.ArgumentParser(
-        description="""Create the bat file to run AMPCOR.
-            """
-    )
-    # - Reference SLCs
-    parser.add_argument('reference', type=str,
-                        help='Reference SLCs.')
-    # - Secondary SLCs
-    parser.add_argument('secondary', type=str,
-                        help='Secondary SLCs.')
-    # - Data Directory
-    parser.add_argument('--directory', '-D',
-                        help='Data directory.',
-                        default=os.getcwd())
-    # - Number of Parallel Processes
-    parser.add_argument('--np', '-N',
-                        type=int, default=14,
-                        help='Number of Parallel Processes.')
-    # - AMPCOR Binary Selected
-    parser.add_argument('--ampcor', '-A',
-                        type=str, default='ampcor_large',
-                        choices=['ampcor_large', 'ampcor_large2',
-                                 'ampcor_superlarge2'],
-                        help='AMPCOR Binary Selected.')
-
-    args = parser.parse_args()
-
-    # - Reference and Secondary SLCs
-    ref_slc = args.reference
-    sec_slc = args.secondary
-    # -
-    ref_slc_path = os.path.join(args.directory, ref_slc + '.slc')
-    ref_par_path = os.path.join(args.directory, ref_slc + '.par')
-    sec_slc_path = os.path.join(args.directory, sec_slc + '.slc')
-    sec_par_path = os.path.join(args.directory, sec_slc + '.par')
+def c_ampcor_iceye(ref_slc: str, sec_slc: str,
+                   data_dir: str = os.getcwd(), out_dir: str = os.getcwd(),
+                   ampcor: str = 'ampcor_large', n_proc: int = 15) -> None:
+    """
+    Create the bat file to run AMPCOR between the considered pair of SLCs
+    :param ref_slc: reference Single Look Complex (SLC) file name
+    :param sec_slc: secondary Single Look Complex (SLC) file name
+    :param data_dir: data directory [default: current directory]
+    :param out_dir: output directory  [default: current directory]
+    :param ampcor: ampcor version to use [default: ampcor_large]
+    :param n_proc: number of parallel processes [default: 15]
+    :return: None
+    """
+    ref_slc_path = os.path.join(data_dir, ref_slc + '.slc')
+    ref_par_path = os.path.join(data_dir, ref_slc + '.par')
+    sec_slc_path = os.path.join(data_dir, sec_slc + '.slc')
+    sec_par_path = os.path.join(data_dir, sec_slc + '.par')
     # - output directory -  use the same directory containing the SLCs
-    out_dir = args.directory
     off_par_path = os.path.join(out_dir, ref_slc + '-' + sec_slc + '.par')
 
     if not os.path.isfile(ref_slc_path):
@@ -103,7 +87,7 @@ def main():
         print(f'# - {ref_slc}' + '-' + f'{sec_slc}.par - Not Found.')
         sys.exit()
 
-    # - other parameters - ampcor skip
+    # - Other parameters -> ampcor skip
     range_spacing = 30
     line_spacing = 30
 
@@ -114,9 +98,9 @@ def main():
     off_param_dict = pg.ParFile(off_par_path).par_dict
 
     # - initial range and azimuth offsets
-    xoff = int(off_param_dict['initial_range_offset'][0])
+    x_off = int(off_param_dict['initial_range_offset'][0])
     yoff = int(off_param_dict['initial_azimuth_offset'][0])
-    print(f'# - initial_range_offset: {xoff}')
+    print(f'# - initial_range_offset: {x_off}')
     print(f'# - initial_azimuth_offset: {yoff}')
 
     # - read reference slc parameters
@@ -162,20 +146,20 @@ def main():
     print(f'# - Secondary Azimuth Res: {sec_pixel_sp}')
     print(f'# - Computed y_slope: {y_slope}\n')
     print(f'# - Number of record of ref. SLC : {n_rec}')
-    print(f'# - Divide offsets into {args.np} chunks')
+    print(f'# - Divide offsets into {n_proc} chunks')
 
     # - Number of offset lines per chunk
-    nn = int(n_rec / line_spacing / args.np)
-    print(f'# - Number of number of lines per chunk : {int(n_rec / args.np)}')
+    nn = int(n_rec / line_spacing / n_proc)
+    print(f'# - Number of number of lines per chunk : {int(n_rec / n_proc)}')
     print(f'# - Number of offset lines per chunk : {nn}')
 
     # - write input parameters files for each chunk
     # - considered by AMPCOR
-    y_curr = int(y_start)       # - chunk specific y_start
+    y_curr = int(y_start)  # - chunk specific y_start
 
     # - open bat_id file
     with open(bat_id, 'w', encoding='utf8') as fid_1:
-        for i in range(args.np):
+        for i in range(n_proc):
             # - Open specific chunk parameter file
             s_file = os.path.join(out_dir,
                                   f'{ref_slc}-{sec_slc}.offmap_{i + 1}.in')
@@ -187,7 +171,7 @@ def main():
                 # - Output offset map file name
                 print(f'{ref_slc}-{sec_slc}.offmap_{i + 1}', file=fid_2)
 
-                print(os.path.join(path_to_ampcor(), args.ampcor)
+                print(os.path.join(path_to_ampcor(), ampcor)
                       + f' {ref_slc}-{sec_slc}.offmap_{i + 1}' + '.in old &',
                       file=fid_1)
 
@@ -213,12 +197,12 @@ def main():
                 print('1 1', file=fid_2)
 
                 # - i-th chunk initial offset
-                xoff_c = xoff
+                x_off_c = x_off
                 yoff_c = int(np.fix(yoff + y_slope
                                     * (2. * y_curr
                                        + line_spacing * (nn - 1)) / 2. + 0.5))
 
-                print('{:5} {:6}'.format(xoff_c, yoff_c), file=fid_2)
+                print('{:5} {:6}'.format(x_off_c, yoff_c), file=fid_2)
 
                 # - Other Input parameters for AMPCOR
                 # - threshold SNR = 0
@@ -230,11 +214,11 @@ def main():
                 print('f f', file=fid_2)
 
                 # - print on std-output
-                print(f'# - {ref_slc}-{sec_slc}.offmap_{i + 1}.in '
-                      f'- y-boundaries ->' + str(y_curr).rjust(10)
-                      + str(y_curr + line_spacing * (nn - 1)).rjust(10))
-                print(f'# - Chunk {i + 1} offsets :'
-                      f' yoff={yoff_c}, xoff={xoff_c}\n')
+                # print(f'# - {ref_slc}-{sec_slc}.offmap_{i + 1}.in '
+                #       f'- y-boundaries ->' + str(y_curr).rjust(10)
+                #       + str(y_curr + line_spacing * (nn - 1)).rjust(10))
+                # print(f'# - Chunk {i + 1} offsets :'
+                #       f' yoff={yoff_c}, x_off={x_off_c}\n')
 
                 # - update y_curr value
                 y_curr += int(line_spacing * nn)
@@ -243,6 +227,47 @@ def main():
     os.chmod(bat_id, 0o0755)
 
     print('# - AMPCOR Calculation Parameters set.')
+
+
+def main() -> None:
+    # - Read the system arguments listed after the program
+    parser = argparse.ArgumentParser(
+        description="""Create the bat file to run AMPCOR."""
+    )
+    # - Reference SLCs
+    parser.add_argument('ref_slc', type=str,
+                        help='Reference SLCs.')
+    # - Secondary SLCs
+    parser.add_argument('sec_slc', type=str,
+                        help='Secondary SLCs.')
+    # - Data Directory
+    parser.add_argument('--directory', '-D',
+                        help='Data directory.',
+                        default=os.getcwd())
+
+    # - Number of Parallel Processes
+    parser.add_argument('--n_proc', '-N',
+                        type=int, default=14,
+                        help='Number of Parallel Processes.')
+
+    # - Compute preliminary dense offsets field to register SLCs
+    parser.add_argument('--pdoff', '-p',
+                        help='Compute preliminary dense offsets field.',
+                        action='store_true')
+
+    # - AMPCOR Binary Selected
+    parser.add_argument('--ampcor', '-A',
+                        type=str, default='ampcor_large',
+                        choices=['ampcor_large', 'ampcor_large2',
+                                 'ampcor_superlarge2'],
+                        help='AMPCOR Binary Selected.')
+
+    args = parser.parse_args()
+
+    # - Reference and Secondary SLCs
+    c_ampcor_iceye(args.ref_slc, args.sec_slc,
+                   data_dir=args.directory, out_dir=args.directory,
+                   n_proc=args.n_proc, ampcor=args.ampcor)
 
 
 # - run main program

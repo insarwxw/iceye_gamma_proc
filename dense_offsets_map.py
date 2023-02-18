@@ -74,6 +74,9 @@ from st_release.congrid2d import congrid2d
 from st_release.fill_nodata import fill_nodata
 from st_release.resample_slc import resample_slc_azimuth, resample_slc_prf
 
+#TODO: Add support for the following options:
+# - --interp_off         Interpolate Offset Map to a different resolution.
+# - --out_off_spacing    Offset Map Range/Azimuth Spacing.
 
 def setup_intf(data_dir: str, ref: str, sec: str,
                offsets: str, offsets_par: str,
